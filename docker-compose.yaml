@@ -8,7 +8,7 @@ services:
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=arbeidssoker-register
+      - POSTGRES_DB=arbeidssokerregisteret
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.1
@@ -62,7 +62,7 @@ services:
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     ports:
-      - 9000:8080
+      - "9000:8080"
     environment:
       DYNAMIC_CONFIG_ENABLED: "true"
       KAFKA_CLUSTERS_0_NAME: main

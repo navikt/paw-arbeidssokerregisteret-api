@@ -1,0 +1,30 @@
+authProviders:
+  - name: tokenx
+    discoveryUrl: http://localhost:8081/default/.well-known/openid-configuration
+    tokenEndpointUrl: http://localhost:8081/default/token
+    clientId: paw-arbeidssokerregisteret-api
+    claims:
+      map:
+        - acr=Level4
+        - acr=idporten-loa-high
+      combineWithOr: true
+  - name: azure
+    discoveryUrl: http://localhost:8081/default/.well-known/openid-configuration
+    tokenEndpointUrl: http://localhost:8081/default/token
+    clientId: paw-arbeidssokerregisteret-api
+    claims:
+      map:
+        - NAVident
+      combineWithOr: false
+database:
+  host: localhost
+  port: 5432
+  username: admin
+  password: admin
+  name: arbeidssokerregisteret
+kafka:
+  brokerUrl: localhost:9092
+  consumerGroupId: arbeidssokerregisteret-api
+  consumers:
+    arbeidssokerperioder:
+      topic: paw-arbeidssokerperioder-v1

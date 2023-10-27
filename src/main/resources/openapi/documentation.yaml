@@ -1,0 +1,67 @@
+openapi: "3.0.3"
+info:
+  title: "paw_arbeidssokerregisteret_api API"
+  description: "paw_arbeidssokerregisteret_api API"
+  version: "1.0.0"
+servers:
+- url: "https://paw_arbeidssokerregisteret_api"
+paths:
+  /api/v1/arbeidssokerperioder:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Arbeidssokerperiode"
+  /internal/isAlive:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "ALIVE"
+  /internal/isReady:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "READY"
+  /internal/metrics:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+components:
+  schemas:
+    Arbeidssokerperiode:
+      type: "object"
+      properties:
+        startet:
+          type: "string"
+          format: "date-time"
+        avsluttet:
+          type: "string"
+          format: "date-time"
