@@ -2,9 +2,9 @@
 
 REST-api for arbeidssokerregisteret
 
-## Dokumentasjon
+## Dokumentasjon for API
 
-https://arbeidssokerregisteret.intern.dev.nav.no
+https://arbeidssokerregisteret.intern.dev.nav.no/docs
 
 ## Flytdiagram
 
@@ -14,7 +14,6 @@ https://arbeidssokerregisteret.intern.dev.nav.no
 
 - [**Kotlin**](https://kotlinlang.org/)
 - [**Ktor**](https://ktor.io/)
-- [**Koin**](https://insert-koin.io/)
 - [**PostgreSQL**](https://www.postgresql.org/)
 - [**Flyway**](https://flywaydb.org/)
 - [**Gradle**](https://gradle.org/)
@@ -33,7 +32,7 @@ Vent litt.
 
 3)
 
-Logg inn i debug-dings med test-id med din nye dolly bruker
+Logg inn i tokenx-token-generator med test-id med din nye dolly bruker
 
 Gå til https://tokenx-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp:paw:paw-arbeidssokerregisteret-api
 

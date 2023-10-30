@@ -1,4 +1,4 @@
-FROM ghcr.io/navikt/baseimages/temurin:17
+ FROM ghcr.io/navikt/baseimages/temurin:17
 
 ENV SERVICE_NAVN=paw-arbeidssokerregisteret
 ENV AGENT=agents/opentelemetry-javaagent.jar

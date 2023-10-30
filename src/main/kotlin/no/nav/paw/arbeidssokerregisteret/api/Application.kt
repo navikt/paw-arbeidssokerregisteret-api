@@ -6,7 +6,6 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.routing.routing
 import no.nav.paw.arbeidssokerregisteret.api.config.Config
-import no.nav.paw.arbeidssokerregisteret.api.config.loadConfiguration
 import no.nav.paw.arbeidssokerregisteret.api.plugins.configureAuthentication
 import no.nav.paw.arbeidssokerregisteret.api.plugins.configureHTTP
 import no.nav.paw.arbeidssokerregisteret.api.plugins.configureLogging
@@ -15,6 +14,7 @@ import no.nav.paw.arbeidssokerregisteret.api.plugins.configureSerialization
 import no.nav.paw.arbeidssokerregisteret.api.routes.arbeidssokerRoutes
 import no.nav.paw.arbeidssokerregisteret.api.routes.healthRoutes
 import no.nav.paw.arbeidssokerregisteret.api.routes.swaggerRoutes
+import no.nav.paw.arbeidssokerregisteret.api.utils.loadConfiguration
 import no.nav.paw.arbeidssokerregisteret.api.utils.migrateDatabase
 import kotlin.concurrent.thread
 
