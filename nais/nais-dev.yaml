@@ -51,3 +51,8 @@ spec:
         - application: tokenx-token-generator
           namespace: aura
           cluster: dev-gcp
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_14
+        databases:
+          - name: arbeidssokerregisteret
