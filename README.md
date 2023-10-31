@@ -80,6 +80,16 @@ docker ps
 
 Fem containere skal kjøre; kakfa, zookeeper, schema-registry, postgres og mock-oauth2-server.
 
+### Gradle properties
+
+Generer et PAT (personal access token) i github [her](https://github.com/settings/tokens).
+
+Gi tokenet minimum read rettigheter -> kopier tokenet -> Autoriser gjennom navikt.
+
+Legg til denne linjen i ```gradle.properties```:
+
+```githubPassword=<github-personal-access-token>```
+
 ### App
 
 Start app med `./gradlew run` eller start via intellij
