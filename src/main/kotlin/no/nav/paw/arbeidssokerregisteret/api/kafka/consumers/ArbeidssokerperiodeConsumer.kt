@@ -1,6 +1,6 @@
 package no.nav.paw.arbeidssokerregisteret.api.kafka.consumers
 
-import no.nav.paw.arbeidssokerregisteret.api.domain.mapper.tilArbeidssokerperiodeDto
+import no.nav.paw.arbeidssokerregisteret.api.domain.mapper.tilArbeidssokerperiode
 import no.nav.paw.arbeidssokerregisteret.api.services.ArbeidssokerperiodeService
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
@@ -21,7 +21,7 @@ class ArbeidssokerperiodeConsumer(
             consumer.poll(Duration.ofMillis(500)).forEach { post ->
                 try {
                     logger.info("Mottok melding fra $topic med offset ${post.offset()}p${post.partition()}")
-                    val arbeidssokerperiode = post.value().tilArbeidssokerperiodeDto()
+                    val arbeidssokerperiode = post.value().tilArbeidssokerperiode()
 
                     arbeidssokerperiodeService.opprettArbeidssokerperiode(arbeidssokerperiode)
                 } catch (error: Exception) {

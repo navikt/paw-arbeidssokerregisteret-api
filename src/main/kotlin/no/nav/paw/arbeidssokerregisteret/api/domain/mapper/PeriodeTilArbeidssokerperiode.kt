@@ -6,7 +6,7 @@ import no.nav.paw.arbeidssokerregisteret.api.domain.BrukerType
 import no.nav.paw.arbeidssokerregisteret.api.utils.toLocalDateTime
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 
-fun Periode.tilArbeidssokerperiodeDto(): Arbeidssokerperiode = Arbeidssokerperiode(
+fun Periode.tilArbeidssokerperiode(): Arbeidssokerperiode = Arbeidssokerperiode(
     id = this.id,
     identitetsnummer = this.identitetsnummer,
     startet = no.nav.paw.arbeidssokerregisteret.api.domain.Metadata(
