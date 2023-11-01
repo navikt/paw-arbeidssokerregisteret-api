@@ -1,4 +1,1 @@
-{
-  "startet": "2023-01-27T14:43:50.558485580",
-  "avsluttet": "2023-10-27T14:43:50.558485580",
-}
+{ "id": "5e4bd82d-8b6d-42fe-a776-7ad7c5d07d20", "identitetsnummer": "12345678911", "startet": { "tidspunkt": 1698838397564, "utfoertAv": { "type": "SLUTTBRUKER", "id": "1" }, "kilde": "kilde", "aarsak": "aarsak" }, "avsluttet": null }

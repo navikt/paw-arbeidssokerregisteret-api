@@ -25,6 +25,7 @@ database:
 kafka:
   brokerUrl: localhost:9092
   consumerGroupId: arbeidssokerregisteret-api
+  schemaRegistryUrl: http://localhost:8082
   consumers:
     arbeidssokerperioder:
       topic: paw-arbeidssokerperioder-v1

@@ -1,18 +1,16 @@
 package no.nav.paw.arbeidssokerregisteret.api.kafka.consumers
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.paw.arbeidssokerregisteret.api.domain.ArbeidssokerperiodeKafkaMelding
+import no.nav.paw.arbeidssokerregisteret.api.domain.mapper.tilArbeidssokerperiodeDto
 import no.nav.paw.arbeidssokerregisteret.api.services.ArbeidssokerperiodeService
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
+import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
 
 class ArbeidssokerperiodeConsumer(
     private val topic: String,
-    private val consumer: KafkaConsumer<String, String>,
-    private val arbeidssokerperiodeService: ArbeidssokerperiodeService,
-    private val objectMapper: ObjectMapper
+    private val consumer: KafkaConsumer<String, Periode>,
+    private val arbeidssokerperiodeService: ArbeidssokerperiodeService
 ) {
 
     fun start() {
@@ -22,9 +20,8 @@ class ArbeidssokerperiodeConsumer(
         while (true) {
             consumer.poll(Duration.ofMillis(500)).forEach { post ->
                 try {
-                    val arbeidssokerperiode: ArbeidssokerperiodeKafkaMelding = objectMapper.readValue<ArbeidssokerperiodeKafkaMelding>(post.value())
-
                     logger.info("Mottok melding fra $topic med offset ${post.offset()}p${post.partition()}")
+                    val arbeidssokerperiode = post.value().tilArbeidssokerperiodeDto()
 
                     arbeidssokerperiodeService.opprettArbeidssokerperiode(arbeidssokerperiode)
                 } catch (error: Exception) {

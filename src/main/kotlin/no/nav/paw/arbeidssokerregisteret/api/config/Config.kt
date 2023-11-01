@@ -20,9 +20,10 @@ data class Claims(
 )
 
 data class KafkaConfig(
-    val brokerUrl: String? = null,
+    val brokerUrl: String,
     val consumerGroupId: String,
-    val consumers: KafkaConsumers
+    val consumers: KafkaConsumers,
+    val schemaRegistryUrl: String
 )
 
 data class KafkaConsumers(

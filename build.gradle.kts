@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "1.9.10"
     id("io.ktor.plugin") version "2.3.4"
     id("org.jmailen.kotlinter") version "3.16.0"
+    id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1"
     application
 }
 
@@ -35,7 +36,11 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
     implementation("com.sksamuel.hoplite:hoplite-core:$hopliteVersion")
     implementation("com.sksamuel.hoplite:hoplite-yaml:$hopliteVersion")
+
+    // Kafka
     implementation("org.apache.kafka:kafka-clients:3.6.0")
+    implementation("org.apache.avro:avro:1.11.1")
+    implementation("io.confluent:kafka-avro-serializer:7.4.0")
 
     // Ktor
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
