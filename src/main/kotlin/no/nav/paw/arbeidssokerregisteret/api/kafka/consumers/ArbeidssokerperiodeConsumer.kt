@@ -22,7 +22,7 @@ class ArbeidssokerperiodeConsumer(
                     logger.info("Mottok melding fra $topic med offset ${post.offset()}p${post.partition()}")
                     val arbeidssokerperiode = post.value()
 
-                    arbeidssokerperiodeService.opprettArbeidssokerperiode(arbeidssokerperiode)
+                    arbeidssokerperiodeService.opprettEllerOppdaterArbeidssokerperiode(arbeidssokerperiode)
                 } catch (error: Exception) {
                     logger.error("Feil ved konsumering av melding fra $topic", error)
                     throw error

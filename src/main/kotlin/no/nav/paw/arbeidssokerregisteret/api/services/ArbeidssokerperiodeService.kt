@@ -9,7 +9,12 @@ class ArbeidssokerperiodeService(private val arbeidssokerperiodeRepository: Arbe
     fun hentArbeidssokerperioder(foedselsnummer: Foedselsnummer): List<ArbeidssokerperiodeResponse> =
         arbeidssokerperiodeRepository.hentArbeidssokerperioderMedFoedselsnummer(foedselsnummer)
 
-    fun opprettArbeidssokerperiode(arbeidssokerperiode: Periode) {
-        TODO()
+    fun opprettEllerOppdaterArbeidssokerperiode(arbeidssokerperiode: Periode) {
+        val periode = arbeidssokerperiodeRepository.hentArbeidssokerperiodeMedId(arbeidssokerperiode.id)
+        if(periode != null){
+            arbeidssokerperiodeRepository.oppdaterArbeidssokerperiode(arbeidssokerperiode)
+        } else {
+            arbeidssokerperiodeRepository.opprettArbeidssokerperiode(arbeidssokerperiode)
+        }
     }
 }
