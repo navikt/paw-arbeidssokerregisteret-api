@@ -1,3 +1,5 @@
+import com.github.davidmc24.gradle.plugin.avro.GenerateAvroProtocolTask
+
 plugins {
     kotlin("jvm") version "1.9.10"
     id("io.ktor.plugin") version "2.3.4"
@@ -6,6 +8,7 @@ plugins {
     application
 }
 
+val arbeidssokerregisteretSchemaVersion = "23.11.02.28-1"
 val logbackVersion = "1.4.5"
 val logstashVersion = "7.3"
 val navCommonModulesVersion = "2.2023.01.02_13.51-1c6adeb1653b"
@@ -24,11 +27,22 @@ repositories {
     maven {
         url = uri("https://jitpack.io")
     }
+    val githubPassword: String by project
+    maven {
+        setUrl("https://maven.pkg.github.com/navikt/paw-arbeidssokerregisteret-event-prosessor")
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+    }
 }
 
-
+val schema by configurations.creating {
+    isTransitive = false
+}
 
 dependencies {
+    schema("no.nav.paw.arbeidssokerregisteret.api.schema:eksternt-api:$arbeidssokerregisteretSchemaVersion")
     implementation(pawObservability.bundles.ktorNettyOpentelemetryMicrometerPrometheus)
     implementation("no.nav.security:token-validation-ktor-v2:$tokenSupportVersion")
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
@@ -80,6 +94,10 @@ java {
 
 application {
     mainClass.set("no.nav.paw.arbeidssokerregisteret.api.ApplicationKt")
+}
+
+tasks.withType(GenerateAvroProtocolTask::class) {
+    source(zipTree(schema.singleFile))
 }
 
 tasks.withType<Test>().configureEach {
