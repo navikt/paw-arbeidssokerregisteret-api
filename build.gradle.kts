@@ -13,7 +13,7 @@ val tokenSupportVersion = "3.1.5"
 val koTestVersion = "5.7.2"
 val hopliteVersion = "2.7.5"
 val exposedVersion = "0.44.0"
-val ktorVersion = "2.3.4"
+val ktorVersion = pawObservability.versions.ktor
 
 repositories {
     mavenLocal()
@@ -25,6 +25,8 @@ repositories {
         url = uri("https://jitpack.io")
     }
 }
+
+
 
 dependencies {
     implementation(pawObservability.bundles.ktorNettyOpentelemetryMicrometerPrometheus)
