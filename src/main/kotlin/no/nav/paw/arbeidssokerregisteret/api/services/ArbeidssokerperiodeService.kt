@@ -1,16 +1,20 @@
 package no.nav.paw.arbeidssokerregisteret.api.services
 
-import no.nav.paw.arbeidssokerregisteret.api.domain.Foedselsnummer
+import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidssokerperiodeResponse
+import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidssokerperiodeResponseV2
 import no.nav.paw.arbeidssokerregisteret.api.repositories.ArbeidssokerperiodeRepository
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 
 class ArbeidssokerperiodeService(private val arbeidssokerperiodeRepository: ArbeidssokerperiodeRepository) {
-    fun hentArbeidssokerperioder(foedselsnummer: Foedselsnummer): List<ArbeidssokerperiodeResponse> =
-        arbeidssokerperiodeRepository.hentArbeidssokerperioderMedFoedselsnummer(foedselsnummer)
+    fun hentArbeidssokerperioder(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponse> =
+        arbeidssokerperiodeRepository.hentArbeidssokerperioderMedIdentitetsnummer(identitetsnummer)
+
+    fun hentArbeidssokerperioderV2(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponseV2> =
+        arbeidssokerperiodeRepository.hentArbeidssokerperioderMedIdentitetsnummerV2(identitetsnummer)
 
     fun opprettEllerOppdaterArbeidssokerperiode(arbeidssokerperiode: Periode) {
-        val periode = arbeidssokerperiodeRepository.hentArbeidssokerperiodeMedId(arbeidssokerperiode.id)
+        val periode = arbeidssokerperiodeRepository.hentArbeidssokerperiodeMedPeriodeId(arbeidssokerperiode.id)
         if(periode != null){
             arbeidssokerperiodeRepository.oppdaterArbeidssokerperiode(arbeidssokerperiode)
         } else {

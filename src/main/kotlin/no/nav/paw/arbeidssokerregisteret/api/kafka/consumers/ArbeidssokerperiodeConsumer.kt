@@ -19,15 +19,14 @@ class ArbeidssokerperiodeConsumer(
         while (true) {
             consumer.poll(Duration.ofMillis(500)).forEach { post ->
                 try {
-                    logger.info("Mottok melding fra $topic med offset ${post.offset()}p${post.partition()}")
+                    logger.trace("Mottok melding fra $topic med offset ${post.offset()} partition ${post.partition()}")
                     val arbeidssokerperiode = post.value()
-
                     arbeidssokerperiodeService.opprettEllerOppdaterArbeidssokerperiode(arbeidssokerperiode)
+
+                    consumer.commitSync()
                 } catch (error: Exception) {
-                    logger.error("Feil ved konsumering av melding fra $topic", error)
-                    throw error
+                    throw Exception("Feil ved konsumering av melding fra $topic", error)
                 }
-                consumer.commitSync()
             }
         }
     }

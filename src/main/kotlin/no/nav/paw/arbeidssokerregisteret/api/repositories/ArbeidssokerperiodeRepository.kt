@@ -3,9 +3,11 @@ package no.nav.paw.arbeidssokerregisteret.api.repositories
 import no.nav.paw.arbeidssokerregisteret.api.database.ArbeidssokerperioderTable
 import no.nav.paw.arbeidssokerregisteret.api.database.BrukerTable
 import no.nav.paw.arbeidssokerregisteret.api.database.MetadataTable
-import no.nav.paw.arbeidssokerregisteret.api.domain.Foedselsnummer
+import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidssokerperiodeResponse
+import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidssokerperiodeResponseV2
 import no.nav.paw.arbeidssokerregisteret.api.v1.Bruker
+import no.nav.paw.arbeidssokerregisteret.api.v1.BrukerType
 import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 import org.jetbrains.exposed.sql.*
@@ -14,25 +16,21 @@ import java.time.Instant
 import java.util.*
 
 class ArbeidssokerperiodeRepository(private val database: Database) {
-    fun hentArbeidssokerperioderMedFoedselsnummer(foedselsnummer: Foedselsnummer): List<ArbeidssokerperiodeResponse> = transaction(database) {
-        ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.identitetsnummer eq foedselsnummer.verdi }
+    fun hentArbeidssokerperioderMedIdentitetsnummer(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponse> = transaction(database) {
+        ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.identitetsnummer eq identitetsnummer.verdi }
             .map { mapArbeidssokerperiodeResponse(it) }
     }
-
-    fun hentArbeidssokerperiodeMedId(id: UUID) = transaction(database) { ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.periodeId eq id }.singleOrNull() }
-
-    private fun mapArbeidssokerperiodeResponse(row: ResultRow): ArbeidssokerperiodeResponse {
-        val startetTidspunkt = fetchTidspunkt(row[ArbeidssokerperioderTable.startetId])
-        val avsluttetTidspunkt = row[ArbeidssokerperioderTable.avsluttetId]?.let { fetchTidspunkt(it) }
-        return ArbeidssokerperiodeResponse(startetTidspunkt, avsluttetTidspunkt)
+    fun hentArbeidssokerperioderMedIdentitetsnummerV2(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponseV2> = transaction(database) {
+        (ArbeidssokerperioderTable innerJoin MetadataTable innerJoin BrukerTable).select { ArbeidssokerperioderTable.identitetsnummer eq identitetsnummer.verdi }
+            .map {
+                ArbeidssokerperiodeResponseV2(
+                    Metadata(Instant.now(), Bruker(BrukerType.SLUTTBRUKER, "2"), "test", "test"),
+                    null
+                )
+            }
     }
 
-    private fun fetchTidspunkt(metadataId: Long): Instant {
-        return MetadataTable.select { MetadataTable.id eq metadataId }
-            .singleOrNull()
-            ?.get(MetadataTable.tidspunkt)
-            ?: throw Exception("Metadata tidspunkt ikke funnet")
-    }
+    fun hentArbeidssokerperiodeMedPeriodeId(id: UUID) = transaction(database) { ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.periodeId eq id }.singleOrNull() }
 
     fun opprettArbeidssokerperiode(arbeidssokerPeriode: Periode) {
         transaction {
@@ -40,31 +38,6 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
             val avsluttetId = arbeidssokerPeriode.avsluttet?.let { insertMetadata(it) }
 
             insertArbeidssokerperiode(arbeidssokerPeriode.id, arbeidssokerPeriode.identitetsnummer, startetId, avsluttetId)
-        }
-    }
-
-    private fun insertMetadata(metadata: Metadata): Long {
-        return MetadataTable.insertAndGetId {
-            it[utfoertAvId] = insertBruker(metadata.utfoertAv)
-            it[tidspunkt] = metadata.tidspunkt
-            it[kilde] = metadata.kilde
-            it[aarsak] = metadata.aarsak
-        }.value
-    }
-
-    private fun insertBruker(bruker: Bruker): Long {
-        return BrukerTable.insertAndGetId {
-            it[brukerId] = bruker.id
-            it[type] = bruker.type
-        }.value
-    }
-
-    private fun insertArbeidssokerperiode(periodeId: UUID, identitetsnummer: String, startetId: Long, avsluttetId: Long?) {
-        ArbeidssokerperioderTable.insert {
-            it[ArbeidssokerperioderTable.periodeId] = periodeId
-            it[ArbeidssokerperioderTable.identitetsnummer] = identitetsnummer
-            it[ArbeidssokerperioderTable.startetId] = startetId
-            it[ArbeidssokerperioderTable.avsluttetId] = avsluttetId
         }
     }
 
@@ -81,6 +54,50 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
                     updateAvsluttetMetadata(avsluttetId, avsluttetMetadata, arbeidssokerPeriode.id)
                 }
             }
+        }
+    }
+
+    private fun mapArbeidssokerperiodeResponse(row: ResultRow): ArbeidssokerperiodeResponse {
+        val startetTidspunkt = fetchTidspunkt(row[ArbeidssokerperioderTable.startetId])
+        val avsluttetTidspunkt = row[ArbeidssokerperioderTable.avsluttetId]?.let { fetchTidspunkt(it) }
+        return ArbeidssokerperiodeResponse(startetTidspunkt, avsluttetTidspunkt)
+    }
+
+
+    private fun fetchTidspunkt(metadataId: Long): Instant {
+        return MetadataTable.select { MetadataTable.id eq metadataId }
+            .singleOrNull()
+            ?.get(MetadataTable.tidspunkt)
+            ?: throw Exception("Metadata tidspunkt ikke funnet")
+    }
+
+    private fun insertMetadata(metadata: Metadata): Long {
+        return MetadataTable.insertAndGetId {
+            it[utfoertAvId] = insertBruker(metadata.utfoertAv)
+            it[tidspunkt] = metadata.tidspunkt
+            it[kilde] = metadata.kilde
+            it[aarsak] = metadata.aarsak
+        }.value
+    }
+
+    private fun insertBruker(bruker: Bruker): Long {
+        val eksisterendeBruker = BrukerTable.select { BrukerTable.brukerId eq bruker.id and (BrukerTable.type eq bruker.type)}.firstOrNull()
+        return if(eksisterendeBruker != null){
+            eksisterendeBruker[BrukerTable.id].value
+        } else {
+            BrukerTable.insertAndGetId{
+                it[brukerId] = bruker.id
+                it[type] = bruker.type
+            }.value
+        }
+    }
+
+    private fun insertArbeidssokerperiode(periodeId: UUID, identitetsnummer: String, startetId: Long, avsluttetId: Long?) {
+        ArbeidssokerperioderTable.insert {
+            it[ArbeidssokerperioderTable.periodeId] = periodeId
+            it[ArbeidssokerperioderTable.identitetsnummer] = identitetsnummer
+            it[ArbeidssokerperioderTable.startetId] = startetId
+            it[ArbeidssokerperioderTable.avsluttetId] = avsluttetId
         }
     }
 
