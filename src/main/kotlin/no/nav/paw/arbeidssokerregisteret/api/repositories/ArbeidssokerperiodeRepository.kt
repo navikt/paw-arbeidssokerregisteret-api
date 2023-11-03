@@ -98,11 +98,8 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
             updateMetadata(avsluttetId, avsluttetMetadata)
         } else {
             val newAvsluttetId = insertMetadata(avsluttetMetadata)
-            val periodeId = ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.periodeId eq arbeidssokerPeriodeId }.singleOrNull()?.get(ArbeidssokerperioderTable.id)
-            if (periodeId != null) {
-                ArbeidssokerperioderTable.update({ ArbeidssokerperioderTable.id eq periodeId }) {
-                    it[ArbeidssokerperioderTable.avsluttetId] = newAvsluttetId
-                }
+            ArbeidssokerperioderTable.update({ ArbeidssokerperioderTable.periodeId eq arbeidssokerPeriodeId }) {
+                it[ArbeidssokerperioderTable.avsluttetId] = newAvsluttetId
             }
         }
     }
