@@ -12,7 +12,7 @@ class ArbeidssokerperiodeService(private val arbeidssokerperiodeRepository: Arbe
 
     fun opprettEllerOppdaterArbeidssokerperiode(arbeidssokerperiode: Periode) {
         val periode = arbeidssokerperiodeRepository.hentArbeidssokerperiodeMedPeriodeId(arbeidssokerperiode.id)
-        if(periode != null){
+        if (periode != null) {
             arbeidssokerperiodeRepository.oppdaterArbeidssokerperiode(arbeidssokerperiode)
         } else {
             arbeidssokerperiodeRepository.opprettArbeidssokerperiode(arbeidssokerperiode)

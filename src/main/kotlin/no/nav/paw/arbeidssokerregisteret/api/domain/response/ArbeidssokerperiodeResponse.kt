@@ -7,7 +7,7 @@ import java.time.Instant
 
 data class ArbeidssokerperiodeResponse(
     val startet: MetadataResponse,
-    val avsluttet: MetadataResponse? = null,
+    val avsluttet: MetadataResponse? = null
 )
 
 data class MetadataResponse(
@@ -27,7 +27,7 @@ enum class BrukerTypeResponse {
 
 fun Metadata.toMetadataResponse() = MetadataResponse(this.tidspunkt, this.utfoertAv.toBrukerResponse(), this.kilde, this.aarsak)
 fun Bruker.toBrukerResponse() = BrukerResponse(this.type.toBrukerTypeResponse())
-fun BrukerType.toBrukerTypeResponse() = when(this) {
+fun BrukerType.toBrukerTypeResponse() = when (this) {
     BrukerType.VEILEDER -> BrukerTypeResponse.VEILEDER
     BrukerType.SLUTTBRUKER -> BrukerTypeResponse.SLUTTBRUKER
     BrukerType.SYSTEM -> BrukerTypeResponse.SYSTEM

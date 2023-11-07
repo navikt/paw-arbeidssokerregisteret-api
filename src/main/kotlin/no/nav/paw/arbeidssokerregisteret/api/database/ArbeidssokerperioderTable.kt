@@ -5,11 +5,9 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.postgresql.util.PGobject
 
-
-
 object BrukerTable : LongIdTable("bruker") {
     val brukerId = varchar("bruker_id", 255)
-    val type = customEnumeration("type", "BrukerType", {value -> BrukerType.valueOf(value as String)}, { PGEnum("BrukerType", it) })
+    val type = customEnumeration("type", "BrukerType", { value -> BrukerType.valueOf(value as String) }, { PGEnum("BrukerType", it) })
 }
 
 object MetadataTable : LongIdTable("metadata") {
@@ -32,5 +30,3 @@ class PGEnum<T : Enum<T>>(enumTypeName: String, enumValue: T?) : PGobject() {
         type = enumTypeName
     }
 }
-
-

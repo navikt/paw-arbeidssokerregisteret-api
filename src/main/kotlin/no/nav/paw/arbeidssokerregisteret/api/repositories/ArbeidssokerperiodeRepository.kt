@@ -29,7 +29,6 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
         }
     }
 
-
     fun hentArbeidssokerperiodeMedPeriodeId(id: UUID) = transaction(database) { ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.periodeId eq id }.singleOrNull() }
 
     fun opprettArbeidssokerperiode(arbeidssokerPeriode: Periode) {
@@ -65,7 +64,7 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
                 metadata[MetadataTable.tidspunkt],
                 bruker,
                 metadata[MetadataTable.kilde],
-                metadata[MetadataTable.aarsak],
+                metadata[MetadataTable.aarsak]
             )
         }
         return null
@@ -90,11 +89,11 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
     }
 
     private fun insertBruker(bruker: Bruker): Long {
-        val eksisterendeBruker = BrukerTable.select { BrukerTable.brukerId eq bruker.id and (BrukerTable.type eq bruker.type)}.firstOrNull()
-        return if(eksisterendeBruker != null){
+        val eksisterendeBruker = BrukerTable.select { BrukerTable.brukerId eq bruker.id and (BrukerTable.type eq bruker.type) }.firstOrNull()
+        return if (eksisterendeBruker != null) {
             eksisterendeBruker[BrukerTable.id].value
         } else {
-            BrukerTable.insertAndGetId{
+            BrukerTable.insertAndGetId {
                 it[brukerId] = bruker.id
                 it[type] = bruker.type
             }.value

@@ -7,9 +7,8 @@ import java.time.Duration
 import javax.sql.DataSource
 
 fun migrateDatabase(dataSource: DataSource) {
-    val flyway = Flyway.configure().baselineOnMigrate(true).cleanDisabled(false).dataSource(dataSource).load()
-    //flyway.clean()
-    flyway.migrate()
+    // Flyway.configure().baselineOnMigrate(true).cleanDisabled(false).dataSource(dataSource).load().clean()
+    Flyway.configure().baselineOnMigrate(true).dataSource(dataSource).load().migrate()
 }
 
 fun generateDatasource(url: String): DataSource = HikariDataSource(
