@@ -8,7 +8,7 @@ import javax.sql.DataSource
 
 fun migrateDatabase(dataSource: DataSource) {
     val flyway = Flyway.configure().baselineOnMigrate(true).cleanDisabled(false).dataSource(dataSource).load()
-    // flyway.clean()
+    //flyway.clean()
     flyway.migrate()
 }
 

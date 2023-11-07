@@ -11,7 +11,7 @@ class ArbeidssokerperiodeService(private val arbeidssokerperiodeRepository: Arbe
         arbeidssokerperiodeRepository.hentArbeidssokerperioderMedIdentitetsnummer(identitetsnummer)
 
     fun hentArbeidssokerperioderV2(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponseV2> =
-        arbeidssokerperiodeRepository.hentArbeidssokerperioderMedIdentitetsnummerV2(identitetsnummer)
+        arbeidssokerperiodeRepository.hentArbeidssokerperioderV2(identitetsnummer)
 
     fun opprettEllerOppdaterArbeidssokerperiode(arbeidssokerperiode: Periode) {
         val periode = arbeidssokerperiodeRepository.hentArbeidssokerperiodeMedPeriodeId(arbeidssokerperiode.id)

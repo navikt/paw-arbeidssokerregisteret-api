@@ -23,7 +23,7 @@ CREATE TABLE arbeidssokerperioder
 (
     id bigint UNIQUE GENERATED ALWAYS AS IDENTITY,
     periode_id UUID NOT NULL,
-    identitetsnummer VARCHAR(11)  NOT NULL,
+    identitetsnummer VARCHAR(11) NOT NULL,
     startet_id bigint REFERENCES  metadata(id),
     avsluttet_id bigint REFERENCES  metadata(id),
     unique (periode_id)

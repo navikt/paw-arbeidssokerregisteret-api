@@ -20,14 +20,46 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
         ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.identitetsnummer eq identitetsnummer.verdi }
             .map { mapArbeidssokerperiodeResponse(it) }
     }
-    fun hentArbeidssokerperioderMedIdentitetsnummerV2(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponseV2> = transaction(database) {
-        (ArbeidssokerperioderTable innerJoin MetadataTable innerJoin BrukerTable).select { ArbeidssokerperioderTable.identitetsnummer eq identitetsnummer.verdi }
-            .map {
-                ArbeidssokerperiodeResponseV2(
-                    Metadata(Instant.now(), Bruker(BrukerType.SLUTTBRUKER, "2"), "test", "test"),
-                    null
-                )
-            }
+
+    fun hentArbeidssokerperioderV2(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponseV2> = transaction(database) {
+        val arbeidssokerperioder = ArbeidssokerperioderTable.select {
+            ArbeidssokerperioderTable.identitetsnummer eq identitetsnummer.verdi
+        }
+
+        val responseList = mutableListOf<ArbeidssokerperiodeResponseV2>()
+
+        for (row in arbeidssokerperioder) {
+            val startetId = row[ArbeidssokerperioderTable.startetId]
+            val avsluttetId = row[ArbeidssokerperioderTable.avsluttetId]
+            val startetMetadata = fetchMetadata(startetId)?: throw Error("Fant ikke startet metadata")
+            val avsluttetMetadata = avsluttetId?.let { fetchMetadata(it) }
+            responseList.add(ArbeidssokerperiodeResponseV2(startetMetadata, avsluttetMetadata))
+        }
+
+        return@transaction responseList
+    }
+
+    private fun fetchMetadata(id: Long): Metadata? {
+        MetadataTable.select { MetadataTable.id eq id }.singleOrNull()?.let { metadata ->
+            val brukerId = metadata[MetadataTable.utfoertAvId]
+            val bruker = fetchBruker(brukerId)
+            return Metadata(
+                metadata[MetadataTable.tidspunkt],
+                bruker,
+                metadata[MetadataTable.kilde],
+                metadata[MetadataTable.aarsak],
+            )
+        }
+        return null
+    }
+
+    private fun fetchBruker(brukerId: Long): Bruker? {
+        return BrukerTable.select { BrukerTable.id eq brukerId }.singleOrNull()?.let {
+            Bruker(
+                it[BrukerTable.type],
+                it[BrukerTable.brukerId]
+            )
+        }
     }
 
     fun hentArbeidssokerperiodeMedPeriodeId(id: UUID) = transaction(database) { ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.periodeId eq id }.singleOrNull() }
