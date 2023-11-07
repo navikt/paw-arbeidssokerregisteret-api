@@ -5,61 +5,32 @@ import no.nav.paw.arbeidssokerregisteret.api.database.BrukerTable
 import no.nav.paw.arbeidssokerregisteret.api.database.MetadataTable
 import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidssokerperiodeResponse
-import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidssokerperiodeResponseV2
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.toMetadataResponse
 import no.nav.paw.arbeidssokerregisteret.api.v1.Bruker
 import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 class ArbeidssokerperiodeRepository(private val database: Database) {
-    fun hentArbeidssokerperioderMedIdentitetsnummer(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponse> = transaction(database) {
-        ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.identitetsnummer eq identitetsnummer.verdi }
-            .map { mapArbeidssokerperiodeResponse(it) }
-    }
 
-    fun hentArbeidssokerperioderV2(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponseV2> = transaction(database) {
+    fun hentArbeidssokerperioder(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponse> = transaction(database) {
         val arbeidssokerperioder = ArbeidssokerperioderTable.select {
             ArbeidssokerperioderTable.identitetsnummer eq identitetsnummer.verdi
         }
 
-        val responseList = mutableListOf<ArbeidssokerperiodeResponseV2>()
+        val responseList = mutableListOf<ArbeidssokerperiodeResponse>()
 
         for (row in arbeidssokerperioder) {
             val startetId = row[ArbeidssokerperioderTable.startetId]
             val avsluttetId = row[ArbeidssokerperioderTable.avsluttetId]
             val startetMetadata = fetchMetadata(startetId)?: throw Error("Fant ikke startet metadata")
             val avsluttetMetadata = avsluttetId?.let { fetchMetadata(it) }
-            responseList.add(ArbeidssokerperiodeResponseV2(startetMetadata.toMetadataResponse(), avsluttetMetadata?.toMetadataResponse()))
+            responseList.add(ArbeidssokerperiodeResponse(startetMetadata.toMetadataResponse(), avsluttetMetadata?.toMetadataResponse()))
         }
 
         return@transaction responseList
-    }
-
-    private fun fetchMetadata(id: Long): Metadata? {
-        MetadataTable.select { MetadataTable.id eq id }.singleOrNull()?.let { metadata ->
-            val brukerId = metadata[MetadataTable.utfoertAvId]
-            val bruker = fetchBruker(brukerId)
-            return Metadata(
-                metadata[MetadataTable.tidspunkt],
-                bruker,
-                metadata[MetadataTable.kilde],
-                metadata[MetadataTable.aarsak],
-            )
-        }
-        return null
-    }
-
-    private fun fetchBruker(brukerId: Long): Bruker? {
-        return BrukerTable.select { BrukerTable.id eq brukerId }.singleOrNull()?.let {
-            Bruker(
-                it[BrukerTable.type],
-                it[BrukerTable.brukerId]
-            )
-        }
     }
 
     fun hentArbeidssokerperiodeMedPeriodeId(id: UUID) = transaction(database) { ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.periodeId eq id }.singleOrNull() }
@@ -89,18 +60,27 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
         }
     }
 
-    private fun mapArbeidssokerperiodeResponse(row: ResultRow): ArbeidssokerperiodeResponse {
-        val startetTidspunkt = fetchTidspunkt(row[ArbeidssokerperioderTable.startetId])
-        val avsluttetTidspunkt = row[ArbeidssokerperioderTable.avsluttetId]?.let { fetchTidspunkt(it) }
-        return ArbeidssokerperiodeResponse(startetTidspunkt, avsluttetTidspunkt)
+    private fun fetchMetadata(id: Long): Metadata? {
+        MetadataTable.select { MetadataTable.id eq id }.singleOrNull()?.let { metadata ->
+            val brukerId = metadata[MetadataTable.utfoertAvId]
+            val bruker = fetchBruker(brukerId)
+            return Metadata(
+                metadata[MetadataTable.tidspunkt],
+                bruker,
+                metadata[MetadataTable.kilde],
+                metadata[MetadataTable.aarsak],
+            )
+        }
+        return null
     }
 
-
-    private fun fetchTidspunkt(metadataId: Long): Instant {
-        return MetadataTable.select { MetadataTable.id eq metadataId }
-            .singleOrNull()
-            ?.get(MetadataTable.tidspunkt)
-            ?: throw Exception("Metadata tidspunkt ikke funnet")
+    private fun fetchBruker(brukerId: Long): Bruker? {
+        return BrukerTable.select { BrukerTable.id eq brukerId }.singleOrNull()?.let {
+            Bruker(
+                it[BrukerTable.type],
+                it[BrukerTable.brukerId]
+            )
+        }
     }
 
     private fun insertMetadata(metadata: Metadata): Long {

@@ -21,13 +21,10 @@ fun Route.arbeidssokerRoutes(arbeidssokerperiodeService: ArbeidssokerperiodeServ
                     val foedselsnummer = call.getPidClaim()
 
                     val arbeidssokerperioder = arbeidssokerperiodeService.hentArbeidssokerperioder(foedselsnummer)
-                    val arbeidssokerperioderV2 = arbeidssokerperiodeService.hentArbeidssokerperioderV2(foedselsnummer)
-
-                    logger.info("{}", arbeidssokerperioderV2)
 
                     logger.info("Hentet arbeidssøkerperiode for bruker")
 
-                    call.respond(HttpStatusCode.OK, arbeidssokerperioderV2)
+                    call.respond(HttpStatusCode.OK, arbeidssokerperioder)
                 }
             }
         }
