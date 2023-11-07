@@ -16,22 +16,19 @@ import java.util.UUID
 class ArbeidssokerperiodeRepository(private val database: Database) {
 
     fun hentArbeidssokerperioder(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponse> = transaction(database) {
-        val arbeidssokerperioder = ArbeidssokerperioderTable.select {
+        ArbeidssokerperioderTable.select {
             ArbeidssokerperioderTable.identitetsnummer eq identitetsnummer.verdi
-        }
-
-        val responseList = mutableListOf<ArbeidssokerperiodeResponse>()
-
-        for (row in arbeidssokerperioder) {
+        }.map { row ->
             val startetId = row[ArbeidssokerperioderTable.startetId]
             val avsluttetId = row[ArbeidssokerperioderTable.avsluttetId]
-            val startetMetadata = fetchMetadata(startetId)?: throw Error("Fant ikke startet metadata")
-            val avsluttetMetadata = avsluttetId?.let { fetchMetadata(it) }
-            responseList.add(ArbeidssokerperiodeResponse(startetMetadata.toMetadataResponse(), avsluttetMetadata?.toMetadataResponse()))
-        }
 
-        return@transaction responseList
+            val startetMetadata = fetchMetadata(startetId) ?: throw Error("Fant ikke startet metadata")
+            val avsluttetMetadata = avsluttetId?.let { fetchMetadata(it) }
+
+            ArbeidssokerperiodeResponse(startetMetadata.toMetadataResponse(), avsluttetMetadata?.toMetadataResponse())
+        }
     }
+
 
     fun hentArbeidssokerperiodeMedPeriodeId(id: UUID) = transaction(database) { ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.periodeId eq id }.singleOrNull() }
 
