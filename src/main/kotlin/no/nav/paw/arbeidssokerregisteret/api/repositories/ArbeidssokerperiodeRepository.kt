@@ -6,8 +6,8 @@ import no.nav.paw.arbeidssokerregisteret.api.database.MetadataTable
 import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidssokerperiodeResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidssokerperiodeResponseV2
+import no.nav.paw.arbeidssokerregisteret.api.domain.response.toMetadataResponse
 import no.nav.paw.arbeidssokerregisteret.api.v1.Bruker
-import no.nav.paw.arbeidssokerregisteret.api.v1.BrukerType
 import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 import org.jetbrains.exposed.sql.*
@@ -33,7 +33,7 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
             val avsluttetId = row[ArbeidssokerperioderTable.avsluttetId]
             val startetMetadata = fetchMetadata(startetId)?: throw Error("Fant ikke startet metadata")
             val avsluttetMetadata = avsluttetId?.let { fetchMetadata(it) }
-            responseList.add(ArbeidssokerperiodeResponseV2(startetMetadata, avsluttetMetadata))
+            responseList.add(ArbeidssokerperiodeResponseV2(startetMetadata.toMetadataResponse(), avsluttetMetadata?.toMetadataResponse()))
         }
 
         return@transaction responseList
