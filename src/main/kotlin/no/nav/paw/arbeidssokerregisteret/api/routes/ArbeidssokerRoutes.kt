@@ -16,7 +16,6 @@ fun Route.arbeidssokerRoutes(arbeidssokerperiodeService: ArbeidssokerperiodeServ
         authenticate("tokenx", "azure") {
             route("/arbeidssokerperioder") {
                 get {
-                    // Henter arbeidssøkerperiode for bruker
                     logger.info("Henter arbeidssøkerperiode for bruker")
 
                     val foedselsnummer = call.getPidClaim()

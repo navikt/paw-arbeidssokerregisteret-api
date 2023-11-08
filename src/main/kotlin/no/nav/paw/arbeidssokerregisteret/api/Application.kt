@@ -15,8 +15,10 @@ import no.nav.paw.arbeidssokerregisteret.api.routes.arbeidssokerRoutes
 import no.nav.paw.arbeidssokerregisteret.api.routes.healthRoutes
 import no.nav.paw.arbeidssokerregisteret.api.routes.swaggerRoutes
 import no.nav.paw.arbeidssokerregisteret.api.utils.loadConfiguration
+import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 import no.nav.paw.arbeidssokerregisteret.api.utils.migrateDatabase
 import kotlin.concurrent.thread
+import kotlin.system.exitProcess
 
 fun main() {
     val server = embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
@@ -38,7 +40,12 @@ fun Application.module() {
     migrateDatabase(dependencies.dataSource)
 
     thread {
-        dependencies.arbeidssokerperiodeConsumer.start()
+        try {
+            dependencies.arbeidssokerperiodeConsumer.start()
+        } catch (e: Exception) {
+            logger.error("Consumer error: ${e.message}", e)
+            exitProcess(1)
+        }
     }
 
     // Konfigurerer plugins
