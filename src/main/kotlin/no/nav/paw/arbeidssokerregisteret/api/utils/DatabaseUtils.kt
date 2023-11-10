@@ -2,6 +2,7 @@ package no.nav.paw.arbeidssokerregisteret.api.utils
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import no.nav.paw.arbeidssokerregisteret.api.config.DatabaseConfig
 import org.flywaydb.core.Flyway
 import java.time.Duration
 import javax.sql.DataSource
@@ -19,3 +20,14 @@ fun generateDatasource(url: String): DataSource = HikariDataSource(
         maxLifetime = Duration.ofMinutes(30).toMillis()
     }
 )
+
+fun DatabaseConfig.dataSource() =
+    HikariDataSource(
+        HikariConfig().apply {
+            jdbcUrl = url
+            driverClassName = "org.postgresql.Driver"
+            password = password
+            username = name
+            isAutoCommit = false
+        }
+    )

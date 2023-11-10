@@ -9,11 +9,18 @@ import no.nav.paw.arbeidssokerregisteret.api.domain.response.toMetadataResponse
 import no.nav.paw.arbeidssokerregisteret.api.v1.Bruker
 import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.insertAndGetId
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import java.util.UUID
 
 class ArbeidssokerperiodeRepository(private val database: Database) {
+
+    fun hentArbeidssokerperiodeMedPeriodeId(periodeId: UUID) = transaction(database) { ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.periodeId eq periodeId }.singleOrNull() }
 
     fun hentArbeidssokerperioder(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponse> = transaction(database) {
         ArbeidssokerperioderTable.select {
@@ -29,45 +36,17 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
         }
     }
 
-    fun hentArbeidssokerperiodeMedPeriodeId(id: UUID) = transaction(database) { ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.periodeId eq id }.singleOrNull() }
-
-    fun opprettArbeidssokerperiode(arbeidssokerPeriode: Periode) {
-        transaction {
-            val startetId = insertMetadata(arbeidssokerPeriode.startet)
-            val avsluttetId = arbeidssokerPeriode.avsluttet?.let { insertMetadata(it) }
-
-            insertArbeidssokerperiode(arbeidssokerPeriode.id, arbeidssokerPeriode.identitetsnummer, startetId, avsluttetId)
-        }
-    }
-
-    fun oppdaterArbeidssokerperiode(arbeidssokerPeriode: Periode) {
-        transaction {
-            val existingPeriode = ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.periodeId eq arbeidssokerPeriode.id }.singleOrNull()
-
-            existingPeriode?.let {
-                val startetId = it[ArbeidssokerperioderTable.startetId]
-                val avsluttetId = it[ArbeidssokerperioderTable.avsluttetId]
-
-                updateMetadata(startetId, arbeidssokerPeriode.startet)
-                arbeidssokerPeriode.avsluttet?.let { avsluttetMetadata ->
-                    updateAvsluttetMetadata(avsluttetId, avsluttetMetadata, arbeidssokerPeriode.id)
-                }
-            }
-        }
-    }
-
     private fun fetchMetadata(id: Long): Metadata? {
-        MetadataTable.select { MetadataTable.id eq id }.singleOrNull()?.let { metadata ->
+        return MetadataTable.select { MetadataTable.id eq id }.singleOrNull()?.let { metadata ->
             val brukerId = metadata[MetadataTable.utfoertAvId]
             val bruker = fetchBruker(brukerId)
-            return Metadata(
+            Metadata(
                 metadata[MetadataTable.tidspunkt],
                 bruker,
                 metadata[MetadataTable.kilde],
                 metadata[MetadataTable.aarsak]
             )
         }
-        return null
     }
 
     private fun fetchBruker(brukerId: Long): Bruker? {
@@ -76,6 +55,15 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
                 it[BrukerTable.type],
                 it[BrukerTable.brukerId]
             )
+        }
+    }
+
+    fun opprettArbeidssokerperiode(arbeidssokerPeriode: Periode) {
+        transaction {
+            val startetId = insertMetadata(arbeidssokerPeriode.startet)
+            val avsluttetId = arbeidssokerPeriode.avsluttet?.let { insertMetadata(it) }
+
+            insertArbeidssokerperiode(arbeidssokerPeriode.id, arbeidssokerPeriode.identitetsnummer, startetId, avsluttetId)
         }
     }
 
@@ -89,7 +77,7 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
     }
 
     private fun insertBruker(bruker: Bruker): Long {
-        val eksisterendeBruker = BrukerTable.select { BrukerTable.brukerId eq bruker.id and (BrukerTable.type eq bruker.type) }.firstOrNull()
+        val eksisterendeBruker = BrukerTable.select { BrukerTable.brukerId eq bruker.id and (BrukerTable.type eq bruker.type) }.singleOrNull()
         return if (eksisterendeBruker != null) {
             eksisterendeBruker[BrukerTable.id].value
         } else {
@@ -106,6 +94,22 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
             it[ArbeidssokerperioderTable.identitetsnummer] = identitetsnummer
             it[ArbeidssokerperioderTable.startetId] = startetId
             it[ArbeidssokerperioderTable.avsluttetId] = avsluttetId
+        }
+    }
+
+    fun oppdaterArbeidssokerperiode(arbeidssokerPeriode: Periode) {
+        transaction {
+            val eksisterendePeriode = ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.periodeId eq arbeidssokerPeriode.id }.singleOrNull()
+
+            eksisterendePeriode?.let {
+                val startetId = it[ArbeidssokerperioderTable.startetId]
+                val avsluttetId = it[ArbeidssokerperioderTable.avsluttetId]
+
+                updateMetadata(startetId, arbeidssokerPeriode.startet)
+                arbeidssokerPeriode.avsluttet?.let { avsluttetMetadata ->
+                    updateAvsluttetMetadata(avsluttetId, avsluttetMetadata, arbeidssokerPeriode.id)
+                }
+            }
         }
     }
 
