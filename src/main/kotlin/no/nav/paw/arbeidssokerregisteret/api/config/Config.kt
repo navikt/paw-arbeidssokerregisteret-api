@@ -2,7 +2,7 @@ package no.nav.paw.arbeidssokerregisteret.api.config
 
 data class Config(
     val authProviders: List<AuthProvider>,
-    val database: Database,
+    val database: DatabaseConfig,
     val kafka: KafkaConfig
 )
 
@@ -34,12 +34,12 @@ data class KafkaConsumer(
     val topic: String
 )
 
-data class ServiceClientConfig(
+/*data class ServiceClientConfig(
     val url: String,
     val scope: String
-)
+)*/
 
-data class Database(
+data class DatabaseConfig(
     val host: String,
     val port: Int,
     val username: String,

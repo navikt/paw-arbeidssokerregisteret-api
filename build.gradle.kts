@@ -3,7 +3,6 @@ import com.github.davidmc24.gradle.plugin.avro.GenerateAvroProtocolTask
 plugins {
     kotlin("jvm") version "1.9.10"
     id("io.ktor.plugin") version "2.3.4"
-    id("org.jmailen.kotlinter") version "3.16.0"
     id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1"
     application
 }
@@ -83,6 +82,7 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:$koTestVersion")
     testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("org.testcontainers:testcontainers:1.19.1")
+    testImplementation("org.testcontainers:postgresql:1.19.1")
     testImplementation("no.nav.security:mock-oauth2-server:2.0.0")
 }
 
