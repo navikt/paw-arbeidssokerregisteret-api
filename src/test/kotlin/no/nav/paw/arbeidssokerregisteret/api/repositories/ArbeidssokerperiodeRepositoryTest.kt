@@ -31,7 +31,6 @@ class ArbeidssokerperiodeRepositoryTest : StringSpec({
         val repository = ArbeidssokerperiodeRepository(database)
 
         val periode = createTestPeriode()
-        println(periode)
         repository.opprettArbeidssokerperiode(periode)
 
         val retrievedPeriode = repository.hentArbeidssokerperiodeMedPeriodeId(periode.id)
