@@ -55,12 +55,13 @@ class ArbeidssokerperiodeRepositoryTest : StringSpec({
         val periode = createTestPeriode()
         repository.opprettArbeidssokerperiode(periode)
 
-        val updatedMetadata = Metadata(
-            Instant.now(),
-            Bruker(BrukerType.SYSTEM, "2"),
-            "NY_KILDE",
-            "NY_AARSAK"
-        )
+        val updatedMetadata =
+            Metadata(
+                Instant.now(),
+                Bruker(BrukerType.SYSTEM, "2"),
+                "NY_KILDE",
+                "NY_AARSAK"
+            )
 
         val updatedPeriode = periode.copy(avsluttet = updatedMetadata)
 
@@ -78,12 +79,13 @@ class ArbeidssokerperiodeRepositoryTest : StringSpec({
         val periode = createTestPeriode().copy(avsluttet = null)
         repository.opprettArbeidssokerperiode(periode)
 
-        val updatedMetadata = Metadata(
-            Instant.now(),
-            Bruker(BrukerType.SYSTEM, "2"),
-            "NY_KILDE",
-            "NY_AARSAK"
-        )
+        val updatedMetadata =
+            Metadata(
+                Instant.now(),
+                Bruker(BrukerType.SYSTEM, "2"),
+                "NY_KILDE",
+                "NY_AARSAK"
+            )
         val updatedPeriode = periode.copy(avsluttet = updatedMetadata)
 
         repository.oppdaterArbeidssokerperiode(updatedPeriode)
@@ -111,18 +113,20 @@ class ArbeidssokerperiodeRepositoryTest : StringSpec({
 })
 
 fun createTestPeriode(): Periode {
-    val startetMetadata = Metadata(
-        Instant.now(),
-        Bruker(BrukerType.SLUTTBRUKER, "1"),
-        "KILDE",
-        "AARSAK"
-    )
-    val avsluttetMetadata = Metadata(
-        Instant.now().plusMillis(100),
-        Bruker(BrukerType.SYSTEM, "2"),
-        "KILDE AVSLUTTET",
-        "AARSAK AVSLUTTET"
-    )
+    val startetMetadata =
+        Metadata(
+            Instant.now(),
+            Bruker(BrukerType.SLUTTBRUKER, "1"),
+            "KILDE",
+            "AARSAK"
+        )
+    val avsluttetMetadata =
+        Metadata(
+            Instant.now().plusMillis(100),
+            Bruker(BrukerType.SYSTEM, "2"),
+            "KILDE AVSLUTTET",
+            "AARSAK AVSLUTTET"
+        )
     return Periode(
         UUID.randomUUID(),
         "12345678911",

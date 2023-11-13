@@ -11,7 +11,6 @@ class ArbeidssokerperiodeConsumer(
     private val consumer: KafkaConsumer<String, Periode>,
     private val arbeidssokerperiodeService: ArbeidssokerperiodeService
 ) {
-
     fun start() {
         logger.info("Lytter på topic $topic")
         consumer.subscribe(listOf(topic))

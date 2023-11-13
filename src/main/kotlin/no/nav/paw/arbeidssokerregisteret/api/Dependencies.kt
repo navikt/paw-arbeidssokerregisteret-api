@@ -20,11 +20,12 @@ fun createDependencies(config: Config): Dependencies {
     // Arbeidssøkerperiode avhengigheter
     val arbeidssokerperiodeRepository = ArbeidssokerperiodeRepository(database)
     val arbeidssokerperiodeService = ArbeidssokerperiodeService(arbeidssokerperiodeRepository)
-    val arbeidssokerperiodeConsumer = ArbeidssokerperiodeConsumer(
-        config.kafka.consumers.arbeidssokerperioder.topic,
-        createKafkaConsumerConfig(config.kafka),
-        arbeidssokerperiodeService
-    )
+    val arbeidssokerperiodeConsumer =
+        ArbeidssokerperiodeConsumer(
+            config.kafka.consumers.arbeidssokerperioder.topic,
+            createKafkaConsumerConfig(config.kafka),
+            arbeidssokerperiodeService
+        )
 
     return Dependencies(
         registry,

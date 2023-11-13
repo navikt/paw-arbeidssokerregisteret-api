@@ -21,8 +21,9 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 fun main() {
-    val server = embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
-        .start(wait = true)
+    val server =
+        embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+            .start(wait = true)
 
     server.addShutdownHook {
         server.stop(300, 300)

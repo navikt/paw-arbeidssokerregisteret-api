@@ -11,10 +11,11 @@ import io.micrometer.prometheus.PrometheusMeterRegistry
 fun Application.configureMetrics(prometheusMeterRegistry: PrometheusMeterRegistry) {
     install(MicrometerMetrics) {
         registry = prometheusMeterRegistry
-        meterBinders = listOf(
-            JvmMemoryMetrics(),
-            JvmGcMetrics(),
-            ProcessorMetrics()
-        )
+        meterBinders =
+            listOf(
+                JvmMemoryMetrics(),
+                JvmGcMetrics(),
+                ProcessorMetrics()
+            )
     }
 }

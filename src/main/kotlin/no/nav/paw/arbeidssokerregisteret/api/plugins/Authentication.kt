@@ -14,7 +14,8 @@ fun Application.configureAuthentication(authProviders: List<AuthProvider>) {
             tokenValidationSupport(
                 name = authProvider.name,
                 requiredClaims = RequiredClaims(authProvider.name, authProvider.claims.map.toTypedArray(), authProvider.claims.combineWithOr),
-                config = TokenSupportConfig(
+                config =
+                TokenSupportConfig(
                     IssuerConfig(
                         name = authProvider.name,
                         discoveryUrl = authProvider.discoveryUrl,

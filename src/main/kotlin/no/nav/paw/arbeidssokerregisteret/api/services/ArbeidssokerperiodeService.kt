@@ -6,9 +6,7 @@ import no.nav.paw.arbeidssokerregisteret.api.repositories.ArbeidssokerperiodeRep
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 
 class ArbeidssokerperiodeService(private val arbeidssokerperiodeRepository: ArbeidssokerperiodeRepository) {
-
-    fun hentArbeidssokerperioder(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponse> =
-        arbeidssokerperiodeRepository.hentArbeidssokerperioder(identitetsnummer)
+    fun hentArbeidssokerperioder(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponse> = arbeidssokerperiodeRepository.hentArbeidssokerperioder(identitetsnummer)
 
     fun opprettEllerOppdaterArbeidssokerperiode(arbeidssokerperiode: Periode) {
         val periode = arbeidssokerperiodeRepository.hentArbeidssokerperiodeMedPeriodeId(arbeidssokerperiode.id)

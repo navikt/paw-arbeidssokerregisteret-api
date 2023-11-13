@@ -8,7 +8,10 @@ import no.nav.paw.arbeidssokerregisteret.api.domain.toIdentitetsnummer
 import no.nav.paw.arbeidssokerregisteret.api.plugins.StatusException
 import no.nav.security.token.support.v2.TokenValidationContextPrincipal
 
-fun ApplicationCall.getClaim(issuer: String, name: String): String? =
+fun ApplicationCall.getClaim(
+    issuer: String,
+    name: String
+): String? =
     authentication.principal<TokenValidationContextPrincipal>()
         ?.context
         ?.getClaims(issuer)

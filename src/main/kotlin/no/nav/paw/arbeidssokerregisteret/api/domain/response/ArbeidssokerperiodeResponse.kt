@@ -22,15 +22,22 @@ data class BrukerResponse(
 )
 
 enum class BrukerTypeResponse {
-    UKJENT_VERDI, UDEFINERT, VEILEDER, SYSTEM, SLUTTBRUKER
+    UKJENT_VERDI,
+    UDEFINERT,
+    VEILEDER,
+    SYSTEM,
+    SLUTTBRUKER
 }
 
 fun Metadata.toMetadataResponse() = MetadataResponse(this.tidspunkt, this.utfoertAv.toBrukerResponse(), this.kilde, this.aarsak)
+
 fun Bruker.toBrukerResponse() = BrukerResponse(this.type.toBrukerTypeResponse())
-fun BrukerType.toBrukerTypeResponse() = when (this) {
-    BrukerType.VEILEDER -> BrukerTypeResponse.VEILEDER
-    BrukerType.SLUTTBRUKER -> BrukerTypeResponse.SLUTTBRUKER
-    BrukerType.SYSTEM -> BrukerTypeResponse.SYSTEM
-    BrukerType.UDEFINERT -> BrukerTypeResponse.UDEFINERT
-    BrukerType.UKJENT_VERDI -> BrukerTypeResponse.UKJENT_VERDI
-}
+
+fun BrukerType.toBrukerTypeResponse() =
+    when (this) {
+        BrukerType.VEILEDER -> BrukerTypeResponse.VEILEDER
+        BrukerType.SLUTTBRUKER -> BrukerTypeResponse.SLUTTBRUKER
+        BrukerType.SYSTEM -> BrukerTypeResponse.SYSTEM
+        BrukerType.UDEFINERT -> BrukerTypeResponse.UDEFINERT
+        BrukerType.UKJENT_VERDI -> BrukerTypeResponse.UKJENT_VERDI
+    }
