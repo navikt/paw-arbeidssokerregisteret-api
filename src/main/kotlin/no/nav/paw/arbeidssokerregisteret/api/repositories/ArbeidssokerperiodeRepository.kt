@@ -10,6 +10,7 @@ import no.nav.paw.arbeidssokerregisteret.api.v1.Bruker
 import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertAndGetId
@@ -18,10 +19,33 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.UUID
 
+class PeriodeConverter(private val repository: ArbeidssokerperiodeRepository) {
+
+    fun convertToPeriode(resultRow: ResultRow): Periode {
+        val periodeId = resultRow[ArbeidssokerperioderTable.periodeId]
+        val identitetsnummer = resultRow[ArbeidssokerperioderTable.identitetsnummer]
+        val startetId = resultRow[ArbeidssokerperioderTable.startetId]
+        val avsluttetId = resultRow[ArbeidssokerperioderTable.avsluttetId]
+
+        val startetMetadata = repository.fetchMetadata(startetId) ?: throw Error("Fant ikke startet metadata")
+        val avsluttetMetadata = avsluttetId?.let { repository.fetchMetadata(it) }
+
+        return Periode(
+            periodeId,
+            identitetsnummer,
+            startetMetadata,
+            avsluttetMetadata
+        )
+    }
+}
+
 class ArbeidssokerperiodeRepository(private val database: Database) {
 
-    fun hentArbeidssokerperiodeMedPeriodeId(periodeId: UUID) = transaction(database) { ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.periodeId eq periodeId }.singleOrNull() }
-
+    fun hentArbeidssokerperiodeMedPeriodeId(periodeId: UUID): Periode? = transaction(database) {
+        ArbeidssokerperioderTable.select { ArbeidssokerperioderTable.periodeId eq periodeId }.singleOrNull()?.let { resultRow ->
+            PeriodeConverter(this@ArbeidssokerperiodeRepository).convertToPeriode(resultRow)
+        }
+    }
     fun hentArbeidssokerperioder(identitetsnummer: Identitetsnummer): List<ArbeidssokerperiodeResponse> = transaction(database) {
         ArbeidssokerperioderTable.select {
             ArbeidssokerperioderTable.identitetsnummer eq identitetsnummer.verdi
@@ -36,7 +60,7 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
         }
     }
 
-    private fun fetchMetadata(id: Long): Metadata? {
+    fun fetchMetadata(id: Long): Metadata? {
         return MetadataTable.select { MetadataTable.id eq id }.singleOrNull()?.let { metadata ->
             val brukerId = metadata[MetadataTable.utfoertAvId]
             val bruker = fetchBruker(brukerId)
@@ -105,15 +129,13 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
                 val startetId = it[ArbeidssokerperioderTable.startetId]
                 val avsluttetId = it[ArbeidssokerperioderTable.avsluttetId]
 
-                updateMetadata(startetId, arbeidssokerPeriode.startet)
-                arbeidssokerPeriode.avsluttet?.let { avsluttetMetadata ->
-                    updateAvsluttetMetadata(avsluttetId, avsluttetMetadata, arbeidssokerPeriode.id)
-                }
+                oppdaterMetadata(startetId, arbeidssokerPeriode.startet)
+                arbeidssokerPeriode.avsluttet?.let { avsluttetPeriode -> oppdaterAvsluttetMetadata(avsluttetId, avsluttetPeriode, arbeidssokerPeriode.id) }
             }
         }
     }
 
-    private fun updateMetadata(metadataId: Long, metadata: Metadata) {
+    private fun oppdaterMetadata(metadataId: Long, metadata: Metadata) {
         MetadataTable.update({ MetadataTable.id eq metadataId }) {
             it[utfoertAvId] = insertBruker(metadata.utfoertAv)
             it[tidspunkt] = metadata.tidspunkt
@@ -121,14 +143,13 @@ class ArbeidssokerperiodeRepository(private val database: Database) {
             it[aarsak] = metadata.aarsak
         }
     }
-
-    private fun updateAvsluttetMetadata(avsluttetId: Long?, avsluttetMetadata: Metadata, arbeidssokerPeriodeId: UUID) {
+    private fun oppdaterAvsluttetMetadata(avsluttetId: Long?, avsluttetMetadata: Metadata, arbeidssokerPeriodeId: UUID) {
         if (avsluttetId != null) {
-            updateMetadata(avsluttetId, avsluttetMetadata)
+            oppdaterMetadata(avsluttetId, avsluttetMetadata)
         } else {
-            val newAvsluttetId = insertMetadata(avsluttetMetadata)
+            val avsluttetMetadataId = insertMetadata(avsluttetMetadata)
             ArbeidssokerperioderTable.update({ ArbeidssokerperioderTable.periodeId eq arbeidssokerPeriodeId }) {
-                it[ArbeidssokerperioderTable.avsluttetId] = newAvsluttetId
+                it[ArbeidssokerperioderTable.avsluttetId] = avsluttetMetadataId
             }
         }
     }

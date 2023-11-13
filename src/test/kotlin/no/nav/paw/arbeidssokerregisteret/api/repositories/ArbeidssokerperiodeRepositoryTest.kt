@@ -36,7 +36,7 @@ class ArbeidssokerperiodeRepositoryTest : StringSpec({
         val retrievedPeriode = repository.hentArbeidssokerperiodeMedPeriodeId(periode.id)
 
         retrievedPeriode shouldNotBe null
-        retrievedPeriode shouldBe periode
+        retrievedPeriode!! shouldBe periode
     }
 
     "Retrieve arbeidssokerperioder for a given Identitetsnummer" {
@@ -48,19 +48,94 @@ class ArbeidssokerperiodeRepositoryTest : StringSpec({
 
         arbeidssokerperioder.size shouldBeExactly 1
     }
+
+    "Update arbeidssokerperiode with avsluttet metadata" {
+        val repository = ArbeidssokerperiodeRepository(database)
+
+        val periode = createTestPeriode()
+        repository.opprettArbeidssokerperiode(periode)
+
+        val updatedMetadata = Metadata(
+            Instant.now(),
+            Bruker(BrukerType.SYSTEM, "2"),
+            "NY_KILDE",
+            "NY_AARSAK"
+        )
+
+        val updatedPeriode = periode.copy(avsluttet = updatedMetadata)
+
+        repository.oppdaterArbeidssokerperiode(updatedPeriode)
+
+        val retrievedPeriode = repository.hentArbeidssokerperiodeMedPeriodeId(periode.id)
+
+        retrievedPeriode shouldNotBe null
+        retrievedPeriode!! shouldBe updatedPeriode
+    }
+
+    "Update arbeidssokerperiode without avsluttet metadata" {
+        val repository = ArbeidssokerperiodeRepository(database)
+
+        val periode = createTestPeriode().copy(avsluttet = null)
+        repository.opprettArbeidssokerperiode(periode)
+
+        val updatedMetadata = Metadata(
+            Instant.now(),
+            Bruker(BrukerType.SYSTEM, "2"),
+            "NY_KILDE",
+            "NY_AARSAK"
+        )
+        val updatedPeriode = periode.copy(avsluttet = updatedMetadata)
+
+        repository.oppdaterArbeidssokerperiode(updatedPeriode)
+
+        val retrievedPeriode = repository.hentArbeidssokerperiodeMedPeriodeId(periode.id)
+
+        retrievedPeriode shouldNotBe null
+        retrievedPeriode shouldBe updatedPeriode
+    }
+    "Update arbeidssokerperiode avsluttet metadata to null should not be possible" {
+        val repository = ArbeidssokerperiodeRepository(database)
+
+        val periode = createTestPeriode()
+        repository.opprettArbeidssokerperiode(periode)
+
+        val updatedPeriode = periode.copy(avsluttet = null)
+
+        repository.oppdaterArbeidssokerperiode(updatedPeriode)
+
+        val retrievedPeriode = repository.hentArbeidssokerperiodeMedPeriodeId(periode.id)
+
+        retrievedPeriode shouldNotBe null
+        retrievedPeriode shouldNotBe updatedPeriode
+    }
 })
 
 fun createTestPeriode(): Periode {
-    val metadata = Metadata(
+    val startetMetadata = Metadata(
         Instant.now(),
         Bruker(BrukerType.SLUTTBRUKER, "1"),
         "KILDE",
         "AARSAK"
     )
+    val avsluttetMetadata = Metadata(
+        Instant.now().plusMillis(100),
+        Bruker(BrukerType.SYSTEM, "2"),
+        "KILDE AVSLUTTET",
+        "AARSAK AVSLUTTET"
+    )
     return Periode(
         UUID.randomUUID(),
         "12345678911",
-        metadata,
-        metadata
+        startetMetadata,
+        avsluttetMetadata
+    )
+}
+
+fun Periode.copy(avsluttet: Metadata?): Periode {
+    return Periode(
+        id,
+        identitetsnummer,
+        startet,
+        avsluttet
     )
 }
