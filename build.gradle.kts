@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm") version "1.9.10"
     id("io.ktor.plugin") version "2.3.4"
     id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1"
+    id("org.jmailen.kotlinter") version "4.0.0"
     application
 }
 
@@ -96,7 +97,7 @@ application {
     mainClass.set("no.nav.paw.arbeidssokerregisteret.api.ApplicationKt")
 }
 
-tasks.withType(GenerateAvroProtocolTask::class) {
+tasks.named("generateAvroProtocol", GenerateAvroProtocolTask::class.java) {
     source(zipTree(schema.singleFile))
 }
 
