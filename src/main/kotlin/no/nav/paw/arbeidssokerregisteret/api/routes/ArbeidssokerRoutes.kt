@@ -16,13 +16,13 @@ fun Route.arbeidssokerRoutes(arbeidssokerperiodeService: ArbeidssokerperiodeServ
         authenticate("tokenx", "azure") {
             route("/arbeidssokerperioder") {
                 get {
-                    logger.info("Henter arbeidssøkerperiode for bruker")
+                    logger.info("Henter arbeidssøkerperioder for bruker")
 
                     val foedselsnummer = call.getPidClaim()
 
                     val arbeidssokerperioder = arbeidssokerperiodeService.hentArbeidssokerperioder(foedselsnummer)
 
-                    logger.info("Hentet arbeidssøkerperiode for bruker")
+                    logger.info("Hentet arbeidssøkerperioder for bruker")
 
                     call.respond(HttpStatusCode.OK, arbeidssokerperioder)
                 }
