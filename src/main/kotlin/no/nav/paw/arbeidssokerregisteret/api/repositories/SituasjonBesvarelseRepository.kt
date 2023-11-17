@@ -40,7 +40,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 class SituasjonBesvarelseConverter {
-    fun convertToSituasjonBesvarelse(resultRow: ResultRow): ArbeidssokersituasjonResponse {
+    fun konverterTilArbeidssokersituasjonResponse(resultRow: ResultRow): ArbeidssokersituasjonResponse {
         val periodeId = resultRow[SituasjonTable.periodeId]
         val sendtInnAvMetadata = MetadataTable.select { MetadataTable.id eq resultRow[SituasjonTable.sendtInnAv] }.singleOrNull()
             ?: throw Error("Fant ikke metadata")
@@ -92,7 +92,7 @@ class SituasjonBesvarelseRepository(private val database: Database) {
     fun hentSituasjonBesvarelse(periodeId: UUID): ArbeidssokersituasjonResponse? =
         transaction(database) {
             SituasjonTable.select { SituasjonTable.periodeId eq periodeId }.singleOrNull()?.let { resultRow ->
-                SituasjonBesvarelseConverter().convertToSituasjonBesvarelse(resultRow)
+                SituasjonBesvarelseConverter().konverterTilArbeidssokersituasjonResponse(resultRow)
             }
         }
 
@@ -100,8 +100,8 @@ class SituasjonBesvarelseRepository(private val database: Database) {
         transaction(database) {
             SituasjonTable.select {
                 SituasjonTable.periodeId eq periodeId
-            }.map { row ->
-                SituasjonBesvarelseConverter().convertToSituasjonBesvarelse(row)
+            }.map { resultRow ->
+                SituasjonBesvarelseConverter().konverterTilArbeidssokersituasjonResponse(resultRow)
             }
         }
 

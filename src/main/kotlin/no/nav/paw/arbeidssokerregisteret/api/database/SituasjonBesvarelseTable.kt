@@ -25,7 +25,6 @@ object HelseTable : LongIdTable("helse") {
 }
 
 object ArbeidserfaringTable : LongIdTable("arbeidserfaring") {
-    val situasjonId = reference("situasjon_id", SituasjonTable)
     val harHattArbeid = customEnumeration("har_hatt_arbeid", "JaNeiVetIkke", { value -> JaNeiVetIkke.valueOf(value as String) }, { PGEnum("JaNeiVetIkke", it) })
 }
 
