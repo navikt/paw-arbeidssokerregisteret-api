@@ -34,11 +34,6 @@ data class KafkaConsumer(
     val topic: String
 )
 
-/*data class ServiceClientConfig(
-    val url: String,
-    val scope: String
-)*/
-
 data class DatabaseConfig(
     val host: String,
     val port: Int,

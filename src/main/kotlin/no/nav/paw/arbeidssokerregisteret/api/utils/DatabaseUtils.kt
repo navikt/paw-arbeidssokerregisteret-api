@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import no.nav.paw.arbeidssokerregisteret.api.config.DatabaseConfig
 import org.flywaydb.core.Flyway
+import org.postgresql.util.PGobject
 import java.time.Duration
 import javax.sql.DataSource
 
@@ -32,3 +33,10 @@ fun DatabaseConfig.dataSource() =
             isAutoCommit = false
         }
     )
+
+class PGEnum<T : Enum<T>>(enumTypeName: String, enumValue: T?) : PGobject() {
+    init {
+        value = enumValue?.name
+        type = enumTypeName
+    }
+}
