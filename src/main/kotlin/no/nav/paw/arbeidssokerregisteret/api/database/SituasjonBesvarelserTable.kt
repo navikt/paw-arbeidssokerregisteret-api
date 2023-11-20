@@ -28,19 +28,21 @@ object ArbeidserfaringTable : LongIdTable("arbeidserfaring") {
     val harHattArbeid = customEnumeration("har_hatt_arbeid", "JaNeiVetIkke", { value -> JaNeiVetIkke.valueOf(value as String) }, { PGEnum("JaNeiVetIkke", it) })
 }
 
-object ArbeidsokersituasjonTable : LongIdTable("arbeidssokersituasjon")
-
-object BeskrivelseMedDetaljerTable : LongIdTable("beskrivelser") {
-    val arbeidssokersituasjonId = reference("arbeidssokersituasjon_id", ArbeidsokersituasjonTable)
+object ArbeidsokersituasjonTable : LongIdTable("arbeidsokersituasjon") {
+    val situasjonId = long("situasjon_id").references(SituasjonTable.id)
 }
 
-object BeskrivelseTable : LongIdTable("beskrivelse") {
+object BeskrivelseMedDetaljerTable : LongIdTable("beskrivelsemeddetaljer") {
+    val arbeidsokersituasjonId = long("arbeidsokersituasjon_id").references(ArbeidsokersituasjonTable.id)
+}
+
+object BeskrivelserTable : LongIdTable("beskrivelser") {
     val beskrivelse = customEnumeration("beskrivelse", "Beskrivelse", { value -> Beskrivelse.valueOf(value as String) }, { PGEnum("Beskrivelse", it) })
-    val beskrivelseMedDetaljerId = reference("beskrivelser_med_detaljer_id", BeskrivelseMedDetaljerTable)
+    val beskrivelseMedDetaljerId = long("beskrivelse_med_detaljer_id").references(BeskrivelseMedDetaljerTable.id)
 }
 
-object DetaljTable : LongIdTable("detalj") {
-    val beskrivelseId = reference("beskrivelse_id", BeskrivelseTable)
+object DetaljerTable : LongIdTable("detaljer") {
+    val beskrivelserId = long("beskrivelser_id").references(BeskrivelserTable.id)
     val nokkel = varchar("nokkel", 50)
     val verdi = varchar("verdi", 255)
 }

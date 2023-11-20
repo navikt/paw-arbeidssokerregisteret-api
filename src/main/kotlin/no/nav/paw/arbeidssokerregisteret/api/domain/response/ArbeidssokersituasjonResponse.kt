@@ -47,14 +47,9 @@ data class UtdanningResponse(
     val godkjent: JaNeiVetIkkeResponse
 )
 
-data class DetaljResponse(
-    val nokkel: String,
-    val verdi: String
-)
-
 data class BeskrivelseMedDetaljerResponse(
     val beskrivelse: BeskrivelseResponse,
-    val detaljer: List<DetaljResponse>
+    val detaljer: Map<String, String>
 )
 
 data class ArbeidssokersituasjonResponse(
