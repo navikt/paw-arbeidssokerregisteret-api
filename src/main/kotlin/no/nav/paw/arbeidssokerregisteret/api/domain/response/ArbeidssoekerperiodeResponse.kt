@@ -5,7 +5,7 @@ import no.nav.paw.arbeidssokerregisteret.api.v1.BrukerType
 import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
 import java.time.Instant
 
-data class ArbeidssokerperiodeResponse(
+data class ArbeidssoekerperiodeResponse(
     val startet: MetadataResponse,
     val avsluttet: MetadataResponse? = null
 )

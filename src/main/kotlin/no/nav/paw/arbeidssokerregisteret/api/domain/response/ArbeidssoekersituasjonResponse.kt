@@ -42,8 +42,8 @@ data class ArbeidserfaringResponse(
 )
 
 data class UtdanningResponse(
-    val utdanningsnivaa: UtdanningsnivaaResponse,
-    val bestatt: JaNeiVetIkkeResponse,
+    val lengde: UtdanningsnivaaResponse,
+    val bestaatt: JaNeiVetIkkeResponse,
     val godkjent: JaNeiVetIkkeResponse
 )
 
@@ -52,7 +52,7 @@ data class BeskrivelseMedDetaljerResponse(
     val detaljer: Map<String, String>
 )
 
-data class ArbeidssokersituasjonResponse(
+data class ArbeidssoekersituasjonResponse(
     val periodeId: UUID,
     val sendtInnAv: MetadataResponse,
     val utdanning: UtdanningResponse,

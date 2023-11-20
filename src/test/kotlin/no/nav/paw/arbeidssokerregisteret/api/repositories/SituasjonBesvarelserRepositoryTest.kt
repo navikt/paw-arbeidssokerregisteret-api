@@ -34,8 +34,11 @@ class SituasjonBesvarelserRepositoryTest : StringSpec({
     }
 
     "Insert and retrieve situasjonbesvarelser" {
-        val repository = SituasjonBesvarelserRepository(database)
+        val periodeRepository = ArbeidssoekerperiodeRepository(database)
+        val periode = createTestPeriode(UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1feb"))
+        periodeRepository.opprettArbeidssoekerperiode(periode)
 
+        val repository = SituasjonBesvarelserRepository(database)
         val situasjonBesvarelse = createTestSituasjonBesvarelse()
         repository.opprettSituasjonBesvarelse(situasjonBesvarelse)
 
@@ -48,7 +51,7 @@ class SituasjonBesvarelserRepositoryTest : StringSpec({
 fun createTestSituasjonBesvarelse() =
     Situasjon(
         UUID.randomUUID(),
-        UUID.randomUUID(),
+        UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1feb"),
         Metadata(
             Instant.now(),
             Bruker(

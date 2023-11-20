@@ -46,7 +46,7 @@ CREATE TABLE metadata
     aarsak VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE arbeidssokerperioder
+CREATE TABLE arbeidssoekerperioder
 (
     id BIGSERIAL PRIMARY KEY,
     periode_id UUID NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE utdanning
 (
     id BIGSERIAL PRIMARY KEY,
     lengde Utdanningsnivaa NOT NULL,
-    bestatt JaNeiVetIkke NOT NULL,
+    bestaatt JaNeiVetIkke NOT NULL,
     godkjent JaNeiVetIkke NOT NULL
 );
 
@@ -79,14 +79,14 @@ CREATE TABLE arbeidserfaring
 CREATE TABLE situasjon
 (
     id BIGSERIAL PRIMARY KEY,
-    periode_id UUID NOT NULL,
+    periode_id UUID REFERENCES arbeidssoekerperioder(periode_id),
     sendt_inn_av_id BIGINT REFERENCES metadata(id),
     utdanning_id BIGINT REFERENCES utdanning(id),
     helse_id BIGINT REFERENCES helse(id),
     arbeidserfaring_id BIGINT REFERENCES arbeidserfaring(id)
 );
 
-CREATE TABLE arbeidsokersituasjon
+CREATE TABLE arbeidssoekersituasjon
 (
     id BIGSERIAL PRIMARY KEY,
     situasjon_id BIGINT REFERENCES situasjon(id)
@@ -95,7 +95,7 @@ CREATE TABLE arbeidsokersituasjon
 CREATE TABLE beskrivelsemeddetaljer
 (
     id BIGSERIAL PRIMARY KEY,
-    arbeidsokersituasjon_id BIGINT REFERENCES arbeidsokersituasjon(id)
+    arbeidssoekersituasjon_id BIGINT REFERENCES arbeidssoekersituasjon(id)
 );
 
 CREATE TABLE beskrivelser
@@ -112,6 +112,3 @@ CREATE TABLE detaljer
     nokkel VARCHAR(50),
     verdi VARCHAR(255)
 );
-
-
-

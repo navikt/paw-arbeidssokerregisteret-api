@@ -1,7 +1,7 @@
 package no.nav.paw.arbeidssokerregisteret.api.repositories
 
 import no.nav.paw.arbeidssokerregisteret.api.database.ArbeidserfaringTable
-import no.nav.paw.arbeidssokerregisteret.api.database.ArbeidsokersituasjonTable
+import no.nav.paw.arbeidssokerregisteret.api.database.ArbeidssoekersituasjonTable
 import no.nav.paw.arbeidssokerregisteret.api.database.BeskrivelseMedDetaljerTable
 import no.nav.paw.arbeidssokerregisteret.api.database.BeskrivelserTable
 import no.nav.paw.arbeidssokerregisteret.api.database.BrukerTable
@@ -11,7 +11,7 @@ import no.nav.paw.arbeidssokerregisteret.api.database.MetadataTable
 import no.nav.paw.arbeidssokerregisteret.api.database.SituasjonTable
 import no.nav.paw.arbeidssokerregisteret.api.database.UtdanningTable
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidserfaringResponse
-import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidssokersituasjonResponse
+import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidssoekersituasjonResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BeskrivelseMedDetaljerResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BeskrivelseResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BrukerResponse
@@ -40,7 +40,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 class SituasjonBesvarelseConverter {
-    fun konverterTilArbeidssokersituasjonResponse(resultRow: ResultRow): ArbeidssokersituasjonResponse {
+    fun konverterTilArbeidssoekersituasjonResponse(resultRow: ResultRow): ArbeidssoekersituasjonResponse {
         val periodeId = resultRow[SituasjonTable.periodeId]
         val situasjonId = resultRow[SituasjonTable.id]
         val sendtInnAvMetadata = MetadataTable.select { MetadataTable.utfoertAvId eq resultRow[SituasjonTable.sendtInnAv] }.singleOrNull()
@@ -53,9 +53,9 @@ class SituasjonBesvarelseConverter {
             ?: throw Error("Fant ikke helse")
         val arbeidserfaring = ArbeidserfaringTable.select { ArbeidserfaringTable.id eq resultRow[SituasjonTable.arbeidserfaringId] }.singleOrNull()
             ?: throw Error("Fant ikke arbeidserfaring")
-        val arbeidsokersituasjon = ArbeidsokersituasjonTable.select { ArbeidsokersituasjonTable.situasjonId eq situasjonId.value }.singleOrNull()
-            ?: throw Error("Fant ikke arbeidsokersituasjon")
-        val beskrivelseMedDetaljer = BeskrivelseMedDetaljerTable.select { BeskrivelseMedDetaljerTable.arbeidsokersituasjonId eq arbeidsokersituasjon[ArbeidsokersituasjonTable.id].value }
+        val arbeidssoekersituasjon = ArbeidssoekersituasjonTable.select { ArbeidssoekersituasjonTable.situasjonId eq situasjonId.value }.singleOrNull()
+            ?: throw Error("Fant ikke arbeidssoekersituasjon")
+        val beskrivelseMedDetaljer = BeskrivelseMedDetaljerTable.select { BeskrivelseMedDetaljerTable.arbeidssoekersituasjonId eq arbeidssoekersituasjon[ArbeidssoekersituasjonTable.id].value }
             .map { beskrivelseMedDetaljerResultRow ->
                 val beskrivelse = BeskrivelserTable.select { BeskrivelserTable.beskrivelseMedDetaljerId eq beskrivelseMedDetaljerResultRow[BeskrivelseMedDetaljerTable.id].value }.singleOrNull()
                     ?: throw Error("Fant ikke beskrivelse")
@@ -63,29 +63,29 @@ class SituasjonBesvarelseConverter {
                     detaljerResultRow[DetaljerTable.nokkel] to detaljerResultRow[DetaljerTable.verdi]
                 }
                 BeskrivelseMedDetaljerResponse(
-                    BeskrivelseResponse.valueOf(beskrivelse[BeskrivelserTable.beskrivelse].name),
-                    detaljer
+                    beskrivelse = BeskrivelseResponse.valueOf(beskrivelse[BeskrivelserTable.beskrivelse].name),
+                    detaljer = detaljer
                 )
             }
 
-        return ArbeidssokersituasjonResponse(
+        return ArbeidssoekersituasjonResponse(
             periodeId = periodeId,
             sendtInnAv = MetadataResponse(
-                sendtInnAvMetadata[MetadataTable.tidspunkt],
-                BrukerResponse(
+                tidspunkt = sendtInnAvMetadata[MetadataTable.tidspunkt],
+                utfoertAv = BrukerResponse(
                     type = BrukerTypeResponse.valueOf(sendtInnAvBruker[BrukerTable.type].name)
                 ),
-                sendtInnAvMetadata[MetadataTable.kilde],
-                sendtInnAvMetadata[MetadataTable.aarsak]
+                kilde = sendtInnAvMetadata[MetadataTable.kilde],
+                aarsak = sendtInnAvMetadata[MetadataTable.aarsak]
             ),
             utdanning = UtdanningResponse(
-                UtdanningsnivaaResponse.valueOf(utdanning[UtdanningTable.lengde].name),
-                JaNeiVetIkkeResponse.valueOf(utdanning[UtdanningTable.bestaatt].name),
-                JaNeiVetIkkeResponse.valueOf(utdanning[UtdanningTable.godkjent].name)
+                lengde = UtdanningsnivaaResponse.valueOf(utdanning[UtdanningTable.lengde].name),
+                bestaatt = JaNeiVetIkkeResponse.valueOf(utdanning[UtdanningTable.bestaatt].name),
+                godkjent = JaNeiVetIkkeResponse.valueOf(utdanning[UtdanningTable.godkjent].name)
             ),
             helse = JaNeiVetIkkeResponse.valueOf(helse[HelseTable.helsetilstandHindrerArbeid].name),
             arbeidserfaring = ArbeidserfaringResponse(
-                JaNeiVetIkkeResponse.valueOf(arbeidserfaring[ArbeidserfaringTable.harHattArbeid].name)
+                harHattArbeid = JaNeiVetIkkeResponse.valueOf(arbeidserfaring[ArbeidserfaringTable.harHattArbeid].name)
             ),
             arbeidssokersituasjon = beskrivelseMedDetaljer
         )
@@ -93,34 +93,34 @@ class SituasjonBesvarelseConverter {
 }
 
 class SituasjonBesvarelserRepository(private val database: Database) {
-    fun hentSituasjonBesvarelse(periodeId: UUID): ArbeidssokersituasjonResponse? =
+    fun hentSituasjonBesvarelse(periodeId: UUID): ArbeidssoekersituasjonResponse? =
         transaction(database) {
             SituasjonTable.select { SituasjonTable.periodeId eq periodeId }.singleOrNull()?.let { resultRow ->
-                SituasjonBesvarelseConverter().konverterTilArbeidssokersituasjonResponse(resultRow)
+                SituasjonBesvarelseConverter().konverterTilArbeidssoekersituasjonResponse(resultRow)
             }
         }
 
-    fun hentSituasjonBesvarelser(periodeId: UUID): List<ArbeidssokersituasjonResponse> =
+    fun hentSituasjonBesvarelser(periodeId: UUID): List<ArbeidssoekersituasjonResponse> =
         transaction(database) {
             SituasjonTable.select {
                 SituasjonTable.periodeId eq periodeId
             }.map { resultRow ->
-                SituasjonBesvarelseConverter().konverterTilArbeidssokersituasjonResponse(resultRow)
+                SituasjonBesvarelseConverter().konverterTilArbeidssoekersituasjonResponse(resultRow)
             }
         }
 
-    fun opprettSituasjonBesvarelse(arbeidsokersituasjon: Situasjon) {
+    fun opprettSituasjonBesvarelse(arbeidssoekersituasjon: Situasjon) {
         transaction(database) {
             try {
-                val sendtInnAvId = insertMetadata(arbeidsokersituasjon.sendtInnAv)
-                val utdanningId = insertUtdanning(arbeidsokersituasjon.utdanning)
-                val helseId = insertHelse(arbeidsokersituasjon.helse)
-                val arbeidserfaringId = insertArbeidserfaring(arbeidsokersituasjon.arbeidserfaring)
-                val situasjonId = insertSituasjon(arbeidsokersituasjon, sendtInnAvId, utdanningId, helseId, arbeidserfaringId)
-                val arbeidsokersituasjonId = insertArbeidsokersituasjon(situasjonId)
+                val sendtInnAvId = insertMetadata(arbeidssoekersituasjon.sendtInnAv)
+                val utdanningId = insertUtdanning(arbeidssoekersituasjon.utdanning)
+                val helseId = insertHelse(arbeidssoekersituasjon.helse)
+                val arbeidserfaringId = insertArbeidserfaring(arbeidssoekersituasjon.arbeidserfaring)
+                val situasjonId = insertSituasjon(arbeidssoekersituasjon, sendtInnAvId, utdanningId, helseId, arbeidserfaringId)
+                val arbeidssoekersituasjonId = insertArbeidssoekersituasjon(situasjonId)
 
-                arbeidsokersituasjon.arbeidsoekersituasjon.beskrivelser.forEach { beskrivelseMedDetaljer ->
-                    val beskrivelseMedDetaljerId = insertBeskrivelseMedDetaljer(arbeidsokersituasjonId)
+                arbeidssoekersituasjon.arbeidsoekersituasjon.beskrivelser.forEach { beskrivelseMedDetaljer ->
+                    val beskrivelseMedDetaljerId = insertBeskrivelseMedDetaljer(arbeidssoekersituasjonId)
                     val beskrivelserId = insertBeskrivelse(beskrivelseMedDetaljer.beskrivelse, beskrivelseMedDetaljerId)
                     beskrivelseMedDetaljer.detaljer.forEach { detalj ->
                         insertDetalj(beskrivelserId, detalj)
@@ -164,28 +164,28 @@ class SituasjonBesvarelserRepository(private val database: Database) {
         }.value
 
     private fun insertSituasjon(
-        arbeidssokersituasjon: Situasjon,
+        arbeidssoekersituasjon: Situasjon,
         sendtInnAvId: Long,
         utdanningId: Long,
         helseId: Long,
         arbeidserfaringId: Long
     ): Long =
         SituasjonTable.insertAndGetId {
-            it[periodeId] = arbeidssokersituasjon.periodeId
+            it[periodeId] = arbeidssoekersituasjon.periodeId
             it[sendtInnAv] = sendtInnAvId
             it[SituasjonTable.utdanningId] = utdanningId
             it[SituasjonTable.helseId] = helseId
             it[SituasjonTable.arbeidserfaringId] = arbeidserfaringId
         }.value
 
-    private fun insertArbeidsokersituasjon(situasjonId: Long): Long =
-        ArbeidsokersituasjonTable.insertAndGetId {
-            it[ArbeidsokersituasjonTable.situasjonId] = situasjonId
+    private fun insertArbeidssoekersituasjon(situasjonId: Long): Long =
+        ArbeidssoekersituasjonTable.insertAndGetId {
+            it[ArbeidssoekersituasjonTable.situasjonId] = situasjonId
         }.value
 
-    private fun insertBeskrivelseMedDetaljer(arbeidsokersituasjonId: Long): Long =
+    private fun insertBeskrivelseMedDetaljer(arbeidssoekersituasjonId: Long): Long =
         BeskrivelseMedDetaljerTable.insertAndGetId {
-            it[BeskrivelseMedDetaljerTable.arbeidsokersituasjonId] = arbeidsokersituasjonId
+            it[BeskrivelseMedDetaljerTable.arbeidssoekersituasjonId] = arbeidssoekersituasjonId
         }.value
 
     private fun insertBeskrivelse(beskrivelse: Beskrivelse, beskrivelseMedDetaljerId: Long): Long =

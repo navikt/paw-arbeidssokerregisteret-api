@@ -42,7 +42,7 @@ fun Application.module() {
 
     thread {
         try {
-            dependencies.arbeidssokerperiodeConsumer.start()
+            dependencies.arbeidssoekerperiodeConsumer.start()
         } catch (e: Exception) {
             logger.error("Consumer error: ${e.message}", e)
             exitProcess(1)
@@ -60,6 +60,6 @@ fun Application.module() {
     routing {
         healthRoutes(dependencies.registry)
         swaggerRoutes()
-        arbeidssokerRoutes(dependencies.arbeidssokerperiodeService)
+        arbeidssokerRoutes(dependencies.arbeidssoekerperiodeService)
     }
 }

@@ -7,7 +7,7 @@ import no.nav.paw.arbeidssokerregisteret.api.v1.Utdanningsnivaa
 import org.jetbrains.exposed.dao.id.LongIdTable
 
 object SituasjonTable : LongIdTable("situasjon") {
-    val periodeId = uuid("periode_id")
+    val periodeId = uuid("periode_id").references(ArbeidssoekerperioderTable.periodeId)
     val sendtInnAv = long("sendt_inn_av_id").references(MetadataTable.utfoertAvId)
     val utdanningId = long("utdanning_id").references(UtdanningTable.id)
     val helseId = long("helse_id").references(HelseTable.id)
@@ -16,7 +16,7 @@ object SituasjonTable : LongIdTable("situasjon") {
 
 object UtdanningTable : LongIdTable("utdanning") {
     val lengde = customEnumeration("lengde", "Utdanningsnivaa", { value -> Utdanningsnivaa.valueOf(value as String) }, { PGEnum("Utdanningsnivaa", it) })
-    val bestaatt = customEnumeration("bestatt", "JaNeiVetIkke", { value -> JaNeiVetIkke.valueOf(value as String) }, { PGEnum("JaNeiVetIkke", it) })
+    val bestaatt = customEnumeration("bestaatt", "JaNeiVetIkke", { value -> JaNeiVetIkke.valueOf(value as String) }, { PGEnum("JaNeiVetIkke", it) })
     val godkjent = customEnumeration("godkjent", "JaNeiVetIkke", { value -> JaNeiVetIkke.valueOf(value as String) }, { PGEnum("JaNeiVetIkke", it) })
 }
 
@@ -28,12 +28,12 @@ object ArbeidserfaringTable : LongIdTable("arbeidserfaring") {
     val harHattArbeid = customEnumeration("har_hatt_arbeid", "JaNeiVetIkke", { value -> JaNeiVetIkke.valueOf(value as String) }, { PGEnum("JaNeiVetIkke", it) })
 }
 
-object ArbeidsokersituasjonTable : LongIdTable("arbeidsokersituasjon") {
+object ArbeidssoekersituasjonTable : LongIdTable("arbeidssoekersituasjon") {
     val situasjonId = long("situasjon_id").references(SituasjonTable.id)
 }
 
 object BeskrivelseMedDetaljerTable : LongIdTable("beskrivelsemeddetaljer") {
-    val arbeidsokersituasjonId = long("arbeidsokersituasjon_id").references(ArbeidsokersituasjonTable.id)
+    val arbeidssoekersituasjonId = long("arbeidssoekersituasjon_id").references(ArbeidssoekersituasjonTable.id)
 }
 
 object BeskrivelserTable : LongIdTable("beskrivelser") {
