@@ -14,7 +14,7 @@ import java.time.Instant
 import java.util.UUID
 import javax.sql.DataSource
 
-class ArbeidssokerperiodeRepositoryTest : StringSpec({
+class PeriodeRepositoryTest : StringSpec({
     lateinit var dataSource: DataSource
     lateinit var database: Database
 
@@ -27,33 +27,33 @@ class ArbeidssokerperiodeRepositoryTest : StringSpec({
         dataSource.connection.close()
     }
 
-    "Insert and retrieve a periode" {
-        val repository = ArbeidssoekerperiodeRepository(database)
+    "Opprett og hent en periode" {
+        val repository = PeriodeRepository(database)
 
-        val periode = createTestPeriode()
-        repository.opprettArbeidssoekerperiode(periode)
+        val periode = hentTestPeriode()
+        repository.opprettPeriode(periode)
 
-        val retrievedPeriode = repository.hentArbeidssoekerperiodeMedPeriodeId(periode.id)
+        val retrievedPeriode = repository.hentPeriode(periode.id)
 
         retrievedPeriode shouldNotBe null
         retrievedPeriode!! shouldBe periode
     }
 
-    "Retrieve arbeidssoekerperioder for a given Identitetsnummer" {
-        val repository = ArbeidssoekerperiodeRepository(database)
+    "Hent en periode for et gitt identitetsnummer" {
+        val repository = PeriodeRepository(database)
 
         val identitetsnummer = Identitetsnummer("12345678911")
 
-        val arbeidssoekerperioder = repository.hentArbeidssoekerperioder(identitetsnummer)
+        val arbeidssoekerperioder = repository.hentPerioder(identitetsnummer)
 
         arbeidssoekerperioder.size shouldBeExactly 1
     }
 
-    "Update arbeidssoekerperiode with avsluttet metadata" {
-        val repository = ArbeidssoekerperiodeRepository(database)
+    "Oppdater periode med avsluttet metadata" {
+        val repository = PeriodeRepository(database)
 
-        val periode = createTestPeriode()
-        repository.opprettArbeidssoekerperiode(periode)
+        val periode = hentTestPeriode()
+        repository.opprettPeriode(periode)
 
         val updatedMetadata =
             Metadata(
@@ -65,19 +65,19 @@ class ArbeidssokerperiodeRepositoryTest : StringSpec({
 
         val updatedPeriode = periode.copy(avsluttet = updatedMetadata)
 
-        repository.oppdaterArbeidssoekerperiode(updatedPeriode)
+        repository.oppdaterPeriode(updatedPeriode)
 
-        val retrievedPeriode = repository.hentArbeidssoekerperiodeMedPeriodeId(periode.id)
+        val retrievedPeriode = repository.hentPeriode(periode.id)
 
         retrievedPeriode shouldNotBe null
         retrievedPeriode!! shouldBe updatedPeriode
     }
 
-    "Update arbeidssoekerperiode without avsluttet metadata" {
-        val repository = ArbeidssoekerperiodeRepository(database)
+    "Oppdater periode uten avsluttet metadata" {
+        val repository = PeriodeRepository(database)
 
-        val periode = createTestPeriode().copy(avsluttet = null)
-        repository.opprettArbeidssoekerperiode(periode)
+        val periode = hentTestPeriode().copy(avsluttet = null)
+        repository.opprettPeriode(periode)
 
         val updatedMetadata =
             Metadata(
@@ -88,31 +88,31 @@ class ArbeidssokerperiodeRepositoryTest : StringSpec({
             )
         val updatedPeriode = periode.copy(avsluttet = updatedMetadata)
 
-        repository.oppdaterArbeidssoekerperiode(updatedPeriode)
+        repository.oppdaterPeriode(updatedPeriode)
 
-        val retrievedPeriode = repository.hentArbeidssoekerperiodeMedPeriodeId(periode.id)
+        val retrievedPeriode = repository.hentPeriode(periode.id)
 
         retrievedPeriode shouldNotBe null
         retrievedPeriode shouldBe updatedPeriode
     }
-    "Update arbeidssoekerperiode avsluttet metadata to null should not be possible" {
-        val repository = ArbeidssoekerperiodeRepository(database)
+    "Oppdatere periode med avsluttet metadata til null skal ikke være mulig" {
+        val repository = PeriodeRepository(database)
 
-        val periode = createTestPeriode()
-        repository.opprettArbeidssoekerperiode(periode)
+        val periode = hentTestPeriode()
+        repository.opprettPeriode(periode)
 
         val updatedPeriode = periode.copy(avsluttet = null)
 
-        repository.oppdaterArbeidssoekerperiode(updatedPeriode)
+        repository.oppdaterPeriode(updatedPeriode)
 
-        val retrievedPeriode = repository.hentArbeidssoekerperiodeMedPeriodeId(periode.id)
+        val retrievedPeriode = repository.hentPeriode(periode.id)
 
         retrievedPeriode shouldNotBe null
         retrievedPeriode shouldNotBe updatedPeriode
     }
 })
 
-fun createTestPeriode(periodeId: UUID? = null): Periode {
+fun hentTestPeriode(periodeId: UUID? = null): Periode {
     val startetMetadata =
         Metadata(
             Instant.now(),

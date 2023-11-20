@@ -17,7 +17,7 @@ object MetadataTable : LongIdTable("metadata") {
     val aarsak = varchar("aarsak", 255)
 }
 
-object ArbeidssoekerperioderTable : LongIdTable("arbeidssoekerperioder") {
+object PeriodeTable : LongIdTable("periode") {
     val periodeId = uuid("periode_id")
     val identitetsnummer = varchar("identitetsnummer", 11)
     val startetId = long("startet_id").references(MetadataTable.id)

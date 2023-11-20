@@ -19,7 +19,7 @@ import java.time.Instant
 import java.util.*
 import javax.sql.DataSource
 
-class SituasjonBesvarelserRepositoryTest : StringSpec({
+class SituasjonRepositoryTest : StringSpec({
 
     lateinit var dataSource: DataSource
     lateinit var database: Database
@@ -27,28 +27,51 @@ class SituasjonBesvarelserRepositoryTest : StringSpec({
     beforeSpec {
         dataSource = initTestDatabase()
         database = Database.connect(dataSource)
+        settInnTestPeriode(database)
     }
 
     afterSpec {
         dataSource.connection.close()
     }
 
-    "Insert and retrieve situasjonbesvarelser" {
-        val periodeRepository = ArbeidssoekerperiodeRepository(database)
-        val periode = createTestPeriode(UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1feb"))
-        periodeRepository.opprettArbeidssoekerperiode(periode)
+    "Opprett og hent ut en situasjon" {
+        val repository = SituasjonRepository(database)
+        val situasjonBesvarelse = lagTestSituasjonBesvarelse()
+        repository.opprettSituasjon(situasjonBesvarelse)
 
-        val repository = SituasjonBesvarelserRepository(database)
-        val situasjonBesvarelse = createTestSituasjonBesvarelse()
-        repository.opprettSituasjonBesvarelse(situasjonBesvarelse)
-
-        val retrievedSituasjonBesvarelser = repository.hentSituasjonBesvarelser(situasjonBesvarelse.periodeId)
+        val retrievedSituasjonBesvarelser = repository.hentSituasjoner(situasjonBesvarelse.periodeId)
 
         retrievedSituasjonBesvarelser.size shouldBe 1
     }
+
+    "Opprett og hent ut flere situasjoner" {
+        val repository = SituasjonRepository(database)
+        val situasjonBesvarelse1 = lagTestSituasjonBesvarelse()
+        val situasjonBesvarelse2 = lagTestSituasjonBesvarelse()
+        repository.opprettSituasjon(situasjonBesvarelse1)
+        repository.opprettSituasjon(situasjonBesvarelse2)
+
+        val retrievedSituasjonBesvarelser = repository.hentSituasjoner(situasjonBesvarelse1.periodeId)
+
+        retrievedSituasjonBesvarelser.size shouldBe 2
+    }
+
+    "Hent ut en ikke-eksisterende situasjon" {
+        val repository = SituasjonRepository(database)
+
+        val retrievedSituasjonBesvarelse = repository.hentSituasjon(UUID.randomUUID())
+
+        retrievedSituasjonBesvarelse shouldBe null
+    }
 })
 
-fun createTestSituasjonBesvarelse() =
+fun settInnTestPeriode(database: Database) {
+    val periodeRepository = PeriodeRepository(database)
+    val periode = hentTestPeriode(UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1feb"))
+    periodeRepository.opprettPeriode(periode)
+}
+
+fun lagTestSituasjonBesvarelse() =
     Situasjon(
         UUID.randomUUID(),
         UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1feb"),
@@ -76,20 +99,20 @@ fun createTestSituasjonBesvarelse() =
             listOf(
                 Element(
                     Beskrivelse.AKKURAT_FULLFORT_UTDANNING,
-                    getListOfDetaljerAsMap()
+                    hentMapAvDetaljer()
                 ),
                 Element(
                     Beskrivelse.IKKE_VAERT_I_JOBB_SISTE_2_AAR,
-                    getListOfDetaljerAsMap()
+                    hentMapAvDetaljer()
                 )
             )
         )
 
     )
 
-fun getListOfDetaljerAsMap(): Map<String, String> {
+fun hentMapAvDetaljer(): Map<String, String> {
     val map = mutableMapOf<String, String>()
-    map["nokkel1"] = "verdi1"
-    map["nokkel2"] = "verdi2"
+    map["noekkel1"] = "verdi1"
+    map["noekkel2"] = "verdi2"
     return map
 }

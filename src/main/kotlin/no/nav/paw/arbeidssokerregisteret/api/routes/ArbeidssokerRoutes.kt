@@ -7,11 +7,11 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
-import no.nav.paw.arbeidssokerregisteret.api.services.ArbeidssoekerperiodeService
+import no.nav.paw.arbeidssokerregisteret.api.services.PeriodeService
 import no.nav.paw.arbeidssokerregisteret.api.utils.getPidClaim
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 
-fun Route.arbeidssokerRoutes(arbeidssoekerperiodeService: ArbeidssoekerperiodeService) {
+fun Route.arbeidssokerRoutes(periodeService: PeriodeService) {
     route("/api/v1") {
         authenticate("tokenx", "azure") {
             route("/arbeidssokerperioder") {
@@ -20,7 +20,7 @@ fun Route.arbeidssokerRoutes(arbeidssoekerperiodeService: ArbeidssoekerperiodeSe
 
                     val foedselsnummer = call.getPidClaim()
 
-                    val arbeidssoekerperioder = arbeidssoekerperiodeService.hentArbeidssoekerperioder(foedselsnummer)
+                    val arbeidssoekerperioder = periodeService.hentPerioder(foedselsnummer)
 
                     logger.info("Hentet arbeidssøkerperioder for bruker")
 

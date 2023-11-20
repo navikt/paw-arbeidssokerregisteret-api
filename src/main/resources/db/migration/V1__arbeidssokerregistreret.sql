@@ -11,7 +11,7 @@ CREATE TYPE JaNeiVetIkke AS ENUM (
     'JA', 'NEI', 'VET_IKKE'
     );
 
-CREATE TYPE Beskrivelse AS ENUM (
+CREATE TYPE BeskrivelseEnum AS ENUM (
     'UKJENT_VERDI',
     'UDEFINERT',
     'HAR_SAGT_OPP',
@@ -46,7 +46,7 @@ CREATE TABLE metadata
     aarsak VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE arbeidssoekerperioder
+CREATE TABLE periode
 (
     id BIGSERIAL PRIMARY KEY,
     periode_id UUID NOT NULL,
@@ -79,36 +79,30 @@ CREATE TABLE arbeidserfaring
 CREATE TABLE situasjon
 (
     id BIGSERIAL PRIMARY KEY,
-    periode_id UUID REFERENCES arbeidssoekerperioder(periode_id),
+    periode_id UUID REFERENCES periode(periode_id),
     sendt_inn_av_id BIGINT REFERENCES metadata(id),
     utdanning_id BIGINT REFERENCES utdanning(id),
     helse_id BIGINT REFERENCES helse(id),
     arbeidserfaring_id BIGINT REFERENCES arbeidserfaring(id)
 );
 
-CREATE TABLE arbeidssoekersituasjon
+CREATE TABLE beskrivelse_med_detaljer
 (
     id BIGSERIAL PRIMARY KEY,
     situasjon_id BIGINT REFERENCES situasjon(id)
 );
 
-CREATE TABLE beskrivelsemeddetaljer
+CREATE TABLE beskrivelse
 (
     id BIGSERIAL PRIMARY KEY,
-    arbeidssoekersituasjon_id BIGINT REFERENCES arbeidssoekersituasjon(id)
-);
-
-CREATE TABLE beskrivelser
-(
-    id BIGSERIAL PRIMARY KEY,
-    beskrivelse Beskrivelse NOT NULL,
-    beskrivelse_med_detaljer_id BIGINT REFERENCES beskrivelsemeddetaljer(id)
+    beskrivelse BeskrivelseEnum NOT NULL,
+    beskrivelse_med_detaljer_id BIGINT REFERENCES beskrivelse_med_detaljer(id)
 );
 
 CREATE TABLE detaljer
 (
     id BIGSERIAL PRIMARY KEY,
-    beskrivelser_id BIGINT REFERENCES beskrivelser(id),
-    nokkel VARCHAR(50),
+    beskrivelse_id BIGINT REFERENCES beskrivelse(id),
+    noekkel VARCHAR(50),
     verdi VARCHAR(255)
 );

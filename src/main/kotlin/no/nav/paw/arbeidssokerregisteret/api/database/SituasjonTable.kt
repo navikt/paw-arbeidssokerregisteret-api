@@ -7,7 +7,7 @@ import no.nav.paw.arbeidssokerregisteret.api.v1.Utdanningsnivaa
 import org.jetbrains.exposed.dao.id.LongIdTable
 
 object SituasjonTable : LongIdTable("situasjon") {
-    val periodeId = uuid("periode_id").references(ArbeidssoekerperioderTable.periodeId)
+    val periodeId = uuid("periode_id").references(PeriodeTable.periodeId)
     val sendtInnAv = long("sendt_inn_av_id").references(MetadataTable.utfoertAvId)
     val utdanningId = long("utdanning_id").references(UtdanningTable.id)
     val helseId = long("helse_id").references(HelseTable.id)
@@ -28,21 +28,17 @@ object ArbeidserfaringTable : LongIdTable("arbeidserfaring") {
     val harHattArbeid = customEnumeration("har_hatt_arbeid", "JaNeiVetIkke", { value -> JaNeiVetIkke.valueOf(value as String) }, { PGEnum("JaNeiVetIkke", it) })
 }
 
-object ArbeidssoekersituasjonTable : LongIdTable("arbeidssoekersituasjon") {
+object BeskrivelseMedDetaljerTable : LongIdTable("beskrivelsemeddetaljer") {
     val situasjonId = long("situasjon_id").references(SituasjonTable.id)
 }
 
-object BeskrivelseMedDetaljerTable : LongIdTable("beskrivelsemeddetaljer") {
-    val arbeidssoekersituasjonId = long("arbeidssoekersituasjon_id").references(ArbeidssoekersituasjonTable.id)
-}
-
-object BeskrivelserTable : LongIdTable("beskrivelser") {
-    val beskrivelse = customEnumeration("beskrivelse", "Beskrivelse", { value -> Beskrivelse.valueOf(value as String) }, { PGEnum("Beskrivelse", it) })
+object BeskrivelseTable : LongIdTable("beskrivelse") {
+    val beskrivelse = customEnumeration("beskrivelse", "Beskrivelse", { value -> Beskrivelse.valueOf(value as String) }, { PGEnum("BeskrivelseEnum", it) })
     val beskrivelseMedDetaljerId = long("beskrivelse_med_detaljer_id").references(BeskrivelseMedDetaljerTable.id)
 }
 
 object DetaljerTable : LongIdTable("detaljer") {
-    val beskrivelserId = long("beskrivelser_id").references(BeskrivelserTable.id)
-    val nokkel = varchar("nokkel", 50)
+    val beskrivelseId = long("beskrivelse_id").references(BeskrivelseTable.id)
+    val noekkel = varchar("noekkel", 50)
     val verdi = varchar("verdi", 255)
 }

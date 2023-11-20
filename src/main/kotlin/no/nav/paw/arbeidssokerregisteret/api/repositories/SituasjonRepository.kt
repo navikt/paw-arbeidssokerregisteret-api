@@ -1,9 +1,8 @@
 package no.nav.paw.arbeidssokerregisteret.api.repositories
 
 import no.nav.paw.arbeidssokerregisteret.api.database.ArbeidserfaringTable
-import no.nav.paw.arbeidssokerregisteret.api.database.ArbeidssoekersituasjonTable
 import no.nav.paw.arbeidssokerregisteret.api.database.BeskrivelseMedDetaljerTable
-import no.nav.paw.arbeidssokerregisteret.api.database.BeskrivelserTable
+import no.nav.paw.arbeidssokerregisteret.api.database.BeskrivelseTable
 import no.nav.paw.arbeidssokerregisteret.api.database.BrukerTable
 import no.nav.paw.arbeidssokerregisteret.api.database.DetaljerTable
 import no.nav.paw.arbeidssokerregisteret.api.database.HelseTable
@@ -11,13 +10,13 @@ import no.nav.paw.arbeidssokerregisteret.api.database.MetadataTable
 import no.nav.paw.arbeidssokerregisteret.api.database.SituasjonTable
 import no.nav.paw.arbeidssokerregisteret.api.database.UtdanningTable
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidserfaringResponse
-import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidssoekersituasjonResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BeskrivelseMedDetaljerResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BeskrivelseResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BrukerResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BrukerTypeResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.JaNeiVetIkkeResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.MetadataResponse
+import no.nav.paw.arbeidssokerregisteret.api.domain.response.SituasjonResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.UtdanningResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.UtdanningsnivaaResponse
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
@@ -39,8 +38,8 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
-class SituasjonBesvarelseConverter {
-    fun konverterTilArbeidssoekersituasjonResponse(resultRow: ResultRow): ArbeidssoekersituasjonResponse {
+class SituasjonConverter {
+    fun konverterTilSituasjonResponse(resultRow: ResultRow): SituasjonResponse {
         val periodeId = resultRow[SituasjonTable.periodeId]
         val situasjonId = resultRow[SituasjonTable.id]
         val sendtInnAvMetadata = MetadataTable.select { MetadataTable.utfoertAvId eq resultRow[SituasjonTable.sendtInnAv] }.singleOrNull()
@@ -53,22 +52,20 @@ class SituasjonBesvarelseConverter {
             ?: throw Error("Fant ikke helse")
         val arbeidserfaring = ArbeidserfaringTable.select { ArbeidserfaringTable.id eq resultRow[SituasjonTable.arbeidserfaringId] }.singleOrNull()
             ?: throw Error("Fant ikke arbeidserfaring")
-        val arbeidssoekersituasjon = ArbeidssoekersituasjonTable.select { ArbeidssoekersituasjonTable.situasjonId eq situasjonId.value }.singleOrNull()
-            ?: throw Error("Fant ikke arbeidssoekersituasjon")
-        val beskrivelseMedDetaljer = BeskrivelseMedDetaljerTable.select { BeskrivelseMedDetaljerTable.arbeidssoekersituasjonId eq arbeidssoekersituasjon[ArbeidssoekersituasjonTable.id].value }
+        val beskrivelseMedDetaljer = BeskrivelseMedDetaljerTable.select { BeskrivelseMedDetaljerTable.situasjonId eq situasjonId.value }
             .map { beskrivelseMedDetaljerResultRow ->
-                val beskrivelse = BeskrivelserTable.select { BeskrivelserTable.beskrivelseMedDetaljerId eq beskrivelseMedDetaljerResultRow[BeskrivelseMedDetaljerTable.id].value }.singleOrNull()
+                val beskrivelse = BeskrivelseTable.select { BeskrivelseTable.beskrivelseMedDetaljerId eq beskrivelseMedDetaljerResultRow[BeskrivelseMedDetaljerTable.id].value }.singleOrNull()
                     ?: throw Error("Fant ikke beskrivelse")
-                val detaljer = DetaljerTable.select { DetaljerTable.beskrivelserId eq beskrivelse[BeskrivelserTable.id].value }.associate { detaljerResultRow ->
-                    detaljerResultRow[DetaljerTable.nokkel] to detaljerResultRow[DetaljerTable.verdi]
+                val detaljer = DetaljerTable.select { DetaljerTable.beskrivelseId eq beskrivelse[BeskrivelseTable.id].value }.associate { detaljerResultRow ->
+                    detaljerResultRow[DetaljerTable.noekkel] to detaljerResultRow[DetaljerTable.verdi]
                 }
                 BeskrivelseMedDetaljerResponse(
-                    beskrivelse = BeskrivelseResponse.valueOf(beskrivelse[BeskrivelserTable.beskrivelse].name),
+                    beskrivelse = BeskrivelseResponse.valueOf(beskrivelse[BeskrivelseTable.beskrivelse].name),
                     detaljer = detaljer
                 )
             }
 
-        return ArbeidssoekersituasjonResponse(
+        return SituasjonResponse(
             periodeId = periodeId,
             sendtInnAv = MetadataResponse(
                 tidspunkt = sendtInnAvMetadata[MetadataTable.tidspunkt],
@@ -92,35 +89,34 @@ class SituasjonBesvarelseConverter {
     }
 }
 
-class SituasjonBesvarelserRepository(private val database: Database) {
-    fun hentSituasjonBesvarelse(periodeId: UUID): ArbeidssoekersituasjonResponse? =
+class SituasjonRepository(private val database: Database) {
+    fun hentSituasjon(periodeId: UUID): SituasjonResponse? =
         transaction(database) {
             SituasjonTable.select { SituasjonTable.periodeId eq periodeId }.singleOrNull()?.let { resultRow ->
-                SituasjonBesvarelseConverter().konverterTilArbeidssoekersituasjonResponse(resultRow)
+                SituasjonConverter().konverterTilSituasjonResponse(resultRow)
             }
         }
 
-    fun hentSituasjonBesvarelser(periodeId: UUID): List<ArbeidssoekersituasjonResponse> =
+    fun hentSituasjoner(periodeId: UUID): List<SituasjonResponse> =
         transaction(database) {
             SituasjonTable.select {
                 SituasjonTable.periodeId eq periodeId
             }.map { resultRow ->
-                SituasjonBesvarelseConverter().konverterTilArbeidssoekersituasjonResponse(resultRow)
+                SituasjonConverter().konverterTilSituasjonResponse(resultRow)
             }
         }
 
-    fun opprettSituasjonBesvarelse(arbeidssoekersituasjon: Situasjon) {
+    fun opprettSituasjon(situasjon: Situasjon) {
         transaction(database) {
             try {
-                val sendtInnAvId = insertMetadata(arbeidssoekersituasjon.sendtInnAv)
-                val utdanningId = insertUtdanning(arbeidssoekersituasjon.utdanning)
-                val helseId = insertHelse(arbeidssoekersituasjon.helse)
-                val arbeidserfaringId = insertArbeidserfaring(arbeidssoekersituasjon.arbeidserfaring)
-                val situasjonId = insertSituasjon(arbeidssoekersituasjon, sendtInnAvId, utdanningId, helseId, arbeidserfaringId)
-                val arbeidssoekersituasjonId = insertArbeidssoekersituasjon(situasjonId)
+                val sendtInnAvId = insertMetadata(situasjon.sendtInnAv)
+                val utdanningId = insertUtdanning(situasjon.utdanning)
+                val helseId = insertHelse(situasjon.helse)
+                val arbeidserfaringId = insertArbeidserfaring(situasjon.arbeidserfaring)
+                val situasjonId = insertSituasjon(situasjon, sendtInnAvId, utdanningId, helseId, arbeidserfaringId)
 
-                arbeidssoekersituasjon.arbeidsoekersituasjon.beskrivelser.forEach { beskrivelseMedDetaljer ->
-                    val beskrivelseMedDetaljerId = insertBeskrivelseMedDetaljer(arbeidssoekersituasjonId)
+                situasjon.arbeidsoekersituasjon.beskrivelser.forEach { beskrivelseMedDetaljer ->
+                    val beskrivelseMedDetaljerId = insertBeskrivelseMedDetaljer(situasjonId)
                     val beskrivelserId = insertBeskrivelse(beskrivelseMedDetaljer.beskrivelse, beskrivelseMedDetaljerId)
                     beskrivelseMedDetaljer.detaljer.forEach { detalj ->
                         insertDetalj(beskrivelserId, detalj)
@@ -164,40 +160,35 @@ class SituasjonBesvarelserRepository(private val database: Database) {
         }.value
 
     private fun insertSituasjon(
-        arbeidssoekersituasjon: Situasjon,
+        situasjon: Situasjon,
         sendtInnAvId: Long,
         utdanningId: Long,
         helseId: Long,
         arbeidserfaringId: Long
     ): Long =
         SituasjonTable.insertAndGetId {
-            it[periodeId] = arbeidssoekersituasjon.periodeId
+            it[periodeId] = situasjon.periodeId
             it[sendtInnAv] = sendtInnAvId
             it[SituasjonTable.utdanningId] = utdanningId
             it[SituasjonTable.helseId] = helseId
             it[SituasjonTable.arbeidserfaringId] = arbeidserfaringId
         }.value
 
-    private fun insertArbeidssoekersituasjon(situasjonId: Long): Long =
-        ArbeidssoekersituasjonTable.insertAndGetId {
-            it[ArbeidssoekersituasjonTable.situasjonId] = situasjonId
-        }.value
-
-    private fun insertBeskrivelseMedDetaljer(arbeidssoekersituasjonId: Long): Long =
+    private fun insertBeskrivelseMedDetaljer(situasjonId: Long): Long =
         BeskrivelseMedDetaljerTable.insertAndGetId {
-            it[BeskrivelseMedDetaljerTable.arbeidssoekersituasjonId] = arbeidssoekersituasjonId
+            it[BeskrivelseMedDetaljerTable.situasjonId] = situasjonId
         }.value
 
     private fun insertBeskrivelse(beskrivelse: Beskrivelse, beskrivelseMedDetaljerId: Long): Long =
-        BeskrivelserTable.insertAndGetId {
-            it[BeskrivelserTable.beskrivelse] = Beskrivelse.valueOf(beskrivelse.name)
-            it[BeskrivelserTable.beskrivelseMedDetaljerId] = beskrivelseMedDetaljerId
+        BeskrivelseTable.insertAndGetId {
+            it[BeskrivelseTable.beskrivelse] = Beskrivelse.valueOf(beskrivelse.name)
+            it[BeskrivelseTable.beskrivelseMedDetaljerId] = beskrivelseMedDetaljerId
         }.value
 
-    private fun insertDetalj(beskrivelserId: Long, detalj: Map.Entry<String, String>) {
+    private fun insertDetalj(beskrivelseId: Long, detalj: Map.Entry<String, String>) {
         DetaljerTable.insert {
-            it[DetaljerTable.beskrivelserId] = beskrivelserId
-            it[nokkel] = detalj.key
+            it[DetaljerTable.beskrivelseId] = beskrivelseId
+            it[noekkel] = detalj.key
             it[verdi] = detalj.value
         }
     }

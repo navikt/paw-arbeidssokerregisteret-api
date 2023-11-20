@@ -1,0 +1,170 @@
+package no.nav.paw.arbeidssokerregisteret.api.repositories
+
+import no.nav.paw.arbeidssokerregisteret.api.database.BrukerTable
+import no.nav.paw.arbeidssokerregisteret.api.database.MetadataTable
+import no.nav.paw.arbeidssokerregisteret.api.database.PeriodeTable
+import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
+import no.nav.paw.arbeidssokerregisteret.api.domain.response.PeriodeResponse
+import no.nav.paw.arbeidssokerregisteret.api.domain.response.toMetadataResponse
+import no.nav.paw.arbeidssokerregisteret.api.v1.Bruker
+import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
+import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.insertAndGetId
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
+import java.util.UUID
+
+class PeriodeConverter(private val repository: PeriodeRepository) {
+    fun convertResultRowToPeriode(resultRow: ResultRow): Periode {
+        val periodeId = resultRow[PeriodeTable.periodeId]
+        val identitetsnummer = resultRow[PeriodeTable.identitetsnummer]
+        val startetId = resultRow[PeriodeTable.startetId]
+        val avsluttetId = resultRow[PeriodeTable.avsluttetId]
+
+        val startetMetadata = repository.hentMetadata(startetId) ?: throw Error("Fant ikke startet metadata")
+        val avsluttetMetadata = avsluttetId?.let { repository.hentMetadata(it) }
+
+        return Periode(
+            periodeId,
+            identitetsnummer,
+            startetMetadata,
+            avsluttetMetadata
+        )
+    }
+}
+
+class PeriodeRepository(private val database: Database) {
+    fun hentPeriode(periodeId: UUID): Periode? =
+        transaction(database) {
+            PeriodeTable.select { PeriodeTable.periodeId eq periodeId }.singleOrNull()?.let { resultRow ->
+                PeriodeConverter(this@PeriodeRepository).convertResultRowToPeriode(resultRow)
+            }
+        }
+
+    fun hentPerioder(identitetsnummer: Identitetsnummer): List<PeriodeResponse> =
+        transaction(database) {
+            PeriodeTable.select {
+                PeriodeTable.identitetsnummer eq identitetsnummer.verdi
+            }.map { resultRow ->
+                val startetId = resultRow[PeriodeTable.startetId]
+                val avsluttetId = resultRow[PeriodeTable.avsluttetId]
+
+                val startetMetadata = hentMetadata(startetId) ?: throw Error("Fant ikke startet metadata")
+                val avsluttetMetadata = avsluttetId?.let { hentMetadata(it) }
+
+                PeriodeResponse(startetMetadata.toMetadataResponse(), avsluttetMetadata?.toMetadataResponse())
+            }
+        }
+
+    fun hentMetadata(id: Long): Metadata? {
+        return MetadataTable.select { MetadataTable.id eq id }.singleOrNull()?.let { metadata ->
+            val brukerId = metadata[MetadataTable.utfoertAvId]
+            val bruker = hentBruker(brukerId)
+            Metadata(
+                metadata[MetadataTable.tidspunkt],
+                bruker,
+                metadata[MetadataTable.kilde],
+                metadata[MetadataTable.aarsak]
+            )
+        }
+    }
+
+    private fun hentBruker(brukerId: Long): Bruker? {
+        return BrukerTable.select { BrukerTable.id eq brukerId }.singleOrNull()?.let {
+            Bruker(
+                it[BrukerTable.type],
+                it[BrukerTable.brukerId]
+            )
+        }
+    }
+
+    fun opprettPeriode(arbeidssoekerPeriode: Periode) {
+        transaction {
+            val startetId = settInnMetadata(arbeidssoekerPeriode.startet)
+            val avsluttetId = arbeidssoekerPeriode.avsluttet?.let { settInnMetadata(it) }
+
+            settInnPeriode(arbeidssoekerPeriode.id, arbeidssoekerPeriode.identitetsnummer, startetId, avsluttetId)
+        }
+    }
+
+    private fun settInnMetadata(metadata: Metadata): Long {
+        return MetadataTable.insertAndGetId {
+            it[utfoertAvId] = settInnBruker(metadata.utfoertAv)
+            it[tidspunkt] = metadata.tidspunkt
+            it[kilde] = metadata.kilde
+            it[aarsak] = metadata.aarsak
+        }.value
+    }
+
+    private fun settInnBruker(bruker: Bruker): Long {
+        val eksisterendeBruker = BrukerTable.select { BrukerTable.brukerId eq bruker.id and (BrukerTable.type eq bruker.type) }.singleOrNull()
+        return if (eksisterendeBruker != null) {
+            eksisterendeBruker[BrukerTable.id].value
+        } else {
+            BrukerTable.insertAndGetId {
+                it[brukerId] = bruker.id
+                it[type] = bruker.type
+            }.value
+        }
+    }
+
+    private fun settInnPeriode(
+        periodeId: UUID,
+        identitetsnummer: String,
+        startetId: Long,
+        avsluttetId: Long?
+    ) {
+        PeriodeTable.insert {
+            it[PeriodeTable.periodeId] = periodeId
+            it[PeriodeTable.identitetsnummer] = identitetsnummer
+            it[PeriodeTable.startetId] = startetId
+            it[PeriodeTable.avsluttetId] = avsluttetId
+        }
+    }
+
+    fun oppdaterPeriode(periode: Periode) {
+        transaction {
+            val eksisterendePeriode = PeriodeTable.select { PeriodeTable.periodeId eq periode.id }.singleOrNull()
+
+            eksisterendePeriode?.let {
+                val startetId = it[PeriodeTable.startetId]
+                val avsluttetId = it[PeriodeTable.avsluttetId]
+
+                oppdaterMetadata(startetId, periode.startet)
+                periode.avsluttet?.let { avsluttetPeriode -> oppdaterAvsluttetMetadata(avsluttetId, avsluttetPeriode, periode.id) }
+            }
+        }
+    }
+
+    private fun oppdaterMetadata(
+        metadataId: Long,
+        metadata: Metadata
+    ) {
+        MetadataTable.update({ MetadataTable.id eq metadataId }) {
+            it[utfoertAvId] = settInnBruker(metadata.utfoertAv)
+            it[tidspunkt] = metadata.tidspunkt
+            it[kilde] = metadata.kilde
+            it[aarsak] = metadata.aarsak
+        }
+    }
+
+    private fun oppdaterAvsluttetMetadata(
+        avsluttetId: Long?,
+        avsluttetMetadata: Metadata,
+        periodeId: UUID
+    ) {
+        if (avsluttetId != null) {
+            oppdaterMetadata(avsluttetId, avsluttetMetadata)
+        } else {
+            val avsluttetMetadataId = settInnMetadata(avsluttetMetadata)
+            PeriodeTable.update({ PeriodeTable.periodeId eq periodeId }) {
+                it[PeriodeTable.avsluttetId] = avsluttetMetadataId
+            }
+        }
+    }
+}

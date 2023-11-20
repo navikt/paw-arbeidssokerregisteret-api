@@ -52,7 +52,7 @@ data class BeskrivelseMedDetaljerResponse(
     val detaljer: Map<String, String>
 )
 
-data class ArbeidssoekersituasjonResponse(
+data class SituasjonResponse(
     val periodeId: UUID,
     val sendtInnAv: MetadataResponse,
     val utdanning: UtdanningResponse,
