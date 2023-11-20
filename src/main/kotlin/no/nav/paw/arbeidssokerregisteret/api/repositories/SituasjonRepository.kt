@@ -38,57 +38,6 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
-class SituasjonConverter {
-    fun konverterTilSituasjonResponse(resultRow: ResultRow): SituasjonResponse {
-        val periodeId = resultRow[SituasjonTable.periodeId]
-        val situasjonId = resultRow[SituasjonTable.id]
-        val sendtInnAvMetadata = MetadataTable.select { MetadataTable.utfoertAvId eq resultRow[SituasjonTable.sendtInnAv] }.singleOrNull()
-            ?: throw Error("Fant ikke metadata")
-        val sendtInnAvBruker = BrukerTable.select { BrukerTable.id eq sendtInnAvMetadata[MetadataTable.utfoertAvId] }.singleOrNull()
-            ?: throw Error("Fant ikke bruker")
-        val utdanning = UtdanningTable.select { UtdanningTable.id eq resultRow[SituasjonTable.utdanningId] }.singleOrNull()
-            ?: throw Error("Fant ikke utdanning")
-        val helse = HelseTable.select { HelseTable.id eq resultRow[SituasjonTable.helseId] }.singleOrNull()
-            ?: throw Error("Fant ikke helse")
-        val arbeidserfaring = ArbeidserfaringTable.select { ArbeidserfaringTable.id eq resultRow[SituasjonTable.arbeidserfaringId] }.singleOrNull()
-            ?: throw Error("Fant ikke arbeidserfaring")
-        val beskrivelseMedDetaljer = BeskrivelseMedDetaljerTable.select { BeskrivelseMedDetaljerTable.situasjonId eq situasjonId.value }
-            .map { beskrivelseMedDetaljerResultRow ->
-                val beskrivelse = BeskrivelseTable.select { BeskrivelseTable.beskrivelseMedDetaljerId eq beskrivelseMedDetaljerResultRow[BeskrivelseMedDetaljerTable.id].value }.singleOrNull()
-                    ?: throw Error("Fant ikke beskrivelse")
-                val detaljer = DetaljerTable.select { DetaljerTable.beskrivelseId eq beskrivelse[BeskrivelseTable.id].value }.associate { detaljerResultRow ->
-                    detaljerResultRow[DetaljerTable.noekkel] to detaljerResultRow[DetaljerTable.verdi]
-                }
-                BeskrivelseMedDetaljerResponse(
-                    beskrivelse = BeskrivelseResponse.valueOf(beskrivelse[BeskrivelseTable.beskrivelse].name),
-                    detaljer = detaljer
-                )
-            }
-
-        return SituasjonResponse(
-            periodeId = periodeId,
-            sendtInnAv = MetadataResponse(
-                tidspunkt = sendtInnAvMetadata[MetadataTable.tidspunkt],
-                utfoertAv = BrukerResponse(
-                    type = BrukerTypeResponse.valueOf(sendtInnAvBruker[BrukerTable.type].name)
-                ),
-                kilde = sendtInnAvMetadata[MetadataTable.kilde],
-                aarsak = sendtInnAvMetadata[MetadataTable.aarsak]
-            ),
-            utdanning = UtdanningResponse(
-                lengde = UtdanningsnivaaResponse.valueOf(utdanning[UtdanningTable.lengde].name),
-                bestaatt = JaNeiVetIkkeResponse.valueOf(utdanning[UtdanningTable.bestaatt].name),
-                godkjent = JaNeiVetIkkeResponse.valueOf(utdanning[UtdanningTable.godkjent].name)
-            ),
-            helse = JaNeiVetIkkeResponse.valueOf(helse[HelseTable.helsetilstandHindrerArbeid].name),
-            arbeidserfaring = ArbeidserfaringResponse(
-                harHattArbeid = JaNeiVetIkkeResponse.valueOf(arbeidserfaring[ArbeidserfaringTable.harHattArbeid].name)
-            ),
-            arbeidssokersituasjon = beskrivelseMedDetaljer
-        )
-    }
-}
-
 class SituasjonRepository(private val database: Database) {
     fun hentSituasjon(periodeId: UUID): SituasjonResponse? =
         transaction(database) {
@@ -109,57 +58,57 @@ class SituasjonRepository(private val database: Database) {
     fun opprettSituasjon(situasjon: Situasjon) {
         transaction(database) {
             try {
-                val sendtInnAvId = insertMetadata(situasjon.sendtInnAv)
-                val utdanningId = insertUtdanning(situasjon.utdanning)
-                val helseId = insertHelse(situasjon.helse)
-                val arbeidserfaringId = insertArbeidserfaring(situasjon.arbeidserfaring)
-                val situasjonId = insertSituasjon(situasjon, sendtInnAvId, utdanningId, helseId, arbeidserfaringId)
+                val sendtInnAvId = settInnMetadata(situasjon.sendtInnAv)
+                val utdanningId = settInnUtdanning(situasjon.utdanning)
+                val helseId = settInnHelse(situasjon.helse)
+                val arbeidserfaringId = settInnArbeidserfaring(situasjon.arbeidserfaring)
+                val situasjonId = settInnSituasjon(situasjon, sendtInnAvId, utdanningId, helseId, arbeidserfaringId)
 
                 situasjon.arbeidsoekersituasjon.beskrivelser.forEach { beskrivelseMedDetaljer ->
-                    val beskrivelseMedDetaljerId = insertBeskrivelseMedDetaljer(situasjonId)
-                    val beskrivelserId = insertBeskrivelse(beskrivelseMedDetaljer.beskrivelse, beskrivelseMedDetaljerId)
+                    val beskrivelseMedDetaljerId = settInnBeskrivelseMedDetaljer(situasjonId)
+                    val beskrivelserId = settInnBeskrivelse(beskrivelseMedDetaljer.beskrivelse, beskrivelseMedDetaljerId)
                     beskrivelseMedDetaljer.detaljer.forEach { detalj ->
-                        insertDetalj(beskrivelserId, detalj)
+                        settInnDetaljer(beskrivelserId, detalj)
                     }
                 }
             } catch (e: Exception) {
-                logger.error("Feil ved opprettelse av situasjonsbesvarelse", e)
+                logger.error("Feil ved opprettelse av situasjon", e)
             }
         }
     }
 
-    private fun insertMetadata(metadata: Metadata): Long =
+    private fun settInnMetadata(metadata: Metadata): Long =
         MetadataTable.insertAndGetId {
             it[tidspunkt] = metadata.tidspunkt
-            it[utfoertAvId] = insertBruker(metadata.utfoertAv)
+            it[utfoertAvId] = settInnBruker(metadata.utfoertAv)
             it[kilde] = metadata.kilde
             it[aarsak] = metadata.aarsak
         }.value
 
-    private fun insertBruker(bruker: Bruker): Long =
+    private fun settInnBruker(bruker: Bruker): Long =
         BrukerTable.insertAndGetId {
             it[type] = BrukerType.valueOf(bruker.type.name)
             it[brukerId] = bruker.id
         }.value
 
-    private fun insertUtdanning(utdanning: Utdanning): Long =
+    private fun settInnUtdanning(utdanning: Utdanning): Long =
         UtdanningTable.insertAndGetId {
             it[lengde] = Utdanningsnivaa.valueOf(utdanning.lengde.name)
             it[bestaatt] = JaNeiVetIkke.valueOf(utdanning.bestaatt.name)
             it[godkjent] = JaNeiVetIkke.valueOf(utdanning.godkjent.name)
         }.value
 
-    private fun insertHelse(helse: Helse): Long =
+    private fun settInnHelse(helse: Helse): Long =
         HelseTable.insertAndGetId {
             it[helsetilstandHindrerArbeid] = JaNeiVetIkke.valueOf(helse.helsetilstandHindrerArbeid.name)
         }.value
 
-    private fun insertArbeidserfaring(arbeidserfaring: Arbeidserfaring): Long =
+    private fun settInnArbeidserfaring(arbeidserfaring: Arbeidserfaring): Long =
         ArbeidserfaringTable.insertAndGetId {
             it[harHattArbeid] = JaNeiVetIkke.valueOf(arbeidserfaring.harHattArbeid.name)
         }.value
 
-    private fun insertSituasjon(
+    private fun settInnSituasjon(
         situasjon: Situasjon,
         sendtInnAvId: Long,
         utdanningId: Long,
@@ -174,22 +123,118 @@ class SituasjonRepository(private val database: Database) {
             it[SituasjonTable.arbeidserfaringId] = arbeidserfaringId
         }.value
 
-    private fun insertBeskrivelseMedDetaljer(situasjonId: Long): Long =
+    private fun settInnBeskrivelseMedDetaljer(situasjonId: Long): Long =
         BeskrivelseMedDetaljerTable.insertAndGetId {
             it[BeskrivelseMedDetaljerTable.situasjonId] = situasjonId
         }.value
 
-    private fun insertBeskrivelse(beskrivelse: Beskrivelse, beskrivelseMedDetaljerId: Long): Long =
+    private fun settInnBeskrivelse(beskrivelse: Beskrivelse, beskrivelseMedDetaljerId: Long): Long =
         BeskrivelseTable.insertAndGetId {
             it[BeskrivelseTable.beskrivelse] = Beskrivelse.valueOf(beskrivelse.name)
             it[BeskrivelseTable.beskrivelseMedDetaljerId] = beskrivelseMedDetaljerId
         }.value
 
-    private fun insertDetalj(beskrivelseId: Long, detalj: Map.Entry<String, String>) {
+    private fun settInnDetaljer(beskrivelseId: Long, detalj: Map.Entry<String, String>) {
         DetaljerTable.insert {
             it[DetaljerTable.beskrivelseId] = beskrivelseId
             it[noekkel] = detalj.key
             it[verdi] = detalj.value
         }
+    }
+}
+
+class SituasjonConverter {
+    fun konverterTilSituasjonResponse(resultRow: ResultRow): SituasjonResponse {
+        val periodeId = resultRow[SituasjonTable.periodeId]
+        val situasjonId = resultRow[SituasjonTable.id]
+
+        val sendtInnAvMetadata = hentMetadataResponse(resultRow[SituasjonTable.sendtInnAv])
+        val utdanning = hentUtdanningResponse(resultRow[SituasjonTable.utdanningId])
+        val helse = hentHelseResponse(resultRow[SituasjonTable.helseId])
+        val arbeidserfaring = hentArbeidserfaringResponse(resultRow[SituasjonTable.arbeidserfaringId])
+        val beskrivelseMedDetaljer = hentBeskrivelseMedDetaljerResponse(situasjonId.value)
+
+        return SituasjonResponse(
+            periodeId = periodeId,
+            sendtInnAv = sendtInnAvMetadata,
+            utdanning = utdanning,
+            helse = helse,
+            arbeidserfaring = arbeidserfaring,
+            arbeidssokersituasjon = beskrivelseMedDetaljer
+        )
+    }
+
+    private fun hentMetadataResponse(metadataId: Long): MetadataResponse {
+        return MetadataTable.select { MetadataTable.utfoertAvId eq metadataId }
+            .singleOrNull()?.let { metadataResultRow ->
+            val utfoertAvId = metadataResultRow[MetadataTable.utfoertAvId]
+            val bruker = BrukerTable.select { BrukerTable.id eq utfoertAvId }
+                .singleOrNull()?.let { brukerResultRow ->
+                BrukerResponse(
+                    type = BrukerTypeResponse.valueOf(brukerResultRow[BrukerTable.type].name)
+                )
+            } ?: throw RuntimeException("Fant ikke bruker")
+
+            MetadataResponse(
+                tidspunkt = metadataResultRow[MetadataTable.tidspunkt],
+                utfoertAv = bruker,
+                kilde = metadataResultRow[MetadataTable.kilde],
+                aarsak = metadataResultRow[MetadataTable.aarsak]
+            )
+        } ?: throw RuntimeException("Fant ikke metadata")
+    }
+
+    private fun hentUtdanningResponse(utdanningId: Long): UtdanningResponse {
+        return UtdanningTable.select { UtdanningTable.id eq utdanningId }
+            .singleOrNull()?.let { utdanningResultRow ->
+            UtdanningResponse(
+                lengde = UtdanningsnivaaResponse.valueOf(utdanningResultRow[UtdanningTable.lengde].name),
+                bestaatt = JaNeiVetIkkeResponse.valueOf(utdanningResultRow[UtdanningTable.bestaatt].name),
+                godkjent = JaNeiVetIkkeResponse.valueOf(utdanningResultRow[UtdanningTable.godkjent].name)
+            )
+        } ?: throw RuntimeException("Fant ikke utdanning")
+    }
+
+    private fun hentHelseResponse(helseId: Long): JaNeiVetIkkeResponse {
+        return HelseTable.select { HelseTable.id eq helseId }
+            .singleOrNull()?.let { helseResultRow ->
+            JaNeiVetIkkeResponse.valueOf(helseResultRow[HelseTable.helsetilstandHindrerArbeid].name)
+        } ?: throw RuntimeException("Fant ikke helse")
+    }
+
+    private fun hentArbeidserfaringResponse(arbeidserfaringId: Long): ArbeidserfaringResponse {
+        return ArbeidserfaringTable.select { ArbeidserfaringTable.id eq arbeidserfaringId }
+            .singleOrNull()?.let { arbeidserfaringResultRow ->
+            ArbeidserfaringResponse(
+                harHattArbeid = JaNeiVetIkkeResponse.valueOf(arbeidserfaringResultRow[ArbeidserfaringTable.harHattArbeid].name)
+            )
+        } ?: throw RuntimeException("Fant ikke arbeidserfaring")
+    }
+
+    private fun hentBeskrivelseMedDetaljerResponse(situasjonId: Long): List<BeskrivelseMedDetaljerResponse> {
+        return BeskrivelseMedDetaljerTable.select { BeskrivelseMedDetaljerTable.situasjonId eq situasjonId }
+            .map { beskrivelseMedDetaljer ->
+                val beskrivelseMedDetaljerId = beskrivelseMedDetaljer[BeskrivelseMedDetaljerTable.id].value
+                val beskrivelse = hentBeskrivelseResponse(beskrivelseMedDetaljerId)
+                val detaljer = hentDetaljerResponse(beskrivelseMedDetaljerId)
+                BeskrivelseMedDetaljerResponse(
+                    beskrivelse = beskrivelse,
+                    detaljer = detaljer
+                )
+            }
+    }
+
+    private fun hentBeskrivelseResponse(beskrivelseMedDetaljerId: Long): BeskrivelseResponse {
+        return BeskrivelseTable.select { BeskrivelseTable.beskrivelseMedDetaljerId eq beskrivelseMedDetaljerId }
+            .singleOrNull()?.let { beskrivelse ->
+            BeskrivelseResponse.valueOf(beskrivelse[BeskrivelseTable.beskrivelse].name)
+        } ?: throw RuntimeException("Fant ikke beskrivelse")
+    }
+
+    private fun hentDetaljerResponse(beskrivelseId: Long): Map<String, String> {
+        return DetaljerTable.select { DetaljerTable.beskrivelseId eq beskrivelseId }
+            .associate { detaljerResultRow ->
+                detaljerResultRow[DetaljerTable.noekkel] to detaljerResultRow[DetaljerTable.verdi]
+            }
     }
 }

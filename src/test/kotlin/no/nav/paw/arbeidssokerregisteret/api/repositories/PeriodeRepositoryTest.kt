@@ -44,9 +44,9 @@ class PeriodeRepositoryTest : StringSpec({
 
         val identitetsnummer = Identitetsnummer("12345678911")
 
-        val arbeidssoekerperioder = repository.hentPerioder(identitetsnummer)
+        val perioder = repository.hentPerioder(identitetsnummer)
 
-        arbeidssoekerperioder.size shouldBeExactly 1
+        perioder.size shouldBeExactly 1
     }
 
     "Oppdater periode med avsluttet metadata" {
@@ -95,6 +95,7 @@ class PeriodeRepositoryTest : StringSpec({
         retrievedPeriode shouldNotBe null
         retrievedPeriode shouldBe updatedPeriode
     }
+
     "Oppdatere periode med avsluttet metadata til null skal ikke være mulig" {
         val repository = PeriodeRepository(database)
 

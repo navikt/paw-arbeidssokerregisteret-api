@@ -19,30 +19,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.UUID
 
-class PeriodeConverter(private val repository: PeriodeRepository) {
-    fun convertResultRowToPeriode(resultRow: ResultRow): Periode {
-        val periodeId = resultRow[PeriodeTable.periodeId]
-        val identitetsnummer = resultRow[PeriodeTable.identitetsnummer]
-        val startetId = resultRow[PeriodeTable.startetId]
-        val avsluttetId = resultRow[PeriodeTable.avsluttetId]
-
-        val startetMetadata = repository.hentMetadata(startetId) ?: throw Error("Fant ikke startet metadata")
-        val avsluttetMetadata = avsluttetId?.let { repository.hentMetadata(it) }
-
-        return Periode(
-            periodeId,
-            identitetsnummer,
-            startetMetadata,
-            avsluttetMetadata
-        )
-    }
-}
-
 class PeriodeRepository(private val database: Database) {
     fun hentPeriode(periodeId: UUID): Periode? =
         transaction(database) {
             PeriodeTable.select { PeriodeTable.periodeId eq periodeId }.singleOrNull()?.let { resultRow ->
-                PeriodeConverter(this@PeriodeRepository).convertResultRowToPeriode(resultRow)
+                PeriodeConverter(this@PeriodeRepository).konverterResultRowToPeriode(resultRow)
             }
         }
 
@@ -83,12 +64,12 @@ class PeriodeRepository(private val database: Database) {
         }
     }
 
-    fun opprettPeriode(arbeidssoekerPeriode: Periode) {
+    fun opprettPeriode(periode: Periode) {
         transaction {
-            val startetId = settInnMetadata(arbeidssoekerPeriode.startet)
-            val avsluttetId = arbeidssoekerPeriode.avsluttet?.let { settInnMetadata(it) }
+            val startetId = settInnMetadata(periode.startet)
+            val avsluttetId = periode.avsluttet?.let { settInnMetadata(it) }
 
-            settInnPeriode(arbeidssoekerPeriode.id, arbeidssoekerPeriode.identitetsnummer, startetId, avsluttetId)
+            settInnPeriode(periode.id, periode.identitetsnummer, startetId, avsluttetId)
         }
     }
 
@@ -166,5 +147,24 @@ class PeriodeRepository(private val database: Database) {
                 it[PeriodeTable.avsluttetId] = avsluttetMetadataId
             }
         }
+    }
+}
+
+class PeriodeConverter(private val repository: PeriodeRepository) {
+    fun konverterResultRowToPeriode(resultRow: ResultRow): Periode {
+        val periodeId = resultRow[PeriodeTable.periodeId]
+        val identitetsnummer = resultRow[PeriodeTable.identitetsnummer]
+        val startetId = resultRow[PeriodeTable.startetId]
+        val avsluttetId = resultRow[PeriodeTable.avsluttetId]
+
+        val startetMetadata = repository.hentMetadata(startetId) ?: throw Error("Fant ikke startet metadata")
+        val avsluttetMetadata = avsluttetId?.let { repository.hentMetadata(it) }
+
+        return Periode(
+            periodeId,
+            identitetsnummer,
+            startetMetadata,
+            avsluttetMetadata
+        )
     }
 }
