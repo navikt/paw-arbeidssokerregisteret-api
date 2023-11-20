@@ -14,6 +14,7 @@ import no.nav.paw.arbeidssokerregisteret.api.domain.response.BeskrivelseMedDetal
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BeskrivelseResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BrukerResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BrukerTypeResponse
+import no.nav.paw.arbeidssokerregisteret.api.domain.response.HelseResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.JaNeiVetIkkeResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.MetadataResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.SituasjonResponse
@@ -195,10 +196,12 @@ class SituasjonConverter {
         } ?: throw RuntimeException("Fant ikke utdanning")
     }
 
-    private fun hentHelseResponse(helseId: Long): JaNeiVetIkkeResponse {
+    private fun hentHelseResponse(helseId: Long): HelseResponse {
         return HelseTable.select { HelseTable.id eq helseId }
             .singleOrNull()?.let { helseResultRow ->
-            JaNeiVetIkkeResponse.valueOf(helseResultRow[HelseTable.helsetilstandHindrerArbeid].name)
+            HelseResponse(
+                helseTilstandHindrerArbeid = JaNeiVetIkkeResponse.valueOf(helseResultRow[HelseTable.helsetilstandHindrerArbeid].name)
+            )
         } ?: throw RuntimeException("Fant ikke helse")
     }
 

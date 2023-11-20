@@ -41,6 +41,10 @@ data class ArbeidserfaringResponse(
     val harHattArbeid: JaNeiVetIkkeResponse
 )
 
+data class HelseResponse(
+    val helseTilstandHindrerArbeid: JaNeiVetIkkeResponse
+)
+
 data class UtdanningResponse(
     val lengde: UtdanningsnivaaResponse,
     val bestaatt: JaNeiVetIkkeResponse,
@@ -56,7 +60,7 @@ data class SituasjonResponse(
     val periodeId: UUID,
     val sendtInnAv: MetadataResponse,
     val utdanning: UtdanningResponse,
-    val helse: JaNeiVetIkkeResponse,
+    val helse: HelseResponse,
     val arbeidserfaring: ArbeidserfaringResponse,
     val arbeidssokersituasjon: List<BeskrivelseMedDetaljerResponse>
 )
