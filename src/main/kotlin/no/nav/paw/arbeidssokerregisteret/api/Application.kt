@@ -43,6 +43,7 @@ fun Application.module() {
     thread {
         try {
             dependencies.periodeConsumer.start()
+            dependencies.situasjonConsumer.start()
         } catch (e: Exception) {
             logger.error("Consumer error: ${e.message}", e)
             exitProcess(1)

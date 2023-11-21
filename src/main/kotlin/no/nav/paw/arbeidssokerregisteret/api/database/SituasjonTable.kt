@@ -7,8 +7,9 @@ import no.nav.paw.arbeidssokerregisteret.api.v1.Utdanningsnivaa
 import org.jetbrains.exposed.dao.id.LongIdTable
 
 object SituasjonTable : LongIdTable("situasjon") {
+    val situasjonId = uuid("situasjon_id")
     val periodeId = uuid("periode_id").references(PeriodeTable.periodeId)
-    val sendtInnAv = long("sendt_inn_av_id").references(MetadataTable.utfoertAvId)
+    val sendtInnAvId = long("sendt_inn_av_id").references(MetadataTable.utfoertAvId)
     val utdanningId = long("utdanning_id").references(UtdanningTable.id)
     val helseId = long("helse_id").references(HelseTable.id)
     val arbeidserfaringId = long("arbeidserfaring_id").references(ArbeidserfaringTable.id)
@@ -28,7 +29,7 @@ object ArbeidserfaringTable : LongIdTable("arbeidserfaring") {
     val harHattArbeid = customEnumeration("har_hatt_arbeid", "JaNeiVetIkke", { value -> JaNeiVetIkke.valueOf(value as String) }, { PGEnum("JaNeiVetIkke", it) })
 }
 
-object BeskrivelseMedDetaljerTable : LongIdTable("beskrivelsemeddetaljer") {
+object BeskrivelseMedDetaljerTable : LongIdTable("beskrivelse_med_detaljer") {
     val situasjonId = long("situasjon_id").references(SituasjonTable.id)
 }
 

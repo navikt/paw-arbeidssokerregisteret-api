@@ -23,11 +23,14 @@ class SituasjonRepositoryTest : StringSpec({
 
     lateinit var dataSource: DataSource
     lateinit var database: Database
+    val periodeId1: UUID = UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1feb")
+    val periodeId2: UUID = UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1fec")
 
     beforeSpec {
         dataSource = initTestDatabase()
         database = Database.connect(dataSource)
-        settInnTestPeriode(database)
+        settInnTestPeriode(database, periodeId1)
+        settInnTestPeriode(database, periodeId2)
     }
 
     afterSpec {
@@ -36,7 +39,7 @@ class SituasjonRepositoryTest : StringSpec({
 
     "Opprett og hent ut en situasjon" {
         val repository = SituasjonRepository(database)
-        val situasjonBesvarelse = lagTestSituasjonBesvarelse()
+        val situasjonBesvarelse = lagTestSituasjonBesvarelse(periodeId1)
         repository.opprettSituasjon(situasjonBesvarelse)
 
         val retrievedSituasjonBesvarelser = repository.hentSituasjoner(situasjonBesvarelse.periodeId)
@@ -46,12 +49,12 @@ class SituasjonRepositoryTest : StringSpec({
 
     "Opprett og hent ut flere situasjoner" {
         val repository = SituasjonRepository(database)
-        val situasjonBesvarelse1 = lagTestSituasjonBesvarelse()
-        val situasjonBesvarelse2 = lagTestSituasjonBesvarelse()
+        val situasjonBesvarelse1 = lagTestSituasjonBesvarelse(periodeId2)
+        val situasjonBesvarelse2 = lagTestSituasjonBesvarelse(periodeId2)
         repository.opprettSituasjon(situasjonBesvarelse1)
         repository.opprettSituasjon(situasjonBesvarelse2)
 
-        val retrievedSituasjonBesvarelser = repository.hentSituasjoner(situasjonBesvarelse1.periodeId)
+        val retrievedSituasjonBesvarelser = repository.hentSituasjoner(periodeId2)
 
         retrievedSituasjonBesvarelser.size shouldBe 2
     }
@@ -59,27 +62,27 @@ class SituasjonRepositoryTest : StringSpec({
     "Hent ut en ikke-eksisterende situasjon" {
         val repository = SituasjonRepository(database)
 
-        val retrievedSituasjonBesvarelse = repository.hentSituasjon(UUID.randomUUID())
+        val retrievedSituasjonBesvarelse = repository.hentSituasjoner(UUID.randomUUID())
 
-        retrievedSituasjonBesvarelse shouldBe null
+        retrievedSituasjonBesvarelse.size shouldBe 0
     }
 })
 
-fun settInnTestPeriode(database: Database) {
+fun settInnTestPeriode(database: Database, periodeId: UUID) {
     val periodeRepository = PeriodeRepository(database)
-    val periode = hentTestPeriode(UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1feb"))
+    val periode = hentTestPeriode(periodeId)
     periodeRepository.opprettPeriode(periode)
 }
 
-fun lagTestSituasjonBesvarelse() =
+fun lagTestSituasjonBesvarelse(periodeId: UUID) =
     Situasjon(
         UUID.randomUUID(),
-        UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1feb"),
+        periodeId,
         Metadata(
             Instant.now(),
             Bruker(
                 BrukerType.SYSTEM,
-                "012345678911"
+                "12345678911"
             ),
             "test",
             "test"

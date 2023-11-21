@@ -29,3 +29,5 @@ kafka:
   consumers:
     arbeidssokerperioder:
       topic: paw-arbeidssokerperioder-v1
+    arbeidssokersituasjon:
+      topic: paw-arbeidssokersituasjon-v1

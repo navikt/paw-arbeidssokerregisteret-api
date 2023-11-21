@@ -9,6 +9,7 @@ import no.nav.paw.arbeidssokerregisteret.api.database.HelseTable
 import no.nav.paw.arbeidssokerregisteret.api.database.MetadataTable
 import no.nav.paw.arbeidssokerregisteret.api.database.SituasjonTable
 import no.nav.paw.arbeidssokerregisteret.api.database.UtdanningTable
+import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidserfaringResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BeskrivelseMedDetaljerResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BeskrivelseResponse
@@ -23,8 +24,6 @@ import no.nav.paw.arbeidssokerregisteret.api.domain.response.UtdanningsnivaaResp
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 import no.nav.paw.arbeidssokerregisteret.api.v1.Arbeidserfaring
 import no.nav.paw.arbeidssokerregisteret.api.v1.Beskrivelse
-import no.nav.paw.arbeidssokerregisteret.api.v1.Bruker
-import no.nav.paw.arbeidssokerregisteret.api.v1.BrukerType
 import no.nav.paw.arbeidssokerregisteret.api.v1.Helse
 import no.nav.paw.arbeidssokerregisteret.api.v1.JaNeiVetIkke
 import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
@@ -40,12 +39,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 class SituasjonRepository(private val database: Database) {
-    fun hentSituasjon(periodeId: UUID): SituasjonResponse? =
-        transaction(database) {
-            SituasjonTable.select { SituasjonTable.periodeId eq periodeId }.singleOrNull()?.let { resultRow ->
-                SituasjonConverter().konverterTilSituasjonResponse(resultRow)
-            }
-        }
 
     fun hentSituasjoner(periodeId: UUID): List<SituasjonResponse> =
         transaction(database) {
@@ -78,18 +71,25 @@ class SituasjonRepository(private val database: Database) {
         }
     }
 
+    fun hentSituasjonerTilhoerendeSistePeriode(identitetsnummer: Identitetsnummer) {
+        transaction(database) {
+            val sistePeriodeId = PeriodeRepository(database).hentSistePeriodeIdMedIdentitetsnummer(identitetsnummer)
+            sistePeriodeId?.let { periodeId ->
+                SituasjonTable.select {
+                    SituasjonTable.periodeId eq periodeId
+                }.map { resultRow ->
+                    SituasjonConverter().konverterTilSituasjonResponse(resultRow)
+                }
+            }
+        }
+    }
+
     private fun settInnMetadata(metadata: Metadata): Long =
         MetadataTable.insertAndGetId {
             it[tidspunkt] = metadata.tidspunkt
-            it[utfoertAvId] = settInnBruker(metadata.utfoertAv)
+            it[utfoertAvId] = PeriodeRepository(database).settInnBruker(metadata.utfoertAv)
             it[kilde] = metadata.kilde
             it[aarsak] = metadata.aarsak
-        }.value
-
-    private fun settInnBruker(bruker: Bruker): Long =
-        BrukerTable.insertAndGetId {
-            it[type] = BrukerType.valueOf(bruker.type.name)
-            it[brukerId] = bruker.id
         }.value
 
     private fun settInnUtdanning(utdanning: Utdanning): Long =
@@ -117,8 +117,9 @@ class SituasjonRepository(private val database: Database) {
         arbeidserfaringId: Long
     ): Long =
         SituasjonTable.insertAndGetId {
+            it[situasjonId] = situasjon.id
             it[periodeId] = situasjon.periodeId
-            it[sendtInnAv] = sendtInnAvId
+            it[SituasjonTable.sendtInnAvId] = sendtInnAvId
             it[SituasjonTable.utdanningId] = utdanningId
             it[SituasjonTable.helseId] = helseId
             it[SituasjonTable.arbeidserfaringId] = arbeidserfaringId
@@ -147,15 +148,19 @@ class SituasjonRepository(private val database: Database) {
 class SituasjonConverter {
     fun konverterTilSituasjonResponse(resultRow: ResultRow): SituasjonResponse {
         val periodeId = resultRow[SituasjonTable.periodeId]
-        val situasjonId = resultRow[SituasjonTable.id]
+        val situasjonIdPK = resultRow[SituasjonTable.id]
+        val situasjonId = resultRow[SituasjonTable.situasjonId]
+        val sendtInnAvId = resultRow[SituasjonTable.sendtInnAvId]
+        val utdanningId = resultRow[SituasjonTable.utdanningId]
 
-        val sendtInnAvMetadata = hentMetadataResponse(resultRow[SituasjonTable.sendtInnAv])
-        val utdanning = hentUtdanningResponse(resultRow[SituasjonTable.utdanningId])
+        val sendtInnAvMetadata = hentMetadataResponse(sendtInnAvId)
+        val utdanning = hentUtdanningResponse(utdanningId)
         val helse = hentHelseResponse(resultRow[SituasjonTable.helseId])
         val arbeidserfaring = hentArbeidserfaringResponse(resultRow[SituasjonTable.arbeidserfaringId])
-        val beskrivelseMedDetaljer = hentBeskrivelseMedDetaljerResponse(situasjonId.value)
+        val beskrivelseMedDetaljer = hentBeskrivelseMedDetaljerResponse(situasjonIdPK.value)
 
         return SituasjonResponse(
+            situasjonId = situasjonId,
             periodeId = periodeId,
             sendtInnAv = sendtInnAvMetadata,
             utdanning = utdanning,
@@ -166,7 +171,7 @@ class SituasjonConverter {
     }
 
     private fun hentMetadataResponse(metadataId: Long): MetadataResponse {
-        return MetadataTable.select { MetadataTable.utfoertAvId eq metadataId }
+        return MetadataTable.select { MetadataTable.id eq metadataId }
             .singleOrNull()?.let { metadataResultRow ->
             val utfoertAvId = metadataResultRow[MetadataTable.utfoertAvId]
             val bruker = BrukerTable.select { BrukerTable.id eq utfoertAvId }

@@ -57,6 +57,7 @@ data class BeskrivelseMedDetaljerResponse(
 )
 
 data class SituasjonResponse(
+    val situasjonId: UUID,
     val periodeId: UUID,
     val sendtInnAv: MetadataResponse,
     val utdanning: UtdanningResponse,

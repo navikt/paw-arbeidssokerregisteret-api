@@ -27,7 +27,8 @@ data class KafkaConfig(
 )
 
 data class KafkaConsumers(
-    val arbeidssokerperioder: KafkaConsumer
+    val arbeidssokerperioder: KafkaConsumer,
+    val arbeidssokersituasjon: KafkaConsumer
 )
 
 data class KafkaConsumer(

@@ -28,3 +28,5 @@ kafka:
   consumers:
     arbeidssokerperioder:
       topic: ${KAFKA_CONSUMER_ARBEIDSSOKERPERIODER_TOPIC}
+    arbeidssokersituasjon:
+      topic: ${KAFKA_CONSUMER_ARBEIDSSOKERSITUASJON_TOPIC}

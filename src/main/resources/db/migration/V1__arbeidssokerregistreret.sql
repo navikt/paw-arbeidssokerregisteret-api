@@ -79,6 +79,7 @@ CREATE TABLE arbeidserfaring
 CREATE TABLE situasjon
 (
     id BIGSERIAL PRIMARY KEY,
+    situasjon_id UUID NOT NULL,
     periode_id UUID REFERENCES periode(periode_id),
     sendt_inn_av_id BIGINT REFERENCES metadata(id),
     utdanning_id BIGINT REFERENCES utdanning(id),
