@@ -9,7 +9,6 @@ import no.nav.paw.arbeidssokerregisteret.api.database.HelseTable
 import no.nav.paw.arbeidssokerregisteret.api.database.MetadataTable
 import no.nav.paw.arbeidssokerregisteret.api.database.SituasjonTable
 import no.nav.paw.arbeidssokerregisteret.api.database.UtdanningTable
-import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidserfaringResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BeskrivelseMedDetaljerResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.BeskrivelseResponse
@@ -46,15 +45,6 @@ class SituasjonRepository(private val database: Database) {
             }.map { resultRow ->
                 SituasjonConverter().konverterTilSituasjonResponse(resultRow)
             }
-        }
-
-    fun hentSituasjonerTilhoerendeSistePeriode(identitetsnummer: Identitetsnummer): SituasjonResponse =
-        transaction(database) {
-            val sistePeriodeId = PeriodeRepository(database).hentSistePeriodeIdMedIdentitetsnummer(identitetsnummer)
-
-            SituasjonTable.select { SituasjonTable.periodeId eq sistePeriodeId }.firstOrNull()?.let {
-                SituasjonConverter().konverterTilSituasjonResponse(it)
-            } ?: throw RuntimeException("Fant ikke situasjon tilhørende siste periode: $sistePeriodeId")
         }
 
     fun opprettSituasjon(situasjon: Situasjon) {

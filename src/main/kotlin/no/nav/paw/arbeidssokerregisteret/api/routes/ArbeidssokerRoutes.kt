@@ -10,11 +10,13 @@ import io.ktor.server.routing.get
 import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
 import no.nav.paw.arbeidssokerregisteret.api.services.AutorisasjonService
 import no.nav.paw.arbeidssokerregisteret.api.services.PeriodeService
+import no.nav.paw.arbeidssokerregisteret.api.services.SituasjonService
 import no.nav.paw.arbeidssokerregisteret.api.utils.getNavAnsatt
 import no.nav.paw.arbeidssokerregisteret.api.utils.getPidClaim
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
+import java.util.UUID
 
-fun Route.arbeidssokerRoutes(periodeService: PeriodeService, autorisasjonService: AutorisasjonService) {
+fun Route.arbeidssokerRoutes(autorisasjonService: AutorisasjonService, periodeService: PeriodeService, situasjonService: SituasjonService) {
     route("/api/v1") {
         authenticate("tokenx") {
             route("/arbeidssokerperioder") {
@@ -28,6 +30,19 @@ fun Route.arbeidssokerRoutes(periodeService: PeriodeService, autorisasjonService
                     logger.info("Hentet arbeidssøkerperioder for bruker")
 
                     call.respond(HttpStatusCode.OK, arbeidssoekerperioder)
+                }
+            }
+            route("/arbeidssokersituasjon/{periodeId}") {
+                get {
+                    val periodeId = UUID.fromString(call.parameters["periodeId"])
+
+                    logger.info("Henter arbeidssøkersituasjoner for bruker med periodeId: $periodeId")
+
+                    val arbeidssoekerSituasjon = situasjonService.hentSituasjoner(periodeId)
+
+                    logger.info("Hentet arbeidssøkersituasjoner for bruker med periodeId: $periodeId")
+
+                    call.respond(HttpStatusCode.OK, arbeidssoekerSituasjon)
                 }
             }
         }
@@ -49,10 +64,32 @@ fun Route.arbeidssokerRoutes(periodeService: PeriodeService, autorisasjonService
                     call.respond(HttpStatusCode.OK, arbeidssoekerperioder)
                 }
             }
+            route("/veileder/arbeidssokersituasjoner") {
+                post {
+                    val (identitetsnummer, periodeId) = call.receive<ArbeidssokersituasjonRequest>()
+
+                    val navAnsatt = call.getNavAnsatt()
+
+                    val harNavAnsattTilgangTilBruker = autorisasjonService.verifiserTilgangTilBruker(navAnsatt, identitetsnummer)
+
+                    if (!harNavAnsattTilgangTilBruker) {
+                        return@post call.respond(HttpStatusCode.Forbidden)
+                    }
+
+                    val arbeidssoekerSituasjon = situasjonService.hentSituasjoner(periodeId)
+
+                    call.respond(HttpStatusCode.OK, arbeidssoekerSituasjon)
+                }
+            }
         }
     }
 }
 
 data class ArbeidssokerperiodeRequest(
     val identitetsnummer: Identitetsnummer
+)
+
+data class ArbeidssokersituasjonRequest(
+    val identitetsnummer: Identitetsnummer,
+    val periodeId: UUID
 )

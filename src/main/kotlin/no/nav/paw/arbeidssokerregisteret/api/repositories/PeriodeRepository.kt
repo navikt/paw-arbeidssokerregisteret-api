@@ -42,15 +42,6 @@ class PeriodeRepository(private val database: Database) {
             }
         }
 
-    fun hentSistePeriodeIdMedIdentitetsnummer(identitetsnummer: Identitetsnummer): UUID =
-        transaction(database) {
-            PeriodeTable.select {
-                PeriodeTable.identitetsnummer eq identitetsnummer.verdi
-            }.map {
-                it[PeriodeTable.periodeId]
-            }.lastOrNull() ?: throw Error("Fant ikke periodeId for identitetsnummer $identitetsnummer")
-        }
-
     fun hentMetadata(id: Long): Metadata? {
         return MetadataTable.select { MetadataTable.id eq id }.singleOrNull()?.let { metadata ->
             val brukerId = metadata[MetadataTable.utfoertAvId]

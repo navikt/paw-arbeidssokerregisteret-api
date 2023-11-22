@@ -61,6 +61,6 @@ fun Application.module() {
     routing {
         healthRoutes(dependencies.registry)
         swaggerRoutes()
-        arbeidssokerRoutes(dependencies.periodeService, dependencies.autorisasjonService)
+        arbeidssokerRoutes(dependencies.autorisasjonService, dependencies.periodeService, dependencies.situasjonService)
     }
 }
