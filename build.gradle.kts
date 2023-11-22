@@ -16,6 +16,7 @@ val tokenSupportVersion = "3.1.5"
 val koTestVersion = "5.7.2"
 val hopliteVersion = "2.7.5"
 val exposedVersion = "0.44.0"
+val poaoVersion = "2023.11.14_13.53-b10eb7528eda"
 val ktorVersion = pawObservability.versions.ktor
 
 repositories {
@@ -48,11 +49,12 @@ dependencies {
     implementation("no.nav.security:token-client-core:$tokenSupportVersion")
     implementation("no.nav.common:token-client:$navCommonModulesVersion")
     implementation("no.nav.common:log:$navCommonModulesVersion")
+    implementation("no.nav.common:audit-log:$navCommonModulesVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
     implementation("com.sksamuel.hoplite:hoplite-core:$hopliteVersion")
     implementation("com.sksamuel.hoplite:hoplite-yaml:$hopliteVersion")
-
+    implementation("com.github.navikt.poao-tilgang:client:$poaoVersion")
     // Kafka
     implementation("org.apache.kafka:kafka-clients:3.6.0")
     implementation("org.apache.avro:avro:1.11.1")

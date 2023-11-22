@@ -3,7 +3,8 @@ package no.nav.paw.arbeidssokerregisteret.api.config
 data class Config(
     val authProviders: List<AuthProvider>,
     val database: DatabaseConfig,
-    val kafka: KafkaConfig
+    val kafka: KafkaConfig,
+    val poaoClientConfig: ServiceClientConfig
 )
 
 data class AuthProvider(
@@ -33,6 +34,11 @@ data class KafkaConsumers(
 
 data class KafkaConsumer(
     val topic: String
+)
+
+data class ServiceClientConfig(
+    val url: String,
+    val scope: String
 )
 
 data class DatabaseConfig(

@@ -42,13 +42,13 @@ class PeriodeRepository(private val database: Database) {
             }
         }
 
-    fun hentSistePeriodeIdMedIdentitetsnummer(identitetsnummer: Identitetsnummer): UUID? =
+    fun hentSistePeriodeIdMedIdentitetsnummer(identitetsnummer: Identitetsnummer): UUID =
         transaction(database) {
             PeriodeTable.select {
                 PeriodeTable.identitetsnummer eq identitetsnummer.verdi
             }.map {
                 it[PeriodeTable.periodeId]
-            }.lastOrNull()
+            }.lastOrNull() ?: throw Error("Fant ikke periodeId for identitetsnummer $identitetsnummer")
         }
 
     fun hentMetadata(id: Long): Metadata? {
@@ -82,7 +82,7 @@ class PeriodeRepository(private val database: Database) {
         }
     }
 
-    private fun settInnMetadata(metadata: Metadata): Long {
+    fun settInnMetadata(metadata: Metadata): Long {
         return MetadataTable.insertAndGetId {
             it[utfoertAvId] = settInnBruker(metadata.utfoertAv)
             it[tidspunkt] = metadata.tidspunkt
@@ -91,7 +91,7 @@ class PeriodeRepository(private val database: Database) {
         }.value
     }
 
-    fun settInnBruker(bruker: Bruker): Long {
+    private fun settInnBruker(bruker: Bruker): Long {
         val eksisterendeBruker = BrukerTable.select { BrukerTable.brukerId eq bruker.id and (BrukerTable.type eq bruker.type) }.singleOrNull()
         return if (eksisterendeBruker != null) {
             eksisterendeBruker[BrukerTable.id].value

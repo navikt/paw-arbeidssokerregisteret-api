@@ -16,6 +16,9 @@ authProviders:
       map:
         - NAVident
       combineWithOr: false
+poaoClientConfig:
+  url: http://localhost:8090
+  scope: api://test.test.poao-tilgang/.default
 database:
   host: localhost
   port: 5432

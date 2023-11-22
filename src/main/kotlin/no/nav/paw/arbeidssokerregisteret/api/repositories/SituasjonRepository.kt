@@ -26,7 +26,6 @@ import no.nav.paw.arbeidssokerregisteret.api.v1.Arbeidserfaring
 import no.nav.paw.arbeidssokerregisteret.api.v1.Beskrivelse
 import no.nav.paw.arbeidssokerregisteret.api.v1.Helse
 import no.nav.paw.arbeidssokerregisteret.api.v1.JaNeiVetIkke
-import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
 import no.nav.paw.arbeidssokerregisteret.api.v1.Situasjon
 import no.nav.paw.arbeidssokerregisteret.api.v1.Utdanning
 import no.nav.paw.arbeidssokerregisteret.api.v1.Utdanningsnivaa
@@ -49,10 +48,19 @@ class SituasjonRepository(private val database: Database) {
             }
         }
 
+    fun hentSituasjonerTilhoerendeSistePeriode(identitetsnummer: Identitetsnummer): SituasjonResponse =
+        transaction(database) {
+            val sistePeriodeId = PeriodeRepository(database).hentSistePeriodeIdMedIdentitetsnummer(identitetsnummer)
+
+            SituasjonTable.select { SituasjonTable.periodeId eq sistePeriodeId }.firstOrNull()?.let {
+                SituasjonConverter().konverterTilSituasjonResponse(it)
+            } ?: throw RuntimeException("Fant ikke situasjon tilhørende siste periode: $sistePeriodeId")
+        }
+
     fun opprettSituasjon(situasjon: Situasjon) {
         transaction(database) {
             try {
-                val sendtInnAvId = settInnMetadata(situasjon.sendtInnAv)
+                val sendtInnAvId = PeriodeRepository(database).settInnMetadata(situasjon.sendtInnAv)
                 val utdanningId = settInnUtdanning(situasjon.utdanning)
                 val helseId = settInnHelse(situasjon.helse)
                 val arbeidserfaringId = settInnArbeidserfaring(situasjon.arbeidserfaring)
@@ -70,27 +78,6 @@ class SituasjonRepository(private val database: Database) {
             }
         }
     }
-
-    fun hentSituasjonerTilhoerendeSistePeriode(identitetsnummer: Identitetsnummer) {
-        transaction(database) {
-            val sistePeriodeId = PeriodeRepository(database).hentSistePeriodeIdMedIdentitetsnummer(identitetsnummer)
-            sistePeriodeId?.let { periodeId ->
-                SituasjonTable.select {
-                    SituasjonTable.periodeId eq periodeId
-                }.map { resultRow ->
-                    SituasjonConverter().konverterTilSituasjonResponse(resultRow)
-                }
-            }
-        }
-    }
-
-    private fun settInnMetadata(metadata: Metadata): Long =
-        MetadataTable.insertAndGetId {
-            it[tidspunkt] = metadata.tidspunkt
-            it[utfoertAvId] = PeriodeRepository(database).settInnBruker(metadata.utfoertAv)
-            it[kilde] = metadata.kilde
-            it[aarsak] = metadata.aarsak
-        }.value
 
     private fun settInnUtdanning(utdanning: Utdanning): Long =
         UtdanningTable.insertAndGetId {
@@ -179,7 +166,7 @@ class SituasjonConverter {
                 BrukerResponse(
                     type = BrukerTypeResponse.valueOf(brukerResultRow[BrukerTable.type].name)
                 )
-            } ?: throw RuntimeException("Fant ikke bruker")
+            } ?: throw RuntimeException("Fant ikke bruker: $utfoertAvId")
 
             MetadataResponse(
                 tidspunkt = metadataResultRow[MetadataTable.tidspunkt],
@@ -187,7 +174,7 @@ class SituasjonConverter {
                 kilde = metadataResultRow[MetadataTable.kilde],
                 aarsak = metadataResultRow[MetadataTable.aarsak]
             )
-        } ?: throw RuntimeException("Fant ikke metadata")
+        } ?: throw RuntimeException("Fant ikke metadata $metadataId")
     }
 
     private fun hentUtdanningResponse(utdanningId: Long): UtdanningResponse {
@@ -198,7 +185,7 @@ class SituasjonConverter {
                 bestaatt = JaNeiVetIkkeResponse.valueOf(utdanningResultRow[UtdanningTable.bestaatt].name),
                 godkjent = JaNeiVetIkkeResponse.valueOf(utdanningResultRow[UtdanningTable.godkjent].name)
             )
-        } ?: throw RuntimeException("Fant ikke utdanning")
+        } ?: throw RuntimeException("Fant ikke utdanning: $utdanningId")
     }
 
     private fun hentHelseResponse(helseId: Long): HelseResponse {
@@ -207,7 +194,7 @@ class SituasjonConverter {
             HelseResponse(
                 helseTilstandHindrerArbeid = JaNeiVetIkkeResponse.valueOf(helseResultRow[HelseTable.helsetilstandHindrerArbeid].name)
             )
-        } ?: throw RuntimeException("Fant ikke helse")
+        } ?: throw RuntimeException("Fant ikke helse: $helseId")
     }
 
     private fun hentArbeidserfaringResponse(arbeidserfaringId: Long): ArbeidserfaringResponse {
@@ -216,7 +203,7 @@ class SituasjonConverter {
             ArbeidserfaringResponse(
                 harHattArbeid = JaNeiVetIkkeResponse.valueOf(arbeidserfaringResultRow[ArbeidserfaringTable.harHattArbeid].name)
             )
-        } ?: throw RuntimeException("Fant ikke arbeidserfaring")
+        } ?: throw RuntimeException("Fant ikke arbeidserfaring: $arbeidserfaringId")
     }
 
     private fun hentBeskrivelseMedDetaljerResponse(situasjonId: Long): List<BeskrivelseMedDetaljerResponse> {
@@ -236,7 +223,7 @@ class SituasjonConverter {
         return BeskrivelseTable.select { BeskrivelseTable.beskrivelseMedDetaljerId eq beskrivelseMedDetaljerId }
             .singleOrNull()?.let { beskrivelse ->
             BeskrivelseResponse.valueOf(beskrivelse[BeskrivelseTable.beskrivelse].name)
-        } ?: throw RuntimeException("Fant ikke beskrivelse")
+        } ?: throw RuntimeException("Fant ikke beskrivelse: $beskrivelseMedDetaljerId")
     }
 
     private fun hentDetaljerResponse(beskrivelseId: Long): Map<String, String> {
