@@ -1,0 +1,11 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: paw-arbeidssokerregisteret-api
+  namespace: paw
+  labels:
+    team: paw
+spec:
+  image: {{ image }}
+  #image: europe-north1-docker.pkg.dev/nais-management-id/myteam/myapplication:2023.05.10-06.50-sha
+  #       ^--- interpolated from the ${{ env.docker_image }} variable in the action

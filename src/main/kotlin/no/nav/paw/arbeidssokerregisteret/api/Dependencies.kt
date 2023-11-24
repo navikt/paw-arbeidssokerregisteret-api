@@ -42,8 +42,8 @@ fun createDependencies(config: Config): Dependencies {
     val periodeService = PeriodeService(periodeRepository)
     val periodeConsumer =
         PeriodeConsumer(
-            config.kafka.consumers.arbeidssokerperioder.topic,
-            createKafkaConsumerConfig(config.kafka),
+            config.kafka.periodeTopic,
+            config.kafka.createKafkaConsumerConfig(),
             periodeService
         )
 
@@ -52,8 +52,8 @@ fun createDependencies(config: Config): Dependencies {
     val situasjonService = SituasjonService(situasjonRepository)
     val situasjonConsumer =
         SituasjonConsumer(
-            config.kafka.consumers.arbeidssokersituasjon.topic,
-            createKafkaConsumerConfig(config.kafka),
+            config.kafka.arbeidssokerOpplysningerTopic,
+            config.kafka.createKafkaConsumerConfig(),
             situasjonService
         )
 
