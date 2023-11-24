@@ -25,6 +25,7 @@ fun createDependencies(config: Config): Dependencies {
     val database = Database.connect(dataSource)
 
     val tokenService = TokenService(
+        // TODO: Her må vi hente ut azure config
         config.authProviders[0]
     )
 
