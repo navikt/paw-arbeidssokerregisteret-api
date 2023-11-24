@@ -20,22 +20,6 @@ data class Claims(
     val combineWithOr: Boolean = false
 )
 
-data class KafkaConfig(
-    val brokerUrl: String,
-    val consumerGroupId: String,
-    val consumers: KafkaConsumers,
-    val schemaRegistryUrl: String
-)
-
-data class KafkaConsumers(
-    val arbeidssokerperioder: KafkaConsumer,
-    val arbeidssokersituasjon: KafkaConsumer
-)
-
-data class KafkaConsumer(
-    val topic: String
-)
-
 data class ServiceClientConfig(
     val url: String,
     val scope: String
