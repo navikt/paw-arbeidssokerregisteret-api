@@ -54,6 +54,7 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
     implementation("com.sksamuel.hoplite:hoplite-core:$hopliteVersion")
     implementation("com.sksamuel.hoplite:hoplite-yaml:$hopliteVersion")
+    implementation("com.sksamuel.hoplite:hoplite-toml:$hopliteVersion")
     implementation("com.github.navikt.poao-tilgang:client:$poaoVersion")
     // Kafka
     implementation("org.apache.kafka:kafka-clients:3.6.0")

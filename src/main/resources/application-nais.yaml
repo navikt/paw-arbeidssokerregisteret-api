@@ -22,11 +22,16 @@ database:
   password: ${NAIS_DATABASE_PAW_ARBEIDSSOKERREGISTERET_API_ARBEIDSSOKERREGISTERET_PASSWORD}
   name: ${NAIS_DATABASE_PAW_ARBEIDSSOKERREGISTERET_API_ARBEIDSSOKERREGISTERET_DATABASE}
 kafka:
-  brokerUrl: ${KAFKA_BROKERS}
-  consumerGroupId: paw-arbeidssokerregisteret-api-v1
-  schemaRegistryUrl: ${KAFKA_SCHEMA_REGISTRY}
-  consumers:
-    arbeidssokerperioder:
-      topic: ${KAFKA_CONSUMER_ARBEIDSSOKERPERIODER_TOPIC}
-    arbeidssokersituasjon:
-      topic: ${KAFKA_CONSUMER_ARBEIDSSOKERSITUASJON_TOPIC}
+  gruppeId: paw.arbeidssokerregisteret-soek-api-v1
+  periodeTopic: paw.arbeidssokerperioder-beta-v1
+  arbeidssokerOpplysningerTopic: paw.arbeidssoker-situasjon-beta-v1
+  serverConfig:
+      autentisering: SSL
+      kafkaBrokers: ${KAFKA_BROKERS}
+      keystorePath: ${KAFKA_KEYSTORE_PATH}
+      credstorePassword: ${KAFKA_CREDSTORE_PASSWORD}
+      truststorePath: ${KAFKA_TRUSTSTORE_PATH}
+  schemaRegistryConfig:
+      url: ${KAFKA_SCHEMA_REGISTRY}
+      bruker: ${KAFKA_SCHEMA_REGISTRY_USER}
+      passord: ${KAFKA_SCHEMA_REGISTRY_PASSWORD}

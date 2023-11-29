@@ -16,7 +16,7 @@ data class KafkaConfig(
     val periodeTopic: String,
     val arbeidssokerOpplysningerTopic: String,
     val gruppeId: String,
-    val serverKonfigurasjon: KafkaServerConfig,
+    val serverConfig: KafkaServerConfig,
     val schemaRegistryConfig: SchemaRegistryConfig
 )
 
@@ -24,7 +24,7 @@ val KafkaConfig.properties
     get(): Map<String, Any?> = mapOf(
         ConsumerConfig.GROUP_ID_CONFIG to gruppeId,
         ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
-        ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to serverKonfigurasjon.kafkaBrokers,
+        ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to serverConfig.kafkaBrokers,
         KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG to schemaRegistryConfig.url,
         KafkaAvroSerializerConfig.AUTO_REGISTER_SCHEMAS to schemaRegistryConfig.autoRegistrerSchema,
         ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java.name,
@@ -38,18 +38,18 @@ val KafkaConfig.properties
                 SchemaRegistryClientConfig.USER_INFO_CONFIG to "${schemaRegistryConfig.bruker}:${schemaRegistryConfig.passord}"
             )
         } ?: emptyMap<String, Any?>()
-        ) + if (serverKonfigurasjon.autentisering.equals("SSL", true)) {
+        ) + if (serverConfig.autentisering.equals("SSL", true)) {
         mapOf(
             CommonClientConfigs.SECURITY_PROTOCOL_CONFIG to "SSL",
-            SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG to serverKonfigurasjon.keystorePath,
-            SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG to serverKonfigurasjon.credstorePassword,
-            SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG to serverKonfigurasjon.truststorePath,
-            SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG to serverKonfigurasjon.credstorePassword
+            SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG to serverConfig.keystorePath,
+            SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG to serverConfig.credstorePassword,
+            SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG to serverConfig.truststorePath,
+            SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG to serverConfig.credstorePassword
         )
     } else {
         emptyMap()
     }
 
-fun <T : SpecificRecord> KafkaConfig.createKafkaConsumerConfig(): KafkaConsumer<String, T> {
+fun <T : SpecificRecord> KafkaConfig.createKafkaConsumer(): KafkaConsumer<String, T> {
     return KafkaConsumer<String, T>(properties)
 }

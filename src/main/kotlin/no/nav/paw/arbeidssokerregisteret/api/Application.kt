@@ -21,8 +21,12 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 fun main() {
+    // Konfigurasjon
+    val config = loadConfiguration<Config>()
+    // Avhengigheter
+    val dependencies = createDependencies(config)
     val server =
-        embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+        embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = { module(dependencies, config) })
             .start(wait = true)
 
     server.addShutdownHook {
@@ -30,13 +34,7 @@ fun main() {
     }
 }
 
-fun Application.module() {
-    // Konfigurasjon
-    val config = loadConfiguration<Config>()
-
-    // Avhengigheter
-    val dependencies = createDependencies(config)
-
+fun Application.module(dependencies: Dependencies, config: Config) {
     // Kjør migration på database
     migrateDatabase(dependencies.dataSource)
 

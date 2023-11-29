@@ -26,11 +26,11 @@ database:
   password: admin
   name: arbeidssokerregisteret
 kafka:
-  brokerUrl: localhost:9092
-  consumerGroupId: arbeidssokerregisteret-api
-  schemaRegistryUrl: http://localhost:8082
-  consumers:
-    arbeidssokerperioder:
-      topic: paw-arbeidssokerperioder-v1
-    arbeidssokersituasjon:
-      topic: paw-arbeidssokersituasjon-v1
+  gruppeId: paw.arbeidssokerregisteret-soek-api-v1
+  periodeTopic: paw.arbeidssokerperioder-beta-v1
+  arbeidssokerOpplysningerTopic: paw.arbeidssoker-situasjon-beta-v1
+  serverConfig:
+    autentisering: PLAIN
+    kafkaBrokers: localhost:9092
+  schemaRegistryConfig:
+    url: localhost:8082

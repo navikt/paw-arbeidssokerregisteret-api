@@ -3,7 +3,7 @@ package no.nav.paw.arbeidssokerregisteret.api
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import no.nav.paw.arbeidssokerregisteret.api.config.Config
-import no.nav.paw.arbeidssokerregisteret.api.config.createKafkaConsumerConfig
+import no.nav.paw.arbeidssokerregisteret.api.config.createKafkaConsumer
 import no.nav.paw.arbeidssokerregisteret.api.kafka.consumers.PeriodeConsumer
 import no.nav.paw.arbeidssokerregisteret.api.kafka.consumers.SituasjonConsumer
 import no.nav.paw.arbeidssokerregisteret.api.repositories.PeriodeRepository
@@ -44,7 +44,7 @@ fun createDependencies(config: Config): Dependencies {
     val periodeConsumer =
         PeriodeConsumer(
             config.kafka.periodeTopic,
-            config.kafka.createKafkaConsumerConfig(),
+            config.kafka.createKafkaConsumer(),
             periodeService
         )
 
@@ -54,7 +54,7 @@ fun createDependencies(config: Config): Dependencies {
     val situasjonConsumer =
         SituasjonConsumer(
             config.kafka.arbeidssokerOpplysningerTopic,
-            config.kafka.createKafkaConsumerConfig(),
+            config.kafka.createKafkaConsumer(),
             situasjonService
         )
 

@@ -53,13 +53,13 @@ fun Route.arbeidssokerRoutes(autorisasjonService: AutorisasjonService, periodeSe
 
                     val navAnsatt = call.getNavAnsatt()
 
-                    val harNavAnsattTilgangTilBruker = autorisasjonService.verifiserTilgangTilBruker(navAnsatt, identitesnummer)
+                    val harNavAnsattTilgangTilBruker = autorisasjonService.verifiserTilgangTilBruker(navAnsatt, Identitetsnummer(identitesnummer))
 
                     if (!harNavAnsattTilgangTilBruker) {
                         return@post call.respond(HttpStatusCode.Forbidden)
                     }
 
-                    val arbeidssoekerperioder = periodeService.hentPerioder(identitesnummer)
+                    val arbeidssoekerperioder = periodeService.hentPerioder(Identitetsnummer(identitesnummer))
 
                     call.respond(HttpStatusCode.OK, arbeidssoekerperioder)
                 }
@@ -86,7 +86,7 @@ fun Route.arbeidssokerRoutes(autorisasjonService: AutorisasjonService, periodeSe
 }
 
 data class ArbeidssokerperiodeRequest(
-    val identitetsnummer: Identitetsnummer
+    val identitetsnummer: String
 )
 
 data class ArbeidssokersituasjonRequest(
