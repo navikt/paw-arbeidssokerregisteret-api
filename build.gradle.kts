@@ -104,6 +104,10 @@ tasks.named("generateAvroProtocol", GenerateAvroProtocolTask::class.java) {
     source(zipTree(schema.singleFile))
 }
 
+tasks.named("compileTestKotlin") {
+    dependsOn("generateTestAvroJava")
+}
+
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
