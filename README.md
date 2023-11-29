@@ -36,6 +36,10 @@ Logg inn i tokenx-token-generator med test-id med din nye dolly bruker
 
 Gå til https://tokenx-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp:paw:paw-arbeidssokerregisteret-api
 
+* For `/veileder` endepunkter.
+
+Logg inn med trygdeetatenbruker på https://azure-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp:paw:paw-arbeidssokerregisteret-api
+
 4) Gjør kall mot API-et
 
 Bruk `access_token` i "Token Response" (fra steg 3) til å gjøre forespørsler mot https://arbeidssokerregisteret.intern.dev.nav.no
@@ -98,7 +102,7 @@ Start app med `./gradlew run` eller start via intellij
 
 For å kalle APIet lokalt må man være autentisert med et Bearer token.
 
-Vi benytter mock-ouath2-server til å utstede tokens på lokal maskin. Følgende steg kan benyttes til å generere opp et token:
+Vi benytter mock-oauth2-server til å utstede tokens på lokal maskin. Følgende steg kan benyttes til å generere opp et token:
 
 1. Sørg for at containeren for mock-oauth2-server kjører lokalt (docker-compose up -d)
 2. Naviger til [mock-oauth2-server sin side for debugging av tokens](http://localhost:8081/default/debugger)
@@ -108,6 +112,14 @@ Vi benytter mock-ouath2-server til å utstede tokens på lokal maskin. Følgende
 
 ```json
 { "acr": "Level4", "pid": "18908396568" }
+```
+
+For veileder:
+```json
+{
+  "oid": "989f736f-14db-45dc-b8d1-94d621dbf2bb",
+  "NAVident": "test"
+}
 ```
 
 6. Trykk Sign in

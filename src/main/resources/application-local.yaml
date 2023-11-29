@@ -16,6 +16,9 @@ authProviders:
       map:
         - NAVident
       combineWithOr: false
+poaoClientConfig:
+  url: http://localhost:8090/poao-tilgang/
+  scope: api://test.test.poao-tilgang/.default
 database:
   host: localhost
   port: 5432
@@ -23,9 +26,11 @@ database:
   password: admin
   name: arbeidssokerregisteret
 kafka:
-  brokerUrl: localhost:9092
-  consumerGroupId: arbeidssokerregisteret-api
-  schemaRegistryUrl: http://localhost:8082
-  consumers:
-    arbeidssokerperioder:
-      topic: paw-arbeidssokerperioder-v1
+  gruppeId: paw.arbeidssokerregisteret-soek-api-v1
+  periodeTopic: paw.arbeidssokerperioder-beta-v1
+  arbeidssokerOpplysningerTopic: paw.arbeidssoker-situasjon-beta-v1
+  serverConfig:
+    autentisering: PLAIN
+    kafkaBrokers: localhost:9092
+  schemaRegistryConfig:
+    url: localhost:8082

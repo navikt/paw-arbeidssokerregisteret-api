@@ -1,15 +1,15 @@
 package no.nav.paw.arbeidssokerregisteret.api.kafka.consumers
 
-import no.nav.paw.arbeidssokerregisteret.api.services.ArbeidssokerperiodeService
+import no.nav.paw.arbeidssokerregisteret.api.services.PeriodeService
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
 
-class ArbeidssokerperiodeConsumer(
+class PeriodeConsumer(
     private val topic: String,
     private val consumer: KafkaConsumer<String, Periode>,
-    private val arbeidssokerperiodeService: ArbeidssokerperiodeService
+    private val periodeService: PeriodeService
 ) {
     fun start() {
         logger.info("Lytter på topic $topic")
@@ -19,8 +19,8 @@ class ArbeidssokerperiodeConsumer(
             consumer.poll(Duration.ofMillis(500)).forEach { post ->
                 try {
                     logger.trace("Mottok melding fra $topic med offset ${post.offset()} partition ${post.partition()}")
-                    val arbeidssokerperiode = post.value()
-                    arbeidssokerperiodeService.opprettEllerOppdaterArbeidssokerperiode(arbeidssokerperiode)
+                    val arbeidssoekerperiode = post.value()
+                    periodeService.opprettEllerOppdaterPeriode(arbeidssoekerperiode)
 
                     consumer.commitSync()
                 } catch (error: Exception) {

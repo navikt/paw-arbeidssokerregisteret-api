@@ -8,7 +8,7 @@ metadata:
 spec:
   image: {{ image }}
   ingresses:
-    - https://arbeidssokerregisteret.intern.dev.nav.no
+    - https://arbeidssokerregisteret-api.intern.dev.nav.no
   port: 8080
   azure:
     application:
@@ -22,8 +22,6 @@ spec:
   kafka:
     pool: nav-dev
   env:
-    - name: KAFKA_CONSUMER_ARBEIDSSOKERPERIODER_TOPIC
-      value: paw.arbeidssokerperioder-beta-v1
     - name: OTEL_METRICS_EXPORTER
       value: "none"
     - name: OTEL_TRACES_EXPORTER
@@ -50,9 +48,14 @@ spec:
       rules:
         - application: tokenx-token-generator
           namespace: aura
-          cluster: dev-gcp
+        - application: azure-token-generator
+          namespace: aura
+    outbound:
+      rules:
+        - application: poao-tilgang
+          namespace: poao
   gcp:
     sqlInstances:
       - type: POSTGRES_14
         databases:
-          - name: arbeidssokerregisteret
+          - name: arbeidssokerregisteretapi

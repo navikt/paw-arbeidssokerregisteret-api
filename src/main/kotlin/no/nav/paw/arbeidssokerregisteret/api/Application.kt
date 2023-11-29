@@ -21,8 +21,12 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 fun main() {
+    // Konfigurasjon
+    val config = loadConfiguration<Config>()
+    // Avhengigheter
+    val dependencies = createDependencies(config)
     val server =
-        embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+        embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = { module(dependencies, config) })
             .start(wait = true)
 
     server.addShutdownHook {
@@ -30,19 +34,14 @@ fun main() {
     }
 }
 
-fun Application.module() {
-    // Konfigurasjon
-    val config = loadConfiguration<Config>()
-
-    // Avhengigheter
-    val dependencies = createDependencies(config)
-
+fun Application.module(dependencies: Dependencies, config: Config) {
     // Kjør migration på database
     migrateDatabase(dependencies.dataSource)
 
     thread {
         try {
-            dependencies.arbeidssokerperiodeConsumer.start()
+            dependencies.periodeConsumer.start()
+            dependencies.situasjonConsumer.start()
         } catch (e: Exception) {
             logger.error("Consumer error: ${e.message}", e)
             exitProcess(1)
@@ -60,6 +59,6 @@ fun Application.module() {
     routing {
         healthRoutes(dependencies.registry)
         swaggerRoutes()
-        arbeidssokerRoutes(dependencies.arbeidssokerperiodeService)
+        arbeidssokerRoutes(dependencies.autorisasjonService, dependencies.periodeService, dependencies.situasjonService)
     }
 }

@@ -3,7 +3,8 @@ package no.nav.paw.arbeidssokerregisteret.api.config
 data class Config(
     val authProviders: List<AuthProvider>,
     val database: DatabaseConfig,
-    val kafka: KafkaConfig
+    val kafka: KafkaConfig,
+    val poaoClientConfig: ServiceClientConfig
 )
 
 data class AuthProvider(
@@ -19,25 +20,10 @@ data class Claims(
     val combineWithOr: Boolean = false
 )
 
-data class KafkaConfig(
-    val brokerUrl: String,
-    val consumerGroupId: String,
-    val consumers: KafkaConsumers,
-    val schemaRegistryUrl: String
-)
-
-data class KafkaConsumers(
-    val arbeidssokerperioder: KafkaConsumer
-)
-
-data class KafkaConsumer(
-    val topic: String
-)
-
-/*data class ServiceClientConfig(
+data class ServiceClientConfig(
     val url: String,
     val scope: String
-)*/
+)
 
 data class DatabaseConfig(
     val host: String,
