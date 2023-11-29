@@ -22,11 +22,9 @@ fun ApplicationCall.getPidClaim(): Identitetsnummer =
     getClaim("tokenx", "pid")?.toIdentitetsnummer()
         ?: throw StatusException(HttpStatusCode.Forbidden, "Fant ikke 'pid'-claim i token fra tokenx-issuer")
 
-private fun ApplicationCall.getNavAnsattAzureId(): String =
-    getClaim("azure", "oid") ?: throw StatusException(HttpStatusCode.Forbidden, "Fant ikke 'oid'-claim i token fra azure-issuer")
+private fun ApplicationCall.getNavAnsattAzureId(): String = getClaim("azure", "oid") ?: throw StatusException(HttpStatusCode.Forbidden, "Fant ikke 'oid'-claim i token fra azure-issuer")
 
-private fun ApplicationCall.getNavAnsattIdent(): String =
-    getClaim("azure", "NAVident") ?: throw StatusException(HttpStatusCode.Forbidden, "Fant ikke 'NAVident'-claim i token fra azure-issuer")
+private fun ApplicationCall.getNavAnsattIdent(): String = getClaim("azure", "NAVident") ?: throw StatusException(HttpStatusCode.Forbidden, "Fant ikke 'NAVident'-claim i token fra azure-issuer")
 
 fun ApplicationCall.getNavAnsatt(): NavAnsatt =
     NavAnsatt(

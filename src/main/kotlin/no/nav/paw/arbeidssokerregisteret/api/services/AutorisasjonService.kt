@@ -10,10 +10,14 @@ import no.nav.poao_tilgang.client.PoaoTilgangCachedClient
 class AutorisasjonService(
     val poaoTilgangHttpClient: PoaoTilgangCachedClient
 ) {
-    fun verifiserTilgangTilBruker(navAnsatt: NavAnsatt, identitetsnummer: Identitetsnummer): Boolean {
-        val harNavAnsattTilgang = poaoTilgangHttpClient.evaluatePolicy(
-            NavAnsattNavIdentLesetilgangTilEksternBrukerPolicyInput(navAnsatt.azureId, identitetsnummer.verdi)
-        ).getOrThrow().isPermit
+    fun verifiserTilgangTilBruker(
+        navAnsatt: NavAnsatt,
+        identitetsnummer: Identitetsnummer
+    ): Boolean {
+        val harNavAnsattTilgang =
+            poaoTilgangHttpClient.evaluatePolicy(
+                NavAnsattNavIdentLesetilgangTilEksternBrukerPolicyInput(navAnsatt.azureId, identitetsnummer.verdi)
+            ).getOrThrow().isPermit
 
         if (!harNavAnsattTilgang) {
             logger.info("NAV-ansatt har ikke tilgang til bruker")

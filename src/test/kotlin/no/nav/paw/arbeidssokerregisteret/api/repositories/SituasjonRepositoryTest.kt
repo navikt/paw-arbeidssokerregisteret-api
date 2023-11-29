@@ -68,7 +68,10 @@ class SituasjonRepositoryTest : StringSpec({
     }
 })
 
-fun settInnTestPeriode(database: Database, periodeId: UUID) {
+fun settInnTestPeriode(
+    database: Database,
+    periodeId: UUID
+) {
     val periodeRepository = PeriodeRepository(database)
     val periode = hentTestPeriode(periodeId)
     periodeRepository.opprettPeriode(periode)
@@ -110,7 +113,6 @@ fun lagTestSituasjonBesvarelse(periodeId: UUID) =
                 )
             )
         )
-
     )
 
 fun hentMapAvDetaljer(): Map<String, String> {

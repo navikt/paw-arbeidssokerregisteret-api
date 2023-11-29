@@ -11,7 +11,11 @@ inline val <reified T : Any> T.logger get() = LoggerFactory.getLogger(T::class.j
 
 inline val autitLogger get() = LoggerFactory.getLogger("AuditLogger")
 
-fun auditLogMelding(identitetsnummer: Identitetsnummer, navAnsatt: NavAnsatt, melding: String): String =
+fun auditLogMelding(
+    identitetsnummer: Identitetsnummer,
+    navAnsatt: NavAnsatt,
+    melding: String
+): String =
     CefMessage.builder()
         .applicationName("paw-arbeidssokerregisteret-api")
         .event(CefMessageEvent.ACCESS)

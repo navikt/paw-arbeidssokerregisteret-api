@@ -34,7 +34,10 @@ fun main() {
     }
 }
 
-fun Application.module(dependencies: Dependencies, config: Config) {
+fun Application.module(
+    dependencies: Dependencies,
+    config: Config
+) {
     // Kjør migration på database
     migrateDatabase(dependencies.dataSource)
 

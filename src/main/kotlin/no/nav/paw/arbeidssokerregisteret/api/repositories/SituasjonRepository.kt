@@ -37,7 +37,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 class SituasjonRepository(private val database: Database) {
-
     fun hentSituasjoner(periodeId: UUID): List<SituasjonResponse> =
         transaction(database) {
             SituasjonTable.select {
@@ -107,13 +106,19 @@ class SituasjonRepository(private val database: Database) {
             it[BeskrivelseMedDetaljerTable.situasjonId] = situasjonId
         }.value
 
-    private fun settInnBeskrivelse(beskrivelse: Beskrivelse, beskrivelseMedDetaljerId: Long): Long =
+    private fun settInnBeskrivelse(
+        beskrivelse: Beskrivelse,
+        beskrivelseMedDetaljerId: Long
+    ): Long =
         BeskrivelseTable.insertAndGetId {
             it[BeskrivelseTable.beskrivelse] = Beskrivelse.valueOf(beskrivelse.name)
             it[BeskrivelseTable.beskrivelseMedDetaljerId] = beskrivelseMedDetaljerId
         }.value
 
-    private fun settInnDetaljer(beskrivelseId: Long, detalj: Map.Entry<String, String>) {
+    private fun settInnDetaljer(
+        beskrivelseId: Long,
+        detalj: Map.Entry<String, String>
+    ) {
         DetaljerTable.insert {
             it[DetaljerTable.beskrivelseId] = beskrivelseId
             it[noekkel] = detalj.key
@@ -150,50 +155,51 @@ class SituasjonConverter {
     private fun hentMetadataResponse(metadataId: Long): MetadataResponse {
         return MetadataTable.select { MetadataTable.id eq metadataId }
             .singleOrNull()?.let { metadataResultRow ->
-            val utfoertAvId = metadataResultRow[MetadataTable.utfoertAvId]
-            val bruker = BrukerTable.select { BrukerTable.id eq utfoertAvId }
-                .singleOrNull()?.let { brukerResultRow ->
-                BrukerResponse(
-                    type = BrukerTypeResponse.valueOf(brukerResultRow[BrukerTable.type].name)
-                )
-            } ?: throw RuntimeException("Fant ikke bruker: $utfoertAvId")
+                val utfoertAvId = metadataResultRow[MetadataTable.utfoertAvId]
+                val bruker =
+                    BrukerTable.select { BrukerTable.id eq utfoertAvId }
+                        .singleOrNull()?.let { brukerResultRow ->
+                            BrukerResponse(
+                                type = BrukerTypeResponse.valueOf(brukerResultRow[BrukerTable.type].name)
+                            )
+                        } ?: throw RuntimeException("Fant ikke bruker: $utfoertAvId")
 
-            MetadataResponse(
-                tidspunkt = metadataResultRow[MetadataTable.tidspunkt],
-                utfoertAv = bruker,
-                kilde = metadataResultRow[MetadataTable.kilde],
-                aarsak = metadataResultRow[MetadataTable.aarsak]
-            )
-        } ?: throw RuntimeException("Fant ikke metadata $metadataId")
+                MetadataResponse(
+                    tidspunkt = metadataResultRow[MetadataTable.tidspunkt],
+                    utfoertAv = bruker,
+                    kilde = metadataResultRow[MetadataTable.kilde],
+                    aarsak = metadataResultRow[MetadataTable.aarsak]
+                )
+            } ?: throw RuntimeException("Fant ikke metadata $metadataId")
     }
 
     private fun hentUtdanningResponse(utdanningId: Long): UtdanningResponse {
         return UtdanningTable.select { UtdanningTable.id eq utdanningId }
             .singleOrNull()?.let { utdanningResultRow ->
-            UtdanningResponse(
-                lengde = UtdanningsnivaaResponse.valueOf(utdanningResultRow[UtdanningTable.lengde].name),
-                bestaatt = JaNeiVetIkkeResponse.valueOf(utdanningResultRow[UtdanningTable.bestaatt].name),
-                godkjent = JaNeiVetIkkeResponse.valueOf(utdanningResultRow[UtdanningTable.godkjent].name)
-            )
-        } ?: throw RuntimeException("Fant ikke utdanning: $utdanningId")
+                UtdanningResponse(
+                    lengde = UtdanningsnivaaResponse.valueOf(utdanningResultRow[UtdanningTable.lengde].name),
+                    bestaatt = JaNeiVetIkkeResponse.valueOf(utdanningResultRow[UtdanningTable.bestaatt].name),
+                    godkjent = JaNeiVetIkkeResponse.valueOf(utdanningResultRow[UtdanningTable.godkjent].name)
+                )
+            } ?: throw RuntimeException("Fant ikke utdanning: $utdanningId")
     }
 
     private fun hentHelseResponse(helseId: Long): HelseResponse {
         return HelseTable.select { HelseTable.id eq helseId }
             .singleOrNull()?.let { helseResultRow ->
-            HelseResponse(
-                helseTilstandHindrerArbeid = JaNeiVetIkkeResponse.valueOf(helseResultRow[HelseTable.helsetilstandHindrerArbeid].name)
-            )
-        } ?: throw RuntimeException("Fant ikke helse: $helseId")
+                HelseResponse(
+                    helseTilstandHindrerArbeid = JaNeiVetIkkeResponse.valueOf(helseResultRow[HelseTable.helsetilstandHindrerArbeid].name)
+                )
+            } ?: throw RuntimeException("Fant ikke helse: $helseId")
     }
 
     private fun hentArbeidserfaringResponse(arbeidserfaringId: Long): ArbeidserfaringResponse {
         return ArbeidserfaringTable.select { ArbeidserfaringTable.id eq arbeidserfaringId }
             .singleOrNull()?.let { arbeidserfaringResultRow ->
-            ArbeidserfaringResponse(
-                harHattArbeid = JaNeiVetIkkeResponse.valueOf(arbeidserfaringResultRow[ArbeidserfaringTable.harHattArbeid].name)
-            )
-        } ?: throw RuntimeException("Fant ikke arbeidserfaring: $arbeidserfaringId")
+                ArbeidserfaringResponse(
+                    harHattArbeid = JaNeiVetIkkeResponse.valueOf(arbeidserfaringResultRow[ArbeidserfaringTable.harHattArbeid].name)
+                )
+            } ?: throw RuntimeException("Fant ikke arbeidserfaring: $arbeidserfaringId")
     }
 
     private fun hentBeskrivelseMedDetaljerResponse(situasjonId: Long): List<BeskrivelseMedDetaljerResponse> {
@@ -212,8 +218,8 @@ class SituasjonConverter {
     private fun hentBeskrivelseResponse(beskrivelseMedDetaljerId: Long): BeskrivelseResponse {
         return BeskrivelseTable.select { BeskrivelseTable.beskrivelseMedDetaljerId eq beskrivelseMedDetaljerId }
             .singleOrNull()?.let { beskrivelse ->
-            BeskrivelseResponse.valueOf(beskrivelse[BeskrivelseTable.beskrivelse].name)
-        } ?: throw RuntimeException("Fant ikke beskrivelse: $beskrivelseMedDetaljerId")
+                BeskrivelseResponse.valueOf(beskrivelse[BeskrivelseTable.beskrivelse].name)
+            } ?: throw RuntimeException("Fant ikke beskrivelse: $beskrivelseMedDetaljerId")
     }
 
     private fun hentDetaljerResponse(beskrivelseId: Long): Map<String, String> {

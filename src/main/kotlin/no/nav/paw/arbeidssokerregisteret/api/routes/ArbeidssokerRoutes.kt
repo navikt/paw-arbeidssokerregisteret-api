@@ -16,7 +16,11 @@ import no.nav.paw.arbeidssokerregisteret.api.utils.getPidClaim
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 import java.util.UUID
 
-fun Route.arbeidssokerRoutes(autorisasjonService: AutorisasjonService, periodeService: PeriodeService, situasjonService: SituasjonService) {
+fun Route.arbeidssokerRoutes(
+    autorisasjonService: AutorisasjonService,
+    periodeService: PeriodeService,
+    situasjonService: SituasjonService
+) {
     route("/api/v1") {
         authenticate("tokenx") {
             route("/arbeidssokerperioder") {

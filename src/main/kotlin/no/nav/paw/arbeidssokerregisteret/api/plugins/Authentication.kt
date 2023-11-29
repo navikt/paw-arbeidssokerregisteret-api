@@ -15,13 +15,13 @@ fun Application.configureAuthentication(authProviders: List<AuthProvider>) {
                 name = authProvider.name,
                 requiredClaims = RequiredClaims(authProvider.name, authProvider.claims.map.toTypedArray(), authProvider.claims.combineWithOr),
                 config =
-                TokenSupportConfig(
-                    IssuerConfig(
-                        name = authProvider.name,
-                        discoveryUrl = authProvider.discoveryUrl,
-                        acceptedAudience = listOf(authProvider.clientId)
+                    TokenSupportConfig(
+                        IssuerConfig(
+                            name = authProvider.name,
+                            discoveryUrl = authProvider.discoveryUrl,
+                            acceptedAudience = listOf(authProvider.clientId)
+                        )
                     )
-                )
             )
         }
     }

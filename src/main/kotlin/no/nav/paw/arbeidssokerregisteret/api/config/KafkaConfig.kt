@@ -21,34 +21,36 @@ data class KafkaConfig(
 )
 
 val KafkaConfig.properties
-    get(): Map<String, Any?> = mapOf(
-        ConsumerConfig.GROUP_ID_CONFIG to gruppeId,
-        ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
-        ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to serverConfig.kafkaBrokers,
-        KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG to schemaRegistryConfig.url,
-        KafkaAvroSerializerConfig.AUTO_REGISTER_SCHEMAS to schemaRegistryConfig.autoRegistrerSchema,
-        ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java.name,
-        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to KafkaAvroDeserializer::class.java,
-        KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG to true,
-        KafkaAvroSerializerConfig.VALUE_SUBJECT_NAME_STRATEGY to RecordNameStrategy::class.java.name
-    ) + (
-        schemaRegistryConfig.bruker?.let {
-            mapOf(
-                SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
-                SchemaRegistryClientConfig.USER_INFO_CONFIG to "${schemaRegistryConfig.bruker}:${schemaRegistryConfig.passord}"
-            )
-        } ?: emptyMap<String, Any?>()
-        ) + if (serverConfig.autentisering.equals("SSL", true)) {
+    get(): Map<String, Any?> =
         mapOf(
-            CommonClientConfigs.SECURITY_PROTOCOL_CONFIG to "SSL",
-            SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG to serverConfig.keystorePath,
-            SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG to serverConfig.credstorePassword,
-            SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG to serverConfig.truststorePath,
-            SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG to serverConfig.credstorePassword
-        )
-    } else {
-        emptyMap()
-    }
+            ConsumerConfig.GROUP_ID_CONFIG to gruppeId,
+            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
+            ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to serverConfig.kafkaBrokers,
+            KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG to schemaRegistryConfig.url,
+            KafkaAvroSerializerConfig.AUTO_REGISTER_SCHEMAS to schemaRegistryConfig.autoRegistrerSchema,
+            ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java.name,
+            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to KafkaAvroDeserializer::class.java,
+            KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG to true,
+            KafkaAvroSerializerConfig.VALUE_SUBJECT_NAME_STRATEGY to RecordNameStrategy::class.java.name
+        ) + (
+            schemaRegistryConfig.bruker?.let {
+                mapOf(
+                    SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
+                    SchemaRegistryClientConfig.USER_INFO_CONFIG to "${schemaRegistryConfig.bruker}:${schemaRegistryConfig.passord}"
+                )
+            } ?: emptyMap<String, Any?>()
+        ) +
+            if (serverConfig.autentisering.equals("SSL", true)) {
+                mapOf(
+                    CommonClientConfigs.SECURITY_PROTOCOL_CONFIG to "SSL",
+                    SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG to serverConfig.keystorePath,
+                    SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG to serverConfig.credstorePassword,
+                    SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG to serverConfig.truststorePath,
+                    SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG to serverConfig.credstorePassword
+                )
+            } else {
+                emptyMap()
+            }
 
 fun <T : SpecificRecord> KafkaConfig.createKafkaConsumer(): KafkaConsumer<String, T> {
     return KafkaConsumer<String, T>(properties)

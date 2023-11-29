@@ -26,12 +26,13 @@ fun createDependencies(config: Config): Dependencies {
 
     val tokenService = config.authProviders.find { it.name == "azure" }?.let(::TokenService) ?: throw RuntimeException("azure provider ikke funnet")
 
-    val poaoTilgangHttpClient = PoaoTilgangCachedClient(
-        PoaoTilgangHttpClient(
-            config.poaoClientConfig.url,
-            { tokenService.createMachineToMachineToken(config.poaoClientConfig.scope) }
+    val poaoTilgangHttpClient =
+        PoaoTilgangCachedClient(
+            PoaoTilgangHttpClient(
+                config.poaoClientConfig.url,
+                { tokenService.createMachineToMachineToken(config.poaoClientConfig.scope) }
+            )
         )
-    )
 
     val autorisasjonService = AutorisasjonService(poaoTilgangHttpClient)
 

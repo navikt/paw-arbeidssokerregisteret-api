@@ -13,28 +13,32 @@ class TokenService(config: AuthProvider) {
         return aadMachineToMachineTokenClient.createMachineToMachineToken(scope)
     }
 
-    private val aadMachineToMachineTokenClient = when (System.getenv("NAIS_CLUSTER_NAME")) {
-        "prod-gcp", "dev-gcp" -> AzureAdTokenClientBuilder.builder()
-            .withNaisDefaults()
-            .buildMachineToMachineTokenClient()
+    private val aadMachineToMachineTokenClient =
+        when (System.getenv("NAIS_CLUSTER_NAME")) {
+            "prod-gcp", "dev-gcp" ->
+                AzureAdTokenClientBuilder.builder()
+                    .withNaisDefaults()
+                    .buildMachineToMachineTokenClient()
 
-        else -> AzureAdTokenClientBuilder.builder()
-            .withClientId(config.clientId)
-            .withPrivateJwk(createMockRSAKey("azure"))
-            .withTokenEndpointUrl(config.tokenEndpointUrl)
-            .buildMachineToMachineTokenClient()
-    }
+            else ->
+                AzureAdTokenClientBuilder.builder()
+                    .withClientId(config.clientId)
+                    .withPrivateJwk(createMockRSAKey("azure"))
+                    .withTokenEndpointUrl(config.tokenEndpointUrl)
+                    .buildMachineToMachineTokenClient()
+        }
 }
 
-fun createMockRSAKey(keyID: String): String? = KeyPairGenerator
-    .getInstance("RSA").let {
-        it.initialize(2048)
-        it.generateKeyPair()
-    }.let {
-        RSAKey.Builder(it.public as RSAPublicKey)
-            .privateKey(it.private as RSAPrivateKey)
-            .keyUse(KeyUse.SIGNATURE)
-            .keyID(keyID)
-            .build()
-            .toJSONString()
-    }
+fun createMockRSAKey(keyID: String): String? =
+    KeyPairGenerator
+        .getInstance("RSA").let {
+            it.initialize(2048)
+            it.generateKeyPair()
+        }.let {
+            RSAKey.Builder(it.public as RSAPublicKey)
+                .privateKey(it.private as RSAPrivateKey)
+                .keyUse(KeyUse.SIGNATURE)
+                .keyID(keyID)
+                .build()
+                .toJSONString()
+        }
