@@ -22,8 +22,6 @@ spec:
   kafka:
     pool: nav-dev
   env:
-    - name: KAFKA_CONSUMER_ARBEIDSSOKERPERIODER_TOPIC
-      value: paw.arbeidssokerperioder-beta-v1
     - name: OTEL_METRICS_EXPORTER
       value: "none"
     - name: OTEL_TRACES_EXPORTER
