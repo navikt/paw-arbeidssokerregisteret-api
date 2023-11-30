@@ -10,6 +10,18 @@ paths:
     get:
       description: ""
       responses:
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
         "200":
           description: "OK"
           content:
@@ -17,7 +29,91 @@ paths:
               schema:
                 type: "array"
                 items:
-                  $ref: "#/components/schemas/Arbeidssokerperiode"
+                  $ref: "#/components/schemas/PeriodeResponse"
+  /api/v1/arbeidssokersituasjon/{periodeId}:
+    get:
+      description: ""
+      parameters:
+      - name: "periodeId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/SituasjonResponse"
+  /api/v1/veileder/arbeidssokerperioder:
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/ArbeidssokerperiodeRequest"
+        required: true
+      responses:
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/PeriodeResponse"
+  /api/v1/veileder/arbeidssokersituasjoner:
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/ArbeidssokersituasjonRequest"
+        required: true
+      responses:
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/SituasjonResponse"
   /internal/isAlive:
     get:
       description: ""
@@ -56,12 +152,136 @@ paths:
                 type: "string"
 components:
   schemas:
-    Arbeidssokerperiode:
+    Instant:
+      type: "object"
+      properties: {}
+    BrukerResponse:
+      type: "object"
+      properties:
+        type:
+          type: "string"
+          enum:
+          - "UKJENT_VERDI"
+          - "UDEFINERT"
+          - "VEILEDER"
+          - "SYSTEM"
+          - "SLUTTBRUKER"
+    MetadataResponse:
+      type: "object"
+      properties:
+        tidspunkt:
+          $ref: "#/components/schemas/Instant"
+        utfoertAv:
+          $ref: "#/components/schemas/BrukerResponse"
+        kilde:
+          type: "string"
+        aarsak:
+          type: "string"
+    PeriodeResponse:
       type: "object"
       properties:
         startet:
-          type: "string"
-          format: "date-time"
+          $ref: "#/components/schemas/MetadataResponse"
         avsluttet:
+          $ref: "#/components/schemas/MetadataResponse"
+    UtdanningResponse:
+      type: "object"
+      properties:
+        lengde:
           type: "string"
-          format: "date-time"
+          enum:
+          - "UKJENT_VERDI"
+          - "UDEFINERT"
+          - "INGEN_UTDANNING"
+          - "GRUNNSKOLE"
+          - "VIDEREGAENDE_GRUNNUTDANNING"
+          - "VIDEREGAENDE_FAGBREV_SVENNEBREV"
+          - "HOYERE_UTDANNING_1_TIL_4"
+          - "HOYERE_UTDANNING_5_ELLER_MER"
+        bestaatt:
+          type: "string"
+          enum:
+          - "JA"
+          - "NEI"
+          - "VET_IKKE"
+        godkjent:
+          type: "string"
+          enum:
+          - "JA"
+          - "NEI"
+          - "VET_IKKE"
+    HelseResponse:
+      type: "object"
+      properties:
+        helseTilstandHindrerArbeid:
+          type: "string"
+          enum:
+          - "JA"
+          - "NEI"
+          - "VET_IKKE"
+    ArbeidserfaringResponse:
+      type: "object"
+      properties:
+        harHattArbeid:
+          type: "string"
+          enum:
+          - "JA"
+          - "NEI"
+          - "VET_IKKE"
+    BeskrivelseMedDetaljerResponse:
+      type: "object"
+      properties:
+        beskrivelse:
+          type: "string"
+          enum:
+          - "UKJENT_VERDI"
+          - "UDEFINERT"
+          - "HAR_SAGT_OPP"
+          - "HAR_BLITT_SAGT_OPP"
+          - "ER_PERMITTERT"
+          - "ALDRI_HATT_JOBB"
+          - "IKKE_VAERT_I_JOBB_SISTE_2_AAR"
+          - "AKKURAT_FULLFORT_UTDANNING"
+          - "VIL_BYTTE_JOBB"
+          - "USIKKER_JOBBSITUASJON"
+          - "MIDLERTIDIG_JOBB"
+          - "DELTIDSJOBB_VIL_MER"
+          - "NY_JOBB"
+          - "KONKURS"
+          - "ANNET"
+        detaljer:
+          type: "string"
+    SituasjonResponse:
+      type: "object"
+      properties:
+        situasjonId:
+          type: "string"
+          format: "uuid"
+        periodeId:
+          type: "string"
+          format: "uuid"
+        sendtInnAv:
+          $ref: "#/components/schemas/MetadataResponse"
+        utdanning:
+          $ref: "#/components/schemas/UtdanningResponse"
+        helse:
+          $ref: "#/components/schemas/HelseResponse"
+        arbeidserfaring:
+          $ref: "#/components/schemas/ArbeidserfaringResponse"
+        arbeidssokersituasjon:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/BeskrivelseMedDetaljerResponse"
+    ArbeidssokerperiodeRequest:
+      type: "object"
+      properties:
+        identitetsnummer:
+          type: "string"
+    ArbeidssokersituasjonRequest:
+      type: "object"
+      properties:
+        identitetsnummer:
+          type: "string"
+        periodeId:
+          type: "string"
+          format: "uuid"
