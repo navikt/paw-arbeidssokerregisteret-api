@@ -4,7 +4,7 @@ REST-api for arbeidssokerregisteret
 
 ## Dokumentasjon for API
 
-https://arbeidssokerregisteret.intern.dev.nav.no/docs
+https://arbeidssokerregisteret-api.intern.dev.nav.no/docs
 
 ## Flytdiagram
 
