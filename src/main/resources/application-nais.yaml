@@ -23,7 +23,7 @@ database:
   name: ${NAIS_DATABASE_PAW_ARBEIDSSOKERREGISTERET_API_ARBEIDSSOKERREGISTERETAPI_DATABASE}
 poaoClientConfig:
   url: http://poao-tilgang.poao.svc.cluster.local
-  scope: api://prod-gcp.poao.poao-tilgang/.default
+  scope: api://${NAIS_CLUSTER_NAME}.poao.poao-tilgang/.default
 kafka:
   gruppeId: paw.arbeidssokerregisteret-soek-api-v1
   periodeTopic: paw.arbeidssokerperioder-beta-v1
