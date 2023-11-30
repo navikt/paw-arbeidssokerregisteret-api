@@ -24,7 +24,7 @@ database:
   port: 5432
   username: admin
   password: admin
-  name: arbeidssokerregisteret
+  name: arbeidssokerregisteretapi
 kafka:
   gruppeId: paw.arbeidssokerregisteret-soek-api-v1
   periodeTopic: paw.arbeidssokerperioder-beta-v1
