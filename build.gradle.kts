@@ -60,6 +60,7 @@ dependencies {
     implementation("org.apache.kafka:kafka-clients:3.6.0")
     implementation("org.apache.avro:avro:1.11.1")
     implementation("io.confluent:kafka-avro-serializer:7.4.0")
+    implementation("io.confluent:kafka-streams-avro-serde:7.4.0")
 
     // Ktor
     implementation("io.ktor:ktor-server-cors:$ktorVersion")

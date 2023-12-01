@@ -33,4 +33,4 @@ kafka:
     autentisering: PLAIN
     kafkaBrokers: localhost:9092
   schemaRegistryConfig:
-    url: localhost:8082
+    url: http://localhost:8082

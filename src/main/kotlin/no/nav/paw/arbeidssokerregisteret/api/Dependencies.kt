@@ -24,7 +24,7 @@ fun createDependencies(config: Config): Dependencies {
 
     val database = Database.connect(dataSource)
 
-    val tokenService = config.authProviders.find { it.name == "azure" }?.let(::TokenService) ?: throw RuntimeException("azure provider ikke funnet")
+    val tokenService = config.authProviders.find { it.name == "azure" }?.run(::TokenService) ?: throw RuntimeException("Azure provider ikke funnet")
 
     val poaoTilgangHttpClient =
         PoaoTilgangCachedClient(

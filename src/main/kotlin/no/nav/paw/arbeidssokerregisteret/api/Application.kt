@@ -6,6 +6,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.routing.routing
 import no.nav.paw.arbeidssokerregisteret.api.config.Config
+import no.nav.paw.arbeidssokerregisteret.api.kafka.producers.LocalProducer
 import no.nav.paw.arbeidssokerregisteret.api.plugins.configureAuthentication
 import no.nav.paw.arbeidssokerregisteret.api.plugins.configureHTTP
 import no.nav.paw.arbeidssokerregisteret.api.plugins.configureLogging
@@ -14,6 +15,7 @@ import no.nav.paw.arbeidssokerregisteret.api.plugins.configureSerialization
 import no.nav.paw.arbeidssokerregisteret.api.routes.arbeidssokerRoutes
 import no.nav.paw.arbeidssokerregisteret.api.routes.healthRoutes
 import no.nav.paw.arbeidssokerregisteret.api.routes.swaggerRoutes
+import no.nav.paw.arbeidssokerregisteret.api.utils.LocalProducerUtils
 import no.nav.paw.arbeidssokerregisteret.api.utils.loadConfiguration
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 import no.nav.paw.arbeidssokerregisteret.api.utils.migrateDatabase
@@ -41,6 +43,24 @@ fun Application.module(
     // Kjør migration på database
     migrateDatabase(dependencies.dataSource)
 
+    // Produser kafka meldinger for lokal utvikling
+    if (isLocalEnvironment()) {
+        val localProducer = LocalProducer(config.kafka)
+        try {
+            LocalProducerUtils().lagTestPerioder().forEach {
+                localProducer.producePeriodeMessage(config.kafka.periodeTopic, it.id.toString(), it)
+            }
+
+            LocalProducerUtils().lagTestSituasjoner().forEach {
+                localProducer.produceSituasjonMessage(config.kafka.arbeidssokerOpplysningerTopic, it.id.toString(), it)
+            }
+        } catch (e: Exception) {
+            logger.error("LocalProducer error: ${e.message}", e)
+            localProducer.close()
+        }
+    }
+
+    // Konsumer meldinger fra Kafka
     thread {
         try {
             dependencies.periodeConsumer.start()
@@ -65,3 +85,5 @@ fun Application.module(
         arbeidssokerRoutes(dependencies.autorisasjonService, dependencies.periodeService, dependencies.situasjonService)
     }
 }
+
+fun isLocalEnvironment() = System.getenv("NAIS_CLUSTER_NAME") == null
