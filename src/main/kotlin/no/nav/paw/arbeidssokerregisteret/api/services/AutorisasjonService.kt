@@ -2,7 +2,7 @@ package no.nav.paw.arbeidssokerregisteret.api.services
 
 import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
 import no.nav.paw.arbeidssokerregisteret.api.utils.auditLogMelding
-import no.nav.paw.arbeidssokerregisteret.api.utils.autitLogger
+import no.nav.paw.arbeidssokerregisteret.api.utils.auditLogger
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 import no.nav.poao_tilgang.client.NavAnsattNavIdentLesetilgangTilEksternBrukerPolicyInput
 import no.nav.poao_tilgang.client.PoaoTilgangCachedClient
@@ -22,7 +22,7 @@ class AutorisasjonService(
         if (!harNavAnsattTilgang) {
             logger.info("NAV-ansatt har ikke tilgang til bruker")
         } else {
-            autitLogger.info(auditLogMelding(identitetsnummer, navAnsatt, "NAV ansatt har hentet informasjon om bruker"))
+            auditLogger.info(auditLogMelding(identitetsnummer, navAnsatt, "NAV ansatt har hentet informasjon om bruker"))
         }
         return harNavAnsattTilgang
     }

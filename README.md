@@ -42,12 +42,12 @@ Logg inn med trygdeetatenbruker på https://azure-token-generator.intern.dev.nav
 
 4) Gjør kall mot API-et
 
-Bruk `access_token` i "Token Response" (fra steg 3) til å gjøre forespørsler mot https://arbeidssokerregisteret.intern.dev.nav.no
+Bruk `access_token` i "Token Response" (fra steg 3) til å gjøre forespørsler mot https://arbeidssokerregisteret-api.intern.dev.nav.no
 
 Eksempel:
 
 ```sh
-$ curl https://arbeidssokerregisteret.intern.dev.nav.no/api/v1/arbeidssokerperioder -H 'Authorization: Bearer <access_token>'
+$ curl https://arbeidssokerregisteret-api.intern.dev.nav.no/api/v1/arbeidssokerperioder -H 'Authorization: Bearer <access_token>'
 ```
 
 ## Lokalt oppsett
