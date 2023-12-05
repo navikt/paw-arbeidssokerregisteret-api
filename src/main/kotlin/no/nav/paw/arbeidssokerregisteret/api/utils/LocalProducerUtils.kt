@@ -1,16 +1,17 @@
 package no.nav.paw.arbeidssokerregisteret.api.utils
 
+import no.nav.paw.arbeidssokerregisteret.api.v1.Annet
 import no.nav.paw.arbeidssokerregisteret.api.v1.Arbeidserfaring
-import no.nav.paw.arbeidssokerregisteret.api.v1.Arbeidsoekersituasjon
 import no.nav.paw.arbeidssokerregisteret.api.v1.Beskrivelse
+import no.nav.paw.arbeidssokerregisteret.api.v1.BeskrivelseMedDetaljer
 import no.nav.paw.arbeidssokerregisteret.api.v1.Bruker
 import no.nav.paw.arbeidssokerregisteret.api.v1.BrukerType
-import no.nav.paw.arbeidssokerregisteret.api.v1.Element
 import no.nav.paw.arbeidssokerregisteret.api.v1.Helse
 import no.nav.paw.arbeidssokerregisteret.api.v1.JaNeiVetIkke
+import no.nav.paw.arbeidssokerregisteret.api.v1.Jobbsituasjon
 import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
+import no.nav.paw.arbeidssokerregisteret.api.v1.OpplysningerOmArbeidssoeker
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
-import no.nav.paw.arbeidssokerregisteret.api.v1.Situasjon
 import no.nav.paw.arbeidssokerregisteret.api.v1.Utdanning
 import no.nav.paw.arbeidssokerregisteret.api.v1.Utdanningsnivaa
 import java.time.Instant
@@ -61,9 +62,9 @@ class LocalProducerUtils {
         )
     }
 
-    fun lagTestSituasjoner(): List<Situasjon> {
+    fun lagTestOpplysningerOmArbeidssoeker(): List<OpplysningerOmArbeidssoeker> {
         return listOf(
-            Situasjon(
+            OpplysningerOmArbeidssoeker(
                 UUID.randomUUID(),
                 testUUID1,
                 Metadata(
@@ -86,16 +87,16 @@ class LocalProducerUtils {
                 Arbeidserfaring(
                     JaNeiVetIkke.JA
                 ),
-                Arbeidsoekersituasjon(
+                Jobbsituasjon(
                     listOf(
-                        Element(
+                        BeskrivelseMedDetaljer(
                             Beskrivelse.AKKURAT_FULLFORT_UTDANNING,
                             mapOf(
                                 Pair("test", "test"),
                                 Pair("test", "test")
                             )
                         ),
-                        Element(
+                        BeskrivelseMedDetaljer(
                             Beskrivelse.DELTIDSJOBB_VIL_MER,
                             mapOf(
                                 Pair("test", "test"),
@@ -103,6 +104,9 @@ class LocalProducerUtils {
                             )
                         )
                     )
+                ),
+                Annet(
+                    JaNeiVetIkke.JA
                 )
             )
         )

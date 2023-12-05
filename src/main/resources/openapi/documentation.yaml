@@ -6,7 +6,7 @@ info:
 servers:
 - url: "https://paw_arbeidssokerregisteret_api"
 paths:
-  /api/v1/arbeidssokerperioder:
+  /api/v1/arbeidssoekerperioder:
     get:
       description: ""
       responses:
@@ -30,7 +30,7 @@ paths:
                 type: "array"
                 items:
                   $ref: "#/components/schemas/PeriodeResponse"
-  /api/v1/arbeidssokersituasjon/{periodeId}:
+  /api/v1/opplysninger-om-arbeidssoeker/{periodeId}:
     get:
       description: ""
       parameters:
@@ -53,8 +53,8 @@ paths:
               schema:
                 type: "array"
                 items:
-                  $ref: "#/components/schemas/SituasjonResponse"
-  /api/v1/veileder/arbeidssokerperioder:
+                  $ref: "#/components/schemas/OpplysningerOmArbeidssoekerResponse"
+  /api/v1/veileder/arbeidssoekerperioder:
     post:
       description: ""
       requestBody:
@@ -84,14 +84,14 @@ paths:
                 type: "array"
                 items:
                   $ref: "#/components/schemas/PeriodeResponse"
-  /api/v1/veileder/arbeidssokersituasjoner:
+  /api/v1/veileder/opplysninger-om-arbeidssoeker:
     post:
       description: ""
       requestBody:
         content:
           '*/*':
             schema:
-              $ref: "#/components/schemas/ArbeidssokersituasjonRequest"
+              $ref: "#/components/schemas/OpplysningerOmArbeidssoekerRequest"
         required: true
       responses:
         "403":
@@ -113,7 +113,7 @@ paths:
               schema:
                 type: "array"
                 items:
-                  $ref: "#/components/schemas/SituasjonResponse"
+                  $ref: "#/components/schemas/OpplysningerOmArbeidssoekerResponse"
   /internal/isAlive:
     get:
       description: ""
@@ -228,6 +228,15 @@ components:
           - "JA"
           - "NEI"
           - "VET_IKKE"
+    AnnetResponse:
+      type: "object"
+      properties:
+        andreForholdHindrerArbeid:
+          type: "string"
+          enum:
+          - "JA"
+          - "NEI"
+          - "VET_IKKE"
     BeskrivelseMedDetaljerResponse:
       type: "object"
       properties:
@@ -251,10 +260,10 @@ components:
           - "ANNET"
         detaljer:
           type: "string"
-    SituasjonResponse:
+    OpplysningerOmArbeidssoekerResponse:
       type: "object"
       properties:
-        situasjonId:
+        opplysningerOmArbeidssoekerId:
           type: "string"
           format: "uuid"
         periodeId:
@@ -268,7 +277,9 @@ components:
           $ref: "#/components/schemas/HelseResponse"
         arbeidserfaring:
           $ref: "#/components/schemas/ArbeidserfaringResponse"
-        arbeidssokersituasjon:
+        annet:
+          $ref: "#/components/schemas/AnnetResponse"
+        jobbsituasjon:
           type: "array"
           items:
             $ref: "#/components/schemas/BeskrivelseMedDetaljerResponse"
@@ -277,7 +288,7 @@ components:
       properties:
         identitetsnummer:
           type: "string"
-    ArbeidssokersituasjonRequest:
+    OpplysningerOmArbeidssoekerRequest:
       type: "object"
       properties:
         identitetsnummer:

@@ -2,18 +2,39 @@ package no.nav.paw.arbeidssokerregisteret.api.kafka.producers
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig
+import no.nav.paw.arbeidssokerregisteret.api.config.Config
 import no.nav.paw.arbeidssokerregisteret.api.config.KafkaConfig
 import no.nav.paw.arbeidssokerregisteret.api.config.properties
+import no.nav.paw.arbeidssokerregisteret.api.isLocalEnvironment
+import no.nav.paw.arbeidssokerregisteret.api.utils.LocalProducerUtils
+import no.nav.paw.arbeidssokerregisteret.api.v1.OpplysningerOmArbeidssoeker
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
-import no.nav.paw.arbeidssokerregisteret.api.v1.Situasjon
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 
+fun produserMeldingerForLokalUtvikling(config: Config) {
+    if (isLocalEnvironment()) {
+        val localProducer = LocalProducer(config.kafka)
+        try {
+            LocalProducerUtils().lagTestPerioder().forEach {
+                localProducer.producePeriodeMessage(config.kafka.periodeTopic, it.id.toString(), it)
+            }
+
+            LocalProducerUtils().lagTestOpplysningerOmArbeidssoeker().forEach {
+                localProducer.produceOpplysningerOmArbeidssoekerMessage(config.kafka.opplysningerOmArbeidssoekerTopic, it.id.toString(), it)
+            }
+        } catch (e: Exception) {
+            println("LocalProducer error: ${e.message}")
+            localProducer.close()
+        }
+    }
+}
+
 class LocalProducer(private val kafkaConfig: KafkaConfig) {
     private val periodeProducer: Producer<String, Periode> = createProducer()
-    private val situasjonProducer: Producer<String, Situasjon> = createProducer()
+    private val opplysningerOmArbeidssoekerProducer: Producer<String, OpplysningerOmArbeidssoeker> = createProducer()
 
     private fun <T> createProducer(): Producer<String, T> {
         val props = kafkaConfig.properties.toMutableMap()
@@ -39,13 +60,13 @@ class LocalProducer(private val kafkaConfig: KafkaConfig) {
         }
     }
 
-    fun produceSituasjonMessage(
+    fun produceOpplysningerOmArbeidssoekerMessage(
         topic: String,
         key: String,
-        value: Situasjon
+        value: OpplysningerOmArbeidssoeker
     ) {
         val record = ProducerRecord(topic, key, value)
-        situasjonProducer.send(record) { _, exception ->
+        opplysningerOmArbeidssoekerProducer.send(record) { _, exception ->
             if (exception != null) {
                 println("Failed to send message: $exception")
             } else {
@@ -56,6 +77,6 @@ class LocalProducer(private val kafkaConfig: KafkaConfig) {
 
     fun close() {
         periodeProducer.close()
-        situasjonProducer.close()
+        opplysningerOmArbeidssoekerProducer.close()
     }
 }

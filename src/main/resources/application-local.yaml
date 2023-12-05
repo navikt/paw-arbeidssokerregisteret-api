@@ -28,7 +28,7 @@ database:
 kafka:
   gruppeId: paw.arbeidssokerregisteret-soek-api-v1
   periodeTopic: paw.arbeidssokerperioder-beta-v1
-  arbeidssokerOpplysningerTopic: paw.arbeidssoker-situasjon-beta-v1
+  opplysningerOmArbeidssoekerTopic: paw.opplysninger-om-arbeidssoeker-beta-v1
   serverConfig:
     autentisering: PLAIN
     kafkaBrokers: localhost:9092

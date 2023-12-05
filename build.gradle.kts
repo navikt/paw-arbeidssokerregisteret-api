@@ -8,7 +8,7 @@ plugins {
     application
 }
 
-val arbeidssokerregisteretSchemaVersion = "23.11.13.59-1"
+val arbeidssokerregisteretSchemaVersion = "23.12.04.87-1"
 val logbackVersion = "1.4.5"
 val logstashVersion = "7.3"
 val navCommonModulesVersion = "2.2023.01.02_13.51-1c6adeb1653b"

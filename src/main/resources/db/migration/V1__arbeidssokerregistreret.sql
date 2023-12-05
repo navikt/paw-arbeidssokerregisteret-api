@@ -76,21 +76,28 @@ CREATE TABLE arbeidserfaring
     har_hatt_arbeid JaNeiVetIkke NOT NULL
 );
 
-CREATE TABLE situasjon
+CREATE TABLE annet
 (
     id BIGSERIAL PRIMARY KEY,
-    situasjon_id UUID NOT NULL,
+    andre_forhold_hindrer_arbeid JaNeiVetIkke NOT NULL
+);
+
+CREATE TABLE opplysninger_om_arbeidssoeker
+(
+    id BIGSERIAL PRIMARY KEY,
+    opplysninger_om_arbeidssoeker_id UUID NOT NULL,
     periode_id UUID REFERENCES periode(periode_id),
     sendt_inn_av_id BIGINT REFERENCES metadata(id),
     utdanning_id BIGINT REFERENCES utdanning(id),
     helse_id BIGINT REFERENCES helse(id),
-    arbeidserfaring_id BIGINT REFERENCES arbeidserfaring(id)
+    arbeidserfaring_id BIGINT REFERENCES arbeidserfaring(id),
+    annet_id BIGINT REFERENCES annet(id)
 );
 
 CREATE TABLE beskrivelse_med_detaljer
 (
     id BIGSERIAL PRIMARY KEY,
-    situasjon_id BIGINT REFERENCES situasjon(id)
+    opplysninger_om_arbeidssoeker_id BIGINT REFERENCES opplysninger_om_arbeidssoeker(id)
 );
 
 CREATE TABLE beskrivelse
