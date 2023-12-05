@@ -5,7 +5,6 @@ import io.confluent.kafka.serializers.KafkaAvroSerializerConfig
 import no.nav.paw.arbeidssokerregisteret.api.config.Config
 import no.nav.paw.arbeidssokerregisteret.api.config.KafkaConfig
 import no.nav.paw.arbeidssokerregisteret.api.config.properties
-import no.nav.paw.arbeidssokerregisteret.api.isLocalEnvironment
 import no.nav.paw.arbeidssokerregisteret.api.utils.LocalProducerUtils
 import no.nav.paw.arbeidssokerregisteret.api.v1.OpplysningerOmArbeidssoeker
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
@@ -31,6 +30,8 @@ fun produserMeldingerForLokalUtvikling(config: Config) {
         }
     }
 }
+
+fun isLocalEnvironment() = System.getenv("NAIS_CLUSTER_NAME") == null
 
 class LocalProducer(private val kafkaConfig: KafkaConfig) {
     private val periodeProducer: Producer<String, Periode> = createProducer()

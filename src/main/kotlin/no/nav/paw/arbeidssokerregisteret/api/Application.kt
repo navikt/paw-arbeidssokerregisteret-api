@@ -70,5 +70,3 @@ fun Application.module(
         arbeidssokerRoutes(dependencies.autorisasjonService, dependencies.periodeService, dependencies.opplysningerOmArbeidssoekerService)
     }
 }
-
-fun isLocalEnvironment() = System.getenv("NAIS_CLUSTER_NAME") == null

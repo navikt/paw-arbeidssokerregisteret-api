@@ -128,7 +128,7 @@ For veileder:
 8. Eksempel:
 
 ```sh
-$ curl localhost:8080/api/v1/arbeidssokerperioder -H 'Authorization: Bearer <access_token>'
+$ curl localhost:8080/api/v1/arbeidssoekerperioder -H 'Authorization: Bearer <access_token>'
 ```
 
 eller benytt en REST-klient (f.eks. [insomnia](https://insomnia.rest/) eller [Postman](https://www.postman.com/product/rest-client/))
@@ -138,22 +138,22 @@ eller benytt en REST-klient (f.eks. [insomnia](https://insomnia.rest/) eller [Po
 
 Kafka UI ligger i docker-compose, og finnes på http://localhost:9000
 
-### Producer
+### Producer for lokal utvikling
 
-Send inn en kafka-melding til `arbeidssokerperioder-v1`:
-
-```sh
-# Eksempel melding
-cat src/main/resources/arbeidssokerperioder-kafka-melding.json | jq -c .
-docker exec -it paw-arbeidssokerregisteret-api_kafka_1 /usr/bin/kafka-console-producer --broker-list 127.0.0.1:9092 --topic arbeidssokerperioder-v1
-```
+Klassen `LocalProducer` sender to meldinger til `arbeidssokerperioder-v1` topicen og en melding til `opplysninger-om-arbeidssoeker-beta-v1'` topicen ved oppstart av applikasjonen.
 
 ### Consumer
 
-Consumer meldinger fra `arbeidssokerperioder-v1`
+Konsumer meldinger fra `arbeidssokerperioder-v1`
 
 ```sh
 docker exec -it paw-arbeidssokerregisteret-api_kafka_1 /usr/bin/kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic arbeidssokerperioder-v1
+```
+
+Konsumer meldinger fra `opplysninger-om-arbeidssoekerbeta-v1`
+
+```sh
+docker exec -it paw-arbeidssokerregisteret-api_kafka_1 /usr/bin/kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic opplysninger-om-arbeidssoeker-beta-v1
 ```
 
 ## Formatering
