@@ -6,6 +6,7 @@ import no.nav.paw.arbeidssokerregisteret.api.config.Config
 import no.nav.paw.arbeidssokerregisteret.api.config.KafkaConfig
 import no.nav.paw.arbeidssokerregisteret.api.config.properties
 import no.nav.paw.arbeidssokerregisteret.api.utils.LocalProducerUtils
+import no.nav.paw.arbeidssokerregisteret.api.utils.loadConfiguration
 import no.nav.paw.arbeidssokerregisteret.api.v1.OpplysningerOmArbeidssoeker
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -13,25 +14,26 @@ import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 
-fun produserMeldingerForLokalUtvikling(config: Config) {
-    if (isLocalEnvironment()) {
-        val localProducer = LocalProducer(config.kafka)
-        try {
-            LocalProducerUtils().lagTestPerioder().forEach {
-                localProducer.producePeriodeMessage(config.kafka.periodeTopic, it.id.toString(), it)
-            }
-
-            LocalProducerUtils().lagTestOpplysningerOmArbeidssoeker().forEach {
-                localProducer.produceOpplysningerOmArbeidssoekerMessage(config.kafka.opplysningerOmArbeidssoekerTopic, it.id.toString(), it)
-            }
-        } catch (e: Exception) {
-            println("LocalProducer error: ${e.message}")
-            localProducer.close()
-        }
-    }
+fun main() {
+    val config = loadConfiguration<Config>()
+    produserMeldingerForLokalUtvikling(config.kafka)
 }
 
-fun isLocalEnvironment() = System.getenv("NAIS_CLUSTER_NAME") == null
+fun produserMeldingerForLokalUtvikling(kafkaConfig: KafkaConfig) {
+    val localProducer = LocalProducer(kafkaConfig)
+    try {
+        LocalProducerUtils().lagTestPerioder().forEach {
+            localProducer.producePeriodeMessage(kafkaConfig.periodeTopic, it.id.toString(), it)
+        }
+
+        LocalProducerUtils().lagTestOpplysningerOmArbeidssoeker().forEach {
+            localProducer.produceOpplysningerOmArbeidssoekerMessage(kafkaConfig.opplysningerOmArbeidssoekerTopic, it.id.toString(), it)
+        }
+    } catch (e: Exception) {
+        println("LocalProducer error: ${e.message}")
+        localProducer.close()
+    }
+}
 
 class LocalProducer(private val kafkaConfig: KafkaConfig) {
     private val periodeProducer: Producer<String, Periode> = createProducer()

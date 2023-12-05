@@ -6,7 +6,6 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.routing.routing
 import no.nav.paw.arbeidssokerregisteret.api.config.Config
-import no.nav.paw.arbeidssokerregisteret.api.kafka.producers.produserMeldingerForLokalUtvikling
 import no.nav.paw.arbeidssokerregisteret.api.plugins.configureAuthentication
 import no.nav.paw.arbeidssokerregisteret.api.plugins.configureHTTP
 import no.nav.paw.arbeidssokerregisteret.api.plugins.configureLogging
@@ -41,9 +40,6 @@ fun Application.module(
 ) {
     // Kjør migration på database
     migrateDatabase(dependencies.dataSource)
-
-    // Produser kafka meldinger for lokal utvikling
-    produserMeldingerForLokalUtvikling(config)
 
     // Konsumer meldinger fra Kafka
     thread {

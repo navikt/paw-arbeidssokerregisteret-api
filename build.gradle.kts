@@ -109,6 +109,16 @@ tasks.named("compileTestKotlin") {
     dependsOn("generateTestAvroJava")
 }
 
+task<JavaExec>("produceLocalMessagesForTopics") {
+    mainClass.set("no.nav.paw.arbeidssokerregisteret.api.kafka.producers.LocalProducerKt")
+    classpath = sourceSets["main"].runtimeClasspath
+}
+
+task<JavaExec>("cleanDatabase") {
+    mainClass.set("no.nav.paw.arbeidssokerregisteret.api.utils.DatabaseUtilsKt")
+    classpath = sourceSets["main"].runtimeClasspath
+}
+
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
