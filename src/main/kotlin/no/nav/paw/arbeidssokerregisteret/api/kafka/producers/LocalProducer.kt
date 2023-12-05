@@ -12,11 +12,10 @@ import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 
 class LocalProducer(private val kafkaConfig: KafkaConfig) {
-
     private val periodeProducer: Producer<String, Periode> = createProducer()
     private val situasjonProducer: Producer<String, Situasjon> = createProducer()
 
-    private fun <T>createProducer(): Producer<String, T> {
+    private fun <T> createProducer(): Producer<String, T> {
         val props = kafkaConfig.properties.toMutableMap()
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = "org.apache.kafka.common.serialization.StringSerializer"
         props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = KafkaAvroSerializer::class.java.name
@@ -25,7 +24,11 @@ class LocalProducer(private val kafkaConfig: KafkaConfig) {
         return KafkaProducer(props)
     }
 
-    fun producePeriodeMessage(topic: String, key: String, value: Periode) {
+    fun producePeriodeMessage(
+        topic: String,
+        key: String,
+        value: Periode
+    ) {
         val record = ProducerRecord(topic, key, value)
         periodeProducer.send(record) { _, exception ->
             if (exception != null) {
@@ -36,7 +39,11 @@ class LocalProducer(private val kafkaConfig: KafkaConfig) {
         }
     }
 
-    fun produceSituasjonMessage(topic: String, key: String, value: Situasjon) {
+    fun produceSituasjonMessage(
+        topic: String,
+        key: String,
+        value: Situasjon
+    ) {
         val record = ProducerRecord(topic, key, value)
         situasjonProducer.send(record) { _, exception ->
             if (exception != null) {
