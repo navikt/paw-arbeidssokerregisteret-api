@@ -1,15 +1,15 @@
 package no.nav.paw.arbeidssokerregisteret.api.kafka.consumers
 
-import no.nav.paw.arbeidssokerregisteret.api.services.SituasjonService
+import no.nav.paw.arbeidssokerregisteret.api.services.OpplysningerOmArbeidssoekerService
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
-import no.nav.paw.arbeidssokerregisteret.api.v1.Situasjon
+import no.nav.paw.arbeidssokerregisteret.api.v1.OpplysningerOmArbeidssoeker
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import java.time.Duration
 
-class SituasjonConsumer(
+class OpplysningerOmArbeidssoekerConsumer(
     private val topic: String,
-    private val consumer: KafkaConsumer<String, Situasjon>,
-    private val situasjonService: SituasjonService
+    private val consumer: KafkaConsumer<String, OpplysningerOmArbeidssoeker>,
+    private val opplysningerOmArbeidssoekerService: OpplysningerOmArbeidssoekerService
 ) {
     fun start() {
         logger.info("Lytter på topic $topic")
@@ -19,8 +19,8 @@ class SituasjonConsumer(
             consumer.poll(Duration.ofMillis(500)).forEach { post ->
                 try {
                     logger.trace("Mottok melding fra $topic med offset ${post.offset()} partition ${post.partition()}")
-                    val arbeidssoekersituasjon = post.value()
-                    situasjonService.opprettSituasjon(arbeidssoekersituasjon)
+                    val opplysningerOmarbeidssoeker = post.value()
+                    opplysningerOmArbeidssoekerService.opprettOpplysningerOmArbeidssoeker(opplysningerOmarbeidssoeker)
 
                     consumer.commitSync()
                 } catch (error: Exception) {

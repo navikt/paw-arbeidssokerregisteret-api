@@ -41,10 +41,11 @@ fun Application.module(
     // Kjør migration på database
     migrateDatabase(dependencies.dataSource)
 
+    // Konsumer meldinger fra Kafka
     thread {
         try {
             dependencies.periodeConsumer.start()
-            dependencies.situasjonConsumer.start()
+            dependencies.opplysningerOmArbeidssoekerConsumer.start()
         } catch (e: Exception) {
             logger.error("Consumer error: ${e.message}", e)
             exitProcess(1)
@@ -62,6 +63,6 @@ fun Application.module(
     routing {
         healthRoutes(dependencies.registry)
         swaggerRoutes()
-        arbeidssokerRoutes(dependencies.autorisasjonService, dependencies.periodeService, dependencies.situasjonService)
+        arbeidssokerRoutes(dependencies.autorisasjonService, dependencies.periodeService, dependencies.opplysningerOmArbeidssoekerService)
     }
 }

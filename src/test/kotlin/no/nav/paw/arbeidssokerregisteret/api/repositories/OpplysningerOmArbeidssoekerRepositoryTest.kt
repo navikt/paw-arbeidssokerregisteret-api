@@ -2,16 +2,17 @@ package no.nav.paw.arbeidssokerregisteret.api.repositories
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import no.nav.paw.arbeidssokerregisteret.api.v1.Annet
 import no.nav.paw.arbeidssokerregisteret.api.v1.Arbeidserfaring
-import no.nav.paw.arbeidssokerregisteret.api.v1.Arbeidsoekersituasjon
 import no.nav.paw.arbeidssokerregisteret.api.v1.Beskrivelse
+import no.nav.paw.arbeidssokerregisteret.api.v1.BeskrivelseMedDetaljer
 import no.nav.paw.arbeidssokerregisteret.api.v1.Bruker
 import no.nav.paw.arbeidssokerregisteret.api.v1.BrukerType
-import no.nav.paw.arbeidssokerregisteret.api.v1.Element
 import no.nav.paw.arbeidssokerregisteret.api.v1.Helse
 import no.nav.paw.arbeidssokerregisteret.api.v1.JaNeiVetIkke
+import no.nav.paw.arbeidssokerregisteret.api.v1.Jobbsituasjon
 import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
-import no.nav.paw.arbeidssokerregisteret.api.v1.Situasjon
+import no.nav.paw.arbeidssokerregisteret.api.v1.OpplysningerOmArbeidssoeker
 import no.nav.paw.arbeidssokerregisteret.api.v1.Utdanning
 import no.nav.paw.arbeidssokerregisteret.api.v1.Utdanningsnivaa
 import org.jetbrains.exposed.sql.Database
@@ -19,7 +20,7 @@ import java.time.Instant
 import java.util.*
 import javax.sql.DataSource
 
-class SituasjonRepositoryTest : StringSpec({
+class OpplysningerOmArbeidssoekerRepositoryTest : StringSpec({
 
     lateinit var dataSource: DataSource
     lateinit var database: Database
@@ -37,34 +38,34 @@ class SituasjonRepositoryTest : StringSpec({
         dataSource.connection.close()
     }
 
-    "Opprett og hent ut en situasjon" {
-        val repository = SituasjonRepository(database)
-        val situasjonBesvarelse = lagTestSituasjonBesvarelse(periodeId1)
-        repository.opprettSituasjon(situasjonBesvarelse)
+    "Opprett og hent ut en opplysninger om arbeidssøker" {
+        val repository = OpplysningerOmArbeidssoekerRepository(database)
+        val opplysninger = lagTestOpplysningerOmArbeidssoeker(periodeId1)
+        repository.opprettOpplysningerOmArbeidssoeker(opplysninger)
 
-        val retrievedSituasjonBesvarelser = repository.hentSituasjoner(situasjonBesvarelse.periodeId)
+        val retrievedOpplysninger = repository.hentOpplysningerOmArbeidssoeker(opplysninger.periodeId)
 
-        retrievedSituasjonBesvarelser.size shouldBe 1
+        retrievedOpplysninger.size shouldBe 1
     }
 
-    "Opprett og hent ut flere situasjoner" {
-        val repository = SituasjonRepository(database)
-        val situasjonBesvarelse1 = lagTestSituasjonBesvarelse(periodeId2)
-        val situasjonBesvarelse2 = lagTestSituasjonBesvarelse(periodeId2)
-        repository.opprettSituasjon(situasjonBesvarelse1)
-        repository.opprettSituasjon(situasjonBesvarelse2)
+    "Opprett og hent ut flere opplysninger om arbeidssøker" {
+        val repository = OpplysningerOmArbeidssoekerRepository(database)
+        val opplysninger1 = lagTestOpplysningerOmArbeidssoeker(periodeId2)
+        val opplysninger2 = lagTestOpplysningerOmArbeidssoeker(periodeId2)
+        repository.opprettOpplysningerOmArbeidssoeker(opplysninger1)
+        repository.opprettOpplysningerOmArbeidssoeker(opplysninger2)
 
-        val retrievedSituasjonBesvarelser = repository.hentSituasjoner(periodeId2)
+        val retrievedOpplysninger = repository.hentOpplysningerOmArbeidssoeker(periodeId2)
 
-        retrievedSituasjonBesvarelser.size shouldBe 2
+        retrievedOpplysninger.size shouldBe 2
     }
 
-    "Hent ut en ikke-eksisterende situasjon" {
-        val repository = SituasjonRepository(database)
+    "Hent ut ikke-eksisterende opplysninger om arbeidssøker" {
+        val repository = OpplysningerOmArbeidssoekerRepository(database)
 
-        val retrievedSituasjonBesvarelse = repository.hentSituasjoner(UUID.randomUUID())
+        val retrievedOpplysninger = repository.hentOpplysningerOmArbeidssoeker(UUID.randomUUID())
 
-        retrievedSituasjonBesvarelse.size shouldBe 0
+        retrievedOpplysninger.size shouldBe 0
     }
 })
 
@@ -77,8 +78,8 @@ fun settInnTestPeriode(
     periodeRepository.opprettPeriode(periode)
 }
 
-fun lagTestSituasjonBesvarelse(periodeId: UUID) =
-    Situasjon(
+fun lagTestOpplysningerOmArbeidssoeker(periodeId: UUID) =
+    OpplysningerOmArbeidssoeker(
         UUID.randomUUID(),
         periodeId,
         Metadata(
@@ -101,17 +102,20 @@ fun lagTestSituasjonBesvarelse(periodeId: UUID) =
         Arbeidserfaring(
             JaNeiVetIkke.VET_IKKE
         ),
-        Arbeidsoekersituasjon(
+        Jobbsituasjon(
             listOf(
-                Element(
+                BeskrivelseMedDetaljer(
                     Beskrivelse.AKKURAT_FULLFORT_UTDANNING,
                     hentMapAvDetaljer()
                 ),
-                Element(
+                BeskrivelseMedDetaljer(
                     Beskrivelse.IKKE_VAERT_I_JOBB_SISTE_2_AAR,
                     hentMapAvDetaljer()
                 )
             )
+        ),
+        Annet(
+            JaNeiVetIkke.VET_IKKE
         )
     )
 

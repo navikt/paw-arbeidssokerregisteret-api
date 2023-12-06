@@ -30,9 +30,7 @@ Gå til https://arbeid.intern.dev.nav.no/arbeid/registrering og registrer bruker
 
 Vent litt. 
 
-3)
-
-Logg inn i tokenx-token-generator med test-id med din nye dolly bruker
+3) Logg inn i tokenx-token-generator med test-id med din nye dolly bruker
 
 Gå til https://tokenx-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp:paw:paw-arbeidssokerregisteret-api
 
@@ -47,7 +45,7 @@ Bruk `access_token` i "Token Response" (fra steg 3) til å gjøre forespørsler 
 Eksempel:
 
 ```sh
-$ curl https://arbeidssokerregisteret-api.intern.dev.nav.no/api/v1/arbeidssokerperioder -H 'Authorization: Bearer <access_token>'
+$ curl https://arbeidssokerregisteret-api.intern.dev.nav.no/api/v1/arbeidssoekerperioder -H 'Authorization: Bearer <access_token>'
 ```
 
 ## Lokalt oppsett
@@ -128,32 +126,33 @@ For veileder:
 8. Eksempel:
 
 ```sh
-$ curl localhost:8080/api/v1/arbeidssokerperioder -H 'Authorization: Bearer <access_token>'
+$ curl localhost:8080/api/v1/arbeidssoekerperioder -H 'Authorization: Bearer <access_token>'
 ```
 
 eller benytt en REST-klient (f.eks. [insomnia](https://insomnia.rest/) eller [Postman](https://www.postman.com/product/rest-client/))
-
 
 ## Kafka
 
 Kafka UI ligger i docker-compose, og finnes på http://localhost:9000
 
-### Producer
+### Produser kafkameldinger for lokal utvikling
 
-Send inn en kafka-melding til `arbeidssokerperioder-v1`:
+Kjør `./gradlew produceLocalMessagesForTopics`
 
-```sh
-# Eksempel melding
-cat src/main/resources/arbeidssokerperioder-kafka-melding.json | jq -c .
-docker exec -it paw-arbeidssokerregisteret-api_kafka_1 /usr/bin/kafka-console-producer --broker-list 127.0.0.1:9092 --topic arbeidssokerperioder-v1
-```
+Denne tasken sender to meldinger til `arbeidssokerperioder-beta-v1` topicen og en melding til `opplysninger-om-arbeidssoeker-beta-v1'` topicen.
 
 ### Consumer
 
-Consumer meldinger fra `arbeidssokerperioder-v1`
+Konsumer meldinger fra `arbeidssokerperioder-beta-v1`
 
 ```sh
-docker exec -it paw-arbeidssokerregisteret-api_kafka_1 /usr/bin/kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic arbeidssokerperioder-v1
+docker exec -it paw-arbeidssokerregisteret-api_kafka_1 /usr/bin/kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic arbeidssokerperioder-beta-v1
+```
+
+Konsumer meldinger fra `opplysninger-om-arbeidssoeker-beta-v1`
+
+```sh
+docker exec -it paw-arbeidssokerregisteret-api_kafka_1 /usr/bin/kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic opplysninger-om-arbeidssoeker-beta-v1
 ```
 
 ## Formatering

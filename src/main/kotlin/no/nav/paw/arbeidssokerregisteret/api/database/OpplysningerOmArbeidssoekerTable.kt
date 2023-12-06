@@ -6,13 +6,14 @@ import no.nav.paw.arbeidssokerregisteret.api.v1.JaNeiVetIkke
 import no.nav.paw.arbeidssokerregisteret.api.v1.Utdanningsnivaa
 import org.jetbrains.exposed.dao.id.LongIdTable
 
-object SituasjonTable : LongIdTable("situasjon") {
-    val situasjonId = uuid("situasjon_id")
+object OpplysningerOmArbeidssoekerTable : LongIdTable("opplysninger_om_arbeidssoeker") {
+    val opplysningerOmArbeidssoekerId = uuid("opplysninger_om_arbeidssoeker_id")
     val periodeId = uuid("periode_id").references(PeriodeTable.periodeId)
     val sendtInnAvId = long("sendt_inn_av_id").references(MetadataTable.utfoertAvId)
     val utdanningId = long("utdanning_id").references(UtdanningTable.id)
     val helseId = long("helse_id").references(HelseTable.id)
     val arbeidserfaringId = long("arbeidserfaring_id").references(ArbeidserfaringTable.id)
+    val annetId = long("annet_id").references(AnnetTable.id)
 }
 
 object UtdanningTable : LongIdTable("utdanning") {
@@ -29,8 +30,12 @@ object ArbeidserfaringTable : LongIdTable("arbeidserfaring") {
     val harHattArbeid = customEnumeration("har_hatt_arbeid", "JaNeiVetIkke", { value -> JaNeiVetIkke.valueOf(value as String) }, { PGEnum("JaNeiVetIkke", it) })
 }
 
+object AnnetTable : LongIdTable("annet") {
+    val andreForholdHindrerArbeid = customEnumeration("andre_forhold_hindrer_arbeid", "JaNeiVetIkke", { value -> JaNeiVetIkke.valueOf(value as String) }, { PGEnum("JaNeiVetIkke", it) })
+}
+
 object BeskrivelseMedDetaljerTable : LongIdTable("beskrivelse_med_detaljer") {
-    val situasjonId = long("situasjon_id").references(SituasjonTable.id)
+    val opplysningerOmArbeidssoekerId = long("opplysninger_om_arbeidssoeker_id").references(OpplysningerOmArbeidssoekerTable.id)
 }
 
 object BeskrivelseTable : LongIdTable("beskrivelse") {

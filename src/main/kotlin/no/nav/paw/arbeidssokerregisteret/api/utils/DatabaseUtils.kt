@@ -8,9 +8,17 @@ import org.postgresql.util.PGobject
 import java.time.Duration
 import javax.sql.DataSource
 
+fun main() {
+    val dataSource = generateDatasource("jdbc:postgresql://localhost:5432/arbeidssokerregisteretapi?user=admin&password=admin")
+    cleanDatabase(dataSource)
+}
+
 fun migrateDatabase(dataSource: DataSource) {
-    Flyway.configure().baselineOnMigrate(true).cleanDisabled(false).dataSource(dataSource).load().clean()
     Flyway.configure().baselineOnMigrate(true).dataSource(dataSource).load().migrate()
+}
+
+fun cleanDatabase(dataSource: DataSource) {
+    Flyway.configure().baselineOnMigrate(true).cleanDisabled(false).dataSource(dataSource).load().clean()
 }
 
 fun generateDatasource(url: String): DataSource =
