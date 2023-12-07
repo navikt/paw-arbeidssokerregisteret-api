@@ -20,7 +20,7 @@ class ProfileringRepositoryTest : StringSpec({
     val opplysningerOmArbeidssoekerId1: UUID = UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1fed")
     val opplysningerOmArbeidssoekerId2: UUID = UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1fee")
 
-    beforeSpec {
+    beforeEach {
         dataSource = initTestDatabase()
         database = Database.connect(dataSource)
         settInnTestPeriode(database, periodeId1)
@@ -29,7 +29,7 @@ class ProfileringRepositoryTest : StringSpec({
         settInnTestOpplysningerOmArbeidssoeker(database, periodeId2, opplysningerOmArbeidssoekerId2)
     }
 
-    afterSpec {
+    afterEach {
         dataSource.connection.close()
     }
 
@@ -61,7 +61,7 @@ fun settInnTestOpplysningerOmArbeidssoeker(
     periodeId: UUID,
     opplysningerOmArbeidssoekerId: UUID
 ) {
-    val opplysninger = lagTestOpplysningerOmArbeidssoeker(periodeId, opplysningerOmArbeidssoekerId)
+    val opplysninger = hentTestOpplysningerOmArbeidssoeker(periodeId, opplysningerOmArbeidssoekerId)
     OpplysningerOmArbeidssoekerRepository(database).opprettOpplysningerOmArbeidssoeker(opplysninger)
 }
 

@@ -29,20 +29,20 @@ class OpplysningerOmArbeidssoekerRepositoryTest : StringSpec({
     val opplysningerOmArbeidssoekerId1: UUID = UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1fed")
     val opplysningerOmArbeidssoekerId2: UUID = UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1fee")
 
-    beforeSpec {
+    beforeEach {
         dataSource = initTestDatabase()
         database = Database.connect(dataSource)
         settInnTestPeriode(database, periodeId1)
         settInnTestPeriode(database, periodeId2)
     }
 
-    afterSpec {
+    afterEach {
         dataSource.connection.close()
     }
 
     "Opprett og hent ut en opplysninger om arbeidssøker" {
         val repository = OpplysningerOmArbeidssoekerRepository(database)
-        val opplysninger = lagTestOpplysningerOmArbeidssoeker(periodeId1, opplysningerOmArbeidssoekerId1)
+        val opplysninger = hentTestOpplysningerOmArbeidssoeker(periodeId1, opplysningerOmArbeidssoekerId1)
         repository.opprettOpplysningerOmArbeidssoeker(opplysninger)
 
         val retrievedOpplysninger = repository.hentOpplysningerOmArbeidssoeker(opplysninger.periodeId)
@@ -52,8 +52,8 @@ class OpplysningerOmArbeidssoekerRepositoryTest : StringSpec({
 
     "Opprett og hent ut flere opplysninger om arbeidssøker" {
         val repository = OpplysningerOmArbeidssoekerRepository(database)
-        val opplysninger1 = lagTestOpplysningerOmArbeidssoeker(periodeId2, opplysningerOmArbeidssoekerId1)
-        val opplysninger2 = lagTestOpplysningerOmArbeidssoeker(periodeId2, opplysningerOmArbeidssoekerId2)
+        val opplysninger1 = hentTestOpplysningerOmArbeidssoeker(periodeId2, opplysningerOmArbeidssoekerId1)
+        val opplysninger2 = hentTestOpplysningerOmArbeidssoeker(periodeId2, opplysningerOmArbeidssoekerId2)
         repository.opprettOpplysningerOmArbeidssoeker(opplysninger1)
         repository.opprettOpplysningerOmArbeidssoeker(opplysninger2)
 
@@ -80,7 +80,7 @@ fun settInnTestPeriode(
     periodeRepository.opprettPeriode(periode)
 }
 
-fun lagTestOpplysningerOmArbeidssoeker(
+fun hentTestOpplysningerOmArbeidssoeker(
     periodeId: UUID,
     opplysningerOmArbeidssoekerId: UUID
 ) = OpplysningerOmArbeidssoeker(
