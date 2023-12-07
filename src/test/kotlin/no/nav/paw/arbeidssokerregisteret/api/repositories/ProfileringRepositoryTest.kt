@@ -46,11 +46,11 @@ class ProfileringRepositoryTest : StringSpec({
     "Opprett og hent ut flere profileringer" {
         val repository = ProfileringRepository(database)
         val profilering1 = lagTestProfilering(periodeId1, opplysningerOmArbeidssoekerId1)
-        val profilering2 = lagTestProfilering(periodeId2, opplysningerOmArbeidssoekerId2)
+        val profilering2 = lagTestProfilering(periodeId1, opplysningerOmArbeidssoekerId2)
         repository.opprettProfileringForArbeidssoeker(profilering1)
         repository.opprettProfileringForArbeidssoeker(profilering2)
 
-        val retrievedProfilering = repository.hentProfileringForArbeidssoekerMedPeriodeId(profilering1.periodeId)
+        val retrievedProfilering = repository.hentProfileringForArbeidssoekerMedPeriodeId(periodeId1)
 
         retrievedProfilering.size shouldBe 2
     }
