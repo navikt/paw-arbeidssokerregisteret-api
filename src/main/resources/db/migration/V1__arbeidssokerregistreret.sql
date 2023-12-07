@@ -1,3 +1,4 @@
+/* ENUMS */
 CREATE TYPE BrukerType AS ENUM (
     'UKJENT_VERDI', 'UDEFINERT', 'VEILEDER', 'SYSTEM', 'SLUTTBRUKER'
     );
@@ -29,6 +30,16 @@ CREATE TYPE BeskrivelseEnum AS ENUM (
     'ANNET'
     );
 
+CREATE TYPE ProfilertTil AS ENUM (
+    'UKJENT_VERDI',
+    'UDEFINERT',
+    'ANTATT_GODE_MULIGHETER',
+    'ANTATT_BEHOV_FOR_VEILEDNING',
+    'OPPGITT_HINDRINGER'
+    );
+
+/* Periode */
+
 CREATE TABLE bruker
 (
     id BIGSERIAL PRIMARY KEY,
@@ -55,6 +66,8 @@ CREATE TABLE periode
     avsluttet_id BIGINT REFERENCES  metadata(id),
     UNIQUE (periode_id)
 );
+
+/* Opplysninger om arbeidssøker */
 
 CREATE TABLE utdanning
 (
@@ -91,7 +104,8 @@ CREATE TABLE opplysninger_om_arbeidssoeker
     utdanning_id BIGINT REFERENCES utdanning(id),
     helse_id BIGINT REFERENCES helse(id),
     arbeidserfaring_id BIGINT REFERENCES arbeidserfaring(id),
-    annet_id BIGINT REFERENCES annet(id)
+    annet_id BIGINT REFERENCES annet(id),
+    UNIQUE (opplysninger_om_arbeidssoeker_id)
 );
 
 CREATE TABLE beskrivelse_med_detaljer
@@ -113,4 +127,18 @@ CREATE TABLE detaljer
     beskrivelse_id BIGINT REFERENCES beskrivelse(id),
     noekkel VARCHAR(50),
     verdi VARCHAR(255)
+);
+
+/* Profilering */
+
+CREATE TABLE profilering
+(
+    id BIGSERIAL PRIMARY KEY,
+    profilering_id UUID NOT NULL,
+    periode_id UUID REFERENCES periode(periode_id),
+    opplysninger_om_arbeidssoeker_id UUID REFERENCES opplysninger_om_arbeidssoeker(opplysninger_om_arbeidssoeker_id),
+    sendt_inn_av_id BIGINT REFERENCES metadata(id),
+    profilert_til ProfilertTil NOT NULL,
+    jobbet_sammenhengende_seks_av_tolv_siste_maneder boolean NOT NULL,
+    alder integer NOT NULL
 );

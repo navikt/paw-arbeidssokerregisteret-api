@@ -11,6 +11,7 @@ import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
 import no.nav.paw.arbeidssokerregisteret.api.services.AutorisasjonService
 import no.nav.paw.arbeidssokerregisteret.api.services.OpplysningerOmArbeidssoekerService
 import no.nav.paw.arbeidssokerregisteret.api.services.PeriodeService
+import no.nav.paw.arbeidssokerregisteret.api.services.ProfileringService
 import no.nav.paw.arbeidssokerregisteret.api.utils.getNavAnsatt
 import no.nav.paw.arbeidssokerregisteret.api.utils.getPidClaim
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
@@ -19,7 +20,8 @@ import java.util.UUID
 fun Route.arbeidssokerRoutes(
     autorisasjonService: AutorisasjonService,
     periodeService: PeriodeService,
-    opplysningerOmArbeidssoekerService: OpplysningerOmArbeidssoekerService
+    opplysningerOmArbeidssoekerService: OpplysningerOmArbeidssoekerService,
+    profileringService: ProfileringService
 ) {
     route("/api/v1") {
         authenticate("tokenx") {
@@ -47,6 +49,32 @@ fun Route.arbeidssokerRoutes(
                     logger.info("Hentet opplysninger-om-arbeidssøker for bruker med periodeId: $periodeId")
 
                     call.respond(HttpStatusCode.OK, opplysningerOmArbeidssoeker)
+                }
+            }
+            route("/profilering/{periodeId}") {
+                get {
+                    val periodeId = UUID.fromString(call.parameters["periodeId"])
+
+                    logger.info("Henter profilering for bruker med periodeId: $periodeId")
+
+                    val profilering = profileringService.hentProfileringForArbeidssoekerMedPeriodeId(periodeId)
+
+                    logger.info("Hentet profilering for bruker med periodeId: $periodeId")
+
+                    call.respond(HttpStatusCode.OK, profilering)
+                }
+            }
+            route("/profilering/{opplysningerOmArbeidssoekerId}") {
+                get {
+                    val opplysningerOmArbeidssoekerId = UUID.fromString(call.parameters["opplysningerOmArbeidssoekerId"])
+
+                    logger.info("Henter profilering for bruker med opplysningerOmArbeidssoekerId: $opplysningerOmArbeidssoekerId")
+
+                    val profilering = profileringService.hentProfileringForArbeidssoekerMedOpplysningerOmArbeidssoekerId(opplysningerOmArbeidssoekerId)
+
+                    logger.info("Hentet profilering for bruker med opplysningerOmArbeidssoekerId: $opplysningerOmArbeidssoekerId")
+
+                    call.respond(HttpStatusCode.OK, profilering)
                 }
             }
         }
@@ -85,6 +113,23 @@ fun Route.arbeidssokerRoutes(
                     call.respond(HttpStatusCode.OK, opplysningerOmArbeidssoeker)
                 }
             }
+            route("/veileder/profilering") {
+                post {
+                    val (identitetsnummer, periodeId) = call.receive<ProfileringRequest>()
+
+                    val navAnsatt = call.getNavAnsatt()
+
+                    val harNavAnsattTilgangTilBruker = autorisasjonService.verifiserTilgangTilBruker(navAnsatt, identitetsnummer)
+
+                    if (!harNavAnsattTilgangTilBruker) {
+                        return@post call.respond(HttpStatusCode.Forbidden)
+                    }
+
+                    val profilering = profileringService.hentProfileringForArbeidssoekerMedPeriodeId(periodeId)
+
+                    call.respond(HttpStatusCode.OK, profilering)
+                }
+            }
         }
     }
 }
@@ -94,6 +139,11 @@ data class ArbeidssokerperiodeRequest(
 )
 
 data class OpplysningerOmArbeidssoekerRequest(
+    val identitetsnummer: Identitetsnummer,
+    val periodeId: UUID
+)
+
+data class ProfileringRequest(
     val identitetsnummer: Identitetsnummer,
     val periodeId: UUID
 )

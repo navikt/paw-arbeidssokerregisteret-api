@@ -2,11 +2,10 @@ package no.nav.paw.arbeidssokerregisteret.api.kafka.producers
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import io.confluent.kafka.serializers.KafkaAvroSerializerConfig
-import no.nav.paw.arbeidssokerregisteret.api.config.Config
 import no.nav.paw.arbeidssokerregisteret.api.config.KafkaConfig
 import no.nav.paw.arbeidssokerregisteret.api.config.properties
 import no.nav.paw.arbeidssokerregisteret.api.utils.LocalProducerUtils
-import no.nav.paw.arbeidssokerregisteret.api.utils.loadConfiguration
+import no.nav.paw.arbeidssokerregisteret.api.utils.loadLocalConfiguration
 import no.nav.paw.arbeidssokerregisteret.api.v1.OpplysningerOmArbeidssoeker
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -15,7 +14,7 @@ import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 
 fun main() {
-    val config = loadConfiguration<Config>()
+    val config = loadLocalConfiguration()
     produserMeldingerForLokalUtvikling(config.kafka)
 }
 

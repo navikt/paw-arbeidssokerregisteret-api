@@ -15,6 +15,7 @@ import org.apache.kafka.common.serialization.StringDeserializer
 data class KafkaConfig(
     val periodeTopic: String,
     val opplysningerOmArbeidssoekerTopic: String,
+    val profileringTopic: String,
     val gruppeId: String,
     val serverConfig: KafkaServerConfig,
     val schemaRegistryConfig: SchemaRegistryConfig
