@@ -45,7 +45,7 @@ class OpplysningerOmArbeidssoekerRepository(private val database: Database) {
             OpplysningerOmArbeidssoekerTable.select {
                 OpplysningerOmArbeidssoekerTable.periodeId eq periodeId
             }.map { resultRow ->
-                SituasjonConverter().konverterTilSituasjonResponse(resultRow)
+                OpplysningerOmArbeidssoekerConverter().konverterTilOpplysningerOmArbeidssoekerResponse(resultRow)
             }
         }
 
@@ -138,8 +138,8 @@ class OpplysningerOmArbeidssoekerRepository(private val database: Database) {
     }
 }
 
-class SituasjonConverter {
-    fun konverterTilSituasjonResponse(resultRow: ResultRow): OpplysningerOmArbeidssoekerResponse {
+class OpplysningerOmArbeidssoekerConverter {
+    fun konverterTilOpplysningerOmArbeidssoekerResponse(resultRow: ResultRow): OpplysningerOmArbeidssoekerResponse {
         val periodeId = resultRow[OpplysningerOmArbeidssoekerTable.periodeId]
         val situasjonIdPK = resultRow[OpplysningerOmArbeidssoekerTable.id]
         val opplysningerOmArbeidssoekerId = resultRow[OpplysningerOmArbeidssoekerTable.opplysningerOmArbeidssoekerId]

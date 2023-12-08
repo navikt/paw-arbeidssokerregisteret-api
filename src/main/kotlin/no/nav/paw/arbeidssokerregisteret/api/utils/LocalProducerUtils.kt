@@ -12,19 +12,22 @@ import no.nav.paw.arbeidssokerregisteret.api.v1.Jobbsituasjon
 import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
 import no.nav.paw.arbeidssokerregisteret.api.v1.OpplysningerOmArbeidssoeker
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
+import no.nav.paw.arbeidssokerregisteret.api.v1.Profilering
+import no.nav.paw.arbeidssokerregisteret.api.v1.ProfilertTil
 import no.nav.paw.arbeidssokerregisteret.api.v1.Utdanning
 import no.nav.paw.arbeidssokerregisteret.api.v1.Utdanningsnivaa
 import java.time.Instant
 import java.util.UUID
 
 class LocalProducerUtils {
-    val testUUID1 = UUID.fromString("00000000-0000-0000-0000-000000000001")
-    val testUUID2 = UUID.fromString("00000000-0000-0000-0000-000000000002")
+    val testPeriodeId1 = UUID.fromString("00000000-0000-0000-0000-000000000001")
+    val testPeriodeId2 = UUID.fromString("00000000-0000-0000-0000-000000000002")
+    val testOpplysningerId1 = UUID.fromString("00000000-0000-0000-0000-000000000003")
 
     fun lagTestPerioder(): List<Periode> {
         return listOf(
             Periode(
-                testUUID1,
+                testPeriodeId1,
                 "12345678911",
                 Metadata(
                     Instant.now(),
@@ -38,7 +41,7 @@ class LocalProducerUtils {
                 null
             ),
             Periode(
-                testUUID2,
+                testPeriodeId2,
                 "12345678911",
                 Metadata(
                     Instant.now(),
@@ -65,8 +68,8 @@ class LocalProducerUtils {
     fun lagTestOpplysningerOmArbeidssoeker(): List<OpplysningerOmArbeidssoeker> {
         return listOf(
             OpplysningerOmArbeidssoeker(
-                UUID.randomUUID(),
-                testUUID1,
+                testOpplysningerId1,
+                testPeriodeId1,
                 Metadata(
                     Instant.now(),
                     Bruker(
@@ -109,6 +112,26 @@ class LocalProducerUtils {
                     JaNeiVetIkke.JA
                 )
             )
+        )
+    }
+
+    fun lagTestProfilering(): Profilering {
+        return Profilering(
+            UUID.randomUUID(),
+            testPeriodeId1,
+            testOpplysningerId1,
+            Metadata(
+                Instant.now(),
+                Bruker(
+                    BrukerType.UKJENT_VERDI,
+                    "12345678911"
+                ),
+                "test",
+                "test"
+            ),
+            ProfilertTil.ANTATT_BEHOV_FOR_VEILEDNING,
+            true,
+            30
         )
     }
 }

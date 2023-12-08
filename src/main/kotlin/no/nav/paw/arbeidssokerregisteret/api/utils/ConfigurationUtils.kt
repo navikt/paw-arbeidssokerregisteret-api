@@ -2,6 +2,7 @@ package no.nav.paw.arbeidssokerregisteret.api.utils
 
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addResourceSource
+import no.nav.paw.arbeidssokerregisteret.api.config.Config
 import java.lang.System.getenv
 
 inline fun <reified T : Any> loadConfiguration(): T =
@@ -17,6 +18,13 @@ inline fun <reified T : Any> loadConfiguration(): T =
                 }
             }
         }
+        .strict()
+        .build()
+        .loadConfigOrThrow()
+
+fun loadLocalConfiguration(): Config =
+    ConfigLoaderBuilder.default()
+        .addResourceSource("/application-local.yaml", true)
         .strict()
         .build()
         .loadConfigOrThrow()

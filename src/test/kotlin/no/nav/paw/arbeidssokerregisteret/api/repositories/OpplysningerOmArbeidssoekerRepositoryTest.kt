@@ -26,21 +26,23 @@ class OpplysningerOmArbeidssoekerRepositoryTest : StringSpec({
     lateinit var database: Database
     val periodeId1: UUID = UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1feb")
     val periodeId2: UUID = UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1fec")
+    val opplysningerOmArbeidssoekerId1: UUID = UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1fed")
+    val opplysningerOmArbeidssoekerId2: UUID = UUID.fromString("84201f96-363b-4aab-a589-89fa4b9b1fee")
 
-    beforeSpec {
+    beforeEach {
         dataSource = initTestDatabase()
         database = Database.connect(dataSource)
         settInnTestPeriode(database, periodeId1)
         settInnTestPeriode(database, periodeId2)
     }
 
-    afterSpec {
+    afterEach {
         dataSource.connection.close()
     }
 
     "Opprett og hent ut en opplysninger om arbeidssøker" {
         val repository = OpplysningerOmArbeidssoekerRepository(database)
-        val opplysninger = lagTestOpplysningerOmArbeidssoeker(periodeId1)
+        val opplysninger = hentTestOpplysningerOmArbeidssoeker(periodeId1, opplysningerOmArbeidssoekerId1)
         repository.opprettOpplysningerOmArbeidssoeker(opplysninger)
 
         val retrievedOpplysninger = repository.hentOpplysningerOmArbeidssoeker(opplysninger.periodeId)
@@ -50,8 +52,8 @@ class OpplysningerOmArbeidssoekerRepositoryTest : StringSpec({
 
     "Opprett og hent ut flere opplysninger om arbeidssøker" {
         val repository = OpplysningerOmArbeidssoekerRepository(database)
-        val opplysninger1 = lagTestOpplysningerOmArbeidssoeker(periodeId2)
-        val opplysninger2 = lagTestOpplysningerOmArbeidssoeker(periodeId2)
+        val opplysninger1 = hentTestOpplysningerOmArbeidssoeker(periodeId2, opplysningerOmArbeidssoekerId1)
+        val opplysninger2 = hentTestOpplysningerOmArbeidssoeker(periodeId2, opplysningerOmArbeidssoekerId2)
         repository.opprettOpplysningerOmArbeidssoeker(opplysninger1)
         repository.opprettOpplysningerOmArbeidssoeker(opplysninger2)
 
@@ -78,46 +80,48 @@ fun settInnTestPeriode(
     periodeRepository.opprettPeriode(periode)
 }
 
-fun lagTestOpplysningerOmArbeidssoeker(periodeId: UUID) =
-    OpplysningerOmArbeidssoeker(
-        UUID.randomUUID(),
-        periodeId,
-        Metadata(
-            Instant.now(),
-            Bruker(
-                BrukerType.SYSTEM,
-                "12345678911"
+fun hentTestOpplysningerOmArbeidssoeker(
+    periodeId: UUID,
+    opplysningerOmArbeidssoekerId: UUID
+) = OpplysningerOmArbeidssoeker(
+    opplysningerOmArbeidssoekerId,
+    periodeId,
+    Metadata(
+        Instant.now(),
+        Bruker(
+            BrukerType.SYSTEM,
+            "12345678911"
+        ),
+        "test",
+        "test"
+    ),
+    Utdanning(
+        Utdanningsnivaa.GRUNNSKOLE,
+        JaNeiVetIkke.VET_IKKE,
+        JaNeiVetIkke.VET_IKKE
+    ),
+    Helse(
+        JaNeiVetIkke.VET_IKKE
+    ),
+    Arbeidserfaring(
+        JaNeiVetIkke.VET_IKKE
+    ),
+    Jobbsituasjon(
+        listOf(
+            BeskrivelseMedDetaljer(
+                Beskrivelse.AKKURAT_FULLFORT_UTDANNING,
+                hentMapAvDetaljer()
             ),
-            "test",
-            "test"
-        ),
-        Utdanning(
-            Utdanningsnivaa.GRUNNSKOLE,
-            JaNeiVetIkke.VET_IKKE,
-            JaNeiVetIkke.VET_IKKE
-        ),
-        Helse(
-            JaNeiVetIkke.VET_IKKE
-        ),
-        Arbeidserfaring(
-            JaNeiVetIkke.VET_IKKE
-        ),
-        Jobbsituasjon(
-            listOf(
-                BeskrivelseMedDetaljer(
-                    Beskrivelse.AKKURAT_FULLFORT_UTDANNING,
-                    hentMapAvDetaljer()
-                ),
-                BeskrivelseMedDetaljer(
-                    Beskrivelse.IKKE_VAERT_I_JOBB_SISTE_2_AAR,
-                    hentMapAvDetaljer()
-                )
+            BeskrivelseMedDetaljer(
+                Beskrivelse.IKKE_VAERT_I_JOBB_SISTE_2_AAR,
+                hentMapAvDetaljer()
             )
-        ),
-        Annet(
-            JaNeiVetIkke.VET_IKKE
         )
+    ),
+    Annet(
+        JaNeiVetIkke.VET_IKKE
     )
+)
 
 fun hentMapAvDetaljer(): Map<String, String> {
     val map = mutableMapOf<String, String>()
