@@ -155,6 +155,12 @@ Konsumer meldinger fra `opplysninger-om-arbeidssoeker-beta-v1`
 docker exec -it paw-arbeidssokerregisteret-api_kafka_1 /usr/bin/kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic opplysninger-om-arbeidssoeker-beta-v1
 ```
 
+Konsumer meldinger fra `arbeidssoker-profilering-beta-v1`
+
+```sh
+docker exec -it paw-arbeidssokerregisteret-api_kafka_1 /usr/bin/kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic arbeidssoker-profilering-beta-v1
+```
+
 ## Formatering
 
 Prosjektet bruker kotlinter

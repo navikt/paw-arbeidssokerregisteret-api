@@ -31,6 +31,7 @@ val KafkaConfig.properties
             KafkaAvroSerializerConfig.AUTO_REGISTER_SCHEMAS to schemaRegistryConfig.autoRegistrerSchema,
             ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java.name,
             ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to KafkaAvroDeserializer::class.java,
+            ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to false,
             KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG to true,
             KafkaAvroSerializerConfig.VALUE_SUBJECT_NAME_STRATEGY to RecordNameStrategy::class.java.name
         ) + (

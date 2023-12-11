@@ -6,6 +6,7 @@ import no.nav.paw.arbeidssokerregisteret.api.database.PeriodeTable
 import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.PeriodeResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.toMetadataResponse
+import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 import no.nav.paw.arbeidssokerregisteret.api.v1.Bruker
 import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
@@ -83,14 +84,18 @@ class PeriodeRepository(private val database: Database) {
     }
 
     private fun settInnBruker(bruker: Bruker): Long {
-        val eksisterendeBruker = BrukerTable.select { BrukerTable.brukerId eq bruker.id and (BrukerTable.type eq bruker.type) }.singleOrNull()
+        val eksisterendeBruker = BrukerTable.select { (BrukerTable.brukerId eq bruker.id) and (BrukerTable.type eq bruker.type) }.singleOrNull()
         return if (eksisterendeBruker != null) {
             eksisterendeBruker[BrukerTable.id].value
         } else {
-            BrukerTable.insertAndGetId {
-                it[brukerId] = bruker.id
-                it[type] = bruker.type
-            }.value
+            try {
+                BrukerTable.insertAndGetId {
+                    it[brukerId] = bruker.id
+                    it[type] = bruker.type
+                }.value
+            } catch (e: Exception) {
+                BrukerTable.select { (BrukerTable.brukerId eq bruker.id) and (BrukerTable.type eq bruker.type) }.single()[BrukerTable.id].value
+            }
         }
     }
 
@@ -110,14 +115,19 @@ class PeriodeRepository(private val database: Database) {
 
     fun oppdaterPeriode(periode: Periode) {
         transaction {
-            val eksisterendePeriode = PeriodeTable.select { PeriodeTable.periodeId eq periode.id }.singleOrNull()
+            try {
+                val eksisterendePeriode = PeriodeTable.select { PeriodeTable.periodeId eq periode.id }.singleOrNull()
 
-            eksisterendePeriode?.let {
-                val startetId = it[PeriodeTable.startetId]
-                val avsluttetId = it[PeriodeTable.avsluttetId]
+                eksisterendePeriode?.let {
+                    val startetId = it[PeriodeTable.startetId]
+                    val avsluttetId = it[PeriodeTable.avsluttetId]
 
-                oppdaterMetadata(startetId, periode.startet)
-                periode.avsluttet?.let { avsluttetPeriode -> oppdaterAvsluttetMetadata(avsluttetId, avsluttetPeriode, periode.id) }
+                    oppdaterMetadata(startetId, periode.startet)
+                    periode.avsluttet?.let { avsluttetPeriode -> oppdaterAvsluttetMetadata(avsluttetId, avsluttetPeriode, periode.id) }
+                }
+            } catch (e: Exception) {
+                logger.error("Feil ved opprettelse av periode", e)
+                throw e
             }
         }
     }

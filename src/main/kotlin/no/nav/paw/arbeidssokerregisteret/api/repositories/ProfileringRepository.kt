@@ -6,6 +6,7 @@ import no.nav.paw.arbeidssokerregisteret.api.domain.response.OpplysningerOmArbei
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.ProfileringResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.toMetadataResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.toProfilertTilResponse
+import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 import no.nav.paw.arbeidssokerregisteret.api.v1.Profilering
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.ResultRow
@@ -37,15 +38,20 @@ class ProfileringRepository(private val database: Database) {
 
     fun opprettProfileringForArbeidssoeker(profilering: Profilering) {
         transaction(database) {
-            val sendtInnAvId = PeriodeRepository(database).settInnMetadata(profilering.sendtInnAv)
-            ProfileringTable.insert {
-                it[profileringId] = profilering.id
-                it[periodeId] = profilering.periodeId
-                it[opplysningerOmArbeidssoekerId] = profilering.opplysningerOmArbeidssokerId
-                it[ProfileringTable.sendtInnAvId] = sendtInnAvId
-                it[profilertTil] = profilering.profilertTil
-                it[jobbetSammenhengendeSeksAvTolvSisteManeder] = profilering.jobbetSammenhengendeSeksAvTolvSisteMnd
-                it[alder] = profilering.alder
+            try {
+                val sendtInnAvId = PeriodeRepository(database).settInnMetadata(profilering.sendtInnAv)
+                ProfileringTable.insert {
+                    it[profileringId] = profilering.id
+                    it[periodeId] = profilering.periodeId
+                    it[opplysningerOmArbeidssoekerId] = profilering.opplysningerOmArbeidssokerId
+                    it[ProfileringTable.sendtInnAvId] = sendtInnAvId
+                    it[profilertTil] = profilering.profilertTil
+                    it[jobbetSammenhengendeSeksAvTolvSisteManeder] = profilering.jobbetSammenhengendeSeksAvTolvSisteMnd
+                    it[alder] = profilering.alder
+                }
+            } catch (e: Exception) {
+                logger.error("Feil ved opprettelse av profilering", e)
+                throw e
             }
         }
     }

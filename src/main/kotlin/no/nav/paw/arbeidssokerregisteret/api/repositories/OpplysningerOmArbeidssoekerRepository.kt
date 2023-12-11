@@ -68,6 +68,7 @@ class OpplysningerOmArbeidssoekerRepository(private val database: Database) {
                 }
             } catch (e: Exception) {
                 logger.error("Feil ved opprettelse av opplysninger om arbeidssøker", e)
+                throw e
             }
         }
     }

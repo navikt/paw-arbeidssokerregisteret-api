@@ -18,9 +18,9 @@ class OpplysningerOmArbeidssoekerConsumer(
         while (true) {
             consumer.poll(Duration.ofMillis(500)).forEach { post ->
                 try {
-                    logger.trace("Mottok melding fra $topic med offset ${post.offset()} partition ${post.partition()}")
-                    val opplysningerOmarbeidssoeker = post.value()
-                    opplysningerOmArbeidssoekerService.opprettOpplysningerOmArbeidssoeker(opplysningerOmarbeidssoeker)
+                    logger.info("Mottok melding fra $topic med offset ${post.offset()} partition ${post.partition()}")
+                    val opplysningerOmArbeidssoeker = post.value()
+                    opplysningerOmArbeidssoekerService.opprettOpplysningerOmArbeidssoeker(opplysningerOmArbeidssoeker)
 
                     consumer.commitSync()
                 } catch (error: Exception) {

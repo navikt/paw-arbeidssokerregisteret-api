@@ -18,7 +18,7 @@ class ProfileringConsumer(
         while (true) {
             consumer.poll(Duration.ofMillis(500)).forEach { post ->
                 try {
-                    logger.trace("Mottok melding fra $topic med offset ${post.offset()} partition ${post.partition()}")
+                    logger.info("Mottok melding fra $topic med offset ${post.offset()} partition ${post.partition()}")
                     val profileringAvArbeidssoeker = post.value()
                     profileringService.opprettProfileringForArbeidssoeker(profileringAvArbeidssoeker)
 

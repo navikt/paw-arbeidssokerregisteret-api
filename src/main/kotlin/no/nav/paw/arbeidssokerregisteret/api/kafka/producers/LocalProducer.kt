@@ -29,7 +29,7 @@ fun produserPeriodeMeldinger(kafkaConfig: KafkaConfig) {
         }
     } catch (e: Exception) {
         println("LocalProducer periode error: ${e.message}")
-        localProducer.close()
+        localProducer.closePeriodeProducer()
     }
 }
 
@@ -41,7 +41,7 @@ fun produserOpplysningerOmArbeidssoekerMeldinger(kafkaConfig: KafkaConfig) {
         }
     } catch (e: Exception) {
         println("LocalProducer opplysninger-om-arbeidssoeker error: ${e.message}")
-        localProducer.close()
+        localProducer.closeOpplysningerOmArbeidssoekerProducer()
     }
 }
 
@@ -53,7 +53,7 @@ fun produserProfileringMeldinger(kafkaConfig: KafkaConfig) {
         }
     } catch (e: Exception) {
         println("LocalProducer profilering error: ${e.message}")
-        localProducer.close()
+        localProducer.closeProfileringProducer()
     }
 }
 
@@ -79,11 +79,11 @@ class LocalProducer(private val kafkaConfig: KafkaConfig) {
         val record = ProducerRecord(topic, key, value)
         periodeProducer.send(record) { _, exception ->
             if (exception != null) {
-                println("Failed to send message: $exception")
+                println("Failed to send periode message: $exception")
             } else {
                 println("Message sent successfully to topic: $topic")
             }
-        }
+        }.get()
     }
 
     fun produceOpplysningerOmArbeidssoekerMessage(
@@ -94,11 +94,11 @@ class LocalProducer(private val kafkaConfig: KafkaConfig) {
         val record = ProducerRecord(topic, key, value)
         opplysningerOmArbeidssoekerProducer.send(record) { _, exception ->
             if (exception != null) {
-                println("Failed to send message: $exception")
+                println("Failed to send opplysninger-om-arbeidssoeker message: $exception")
             } else {
                 println("Message sent successfully to topic: $topic")
             }
-        }
+        }.get()
     }
 
     fun produceProfileringMessage(
@@ -109,15 +109,22 @@ class LocalProducer(private val kafkaConfig: KafkaConfig) {
         val record = ProducerRecord(topic, key, value)
         profileringProducer.send(record) { _, exception ->
             if (exception != null) {
-                println("Failed to send message: $exception")
+                println("Failed to send profilering message: $exception")
             } else {
                 println("Message sent successfully to topic: $topic")
             }
-        }
+        }.get()
     }
 
-    fun close() {
+    fun closePeriodeProducer() {
         periodeProducer.close()
+    }
+
+    fun closeOpplysningerOmArbeidssoekerProducer() {
         opplysningerOmArbeidssoekerProducer.close()
+    }
+
+    fun closeProfileringProducer() {
+        profileringProducer.close()
     }
 }

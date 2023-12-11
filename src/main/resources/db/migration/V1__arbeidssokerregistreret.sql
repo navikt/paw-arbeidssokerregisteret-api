@@ -99,7 +99,7 @@ CREATE TABLE opplysninger_om_arbeidssoeker
 (
     id BIGSERIAL PRIMARY KEY,
     opplysninger_om_arbeidssoeker_id UUID NOT NULL,
-    periode_id UUID REFERENCES periode(periode_id),
+    periode_id UUID,
     sendt_inn_av_id BIGINT REFERENCES metadata(id),
     utdanning_id BIGINT REFERENCES utdanning(id),
     helse_id BIGINT REFERENCES helse(id),
@@ -135,8 +135,8 @@ CREATE TABLE profilering
 (
     id BIGSERIAL PRIMARY KEY,
     profilering_id UUID NOT NULL,
-    periode_id UUID REFERENCES periode(periode_id),
-    opplysninger_om_arbeidssoeker_id UUID REFERENCES opplysninger_om_arbeidssoeker(opplysninger_om_arbeidssoeker_id),
+    periode_id UUID,
+    opplysninger_om_arbeidssoeker_id UUID,
     sendt_inn_av_id BIGINT REFERENCES metadata(id),
     profilert_til ProfilertTil NOT NULL,
     jobbet_sammenhengende_seks_av_tolv_siste_maneder boolean NOT NULL,

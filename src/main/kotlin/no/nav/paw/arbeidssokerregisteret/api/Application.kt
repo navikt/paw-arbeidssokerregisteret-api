@@ -41,14 +41,32 @@ fun Application.module(
     // Kjør migration på database
     migrateDatabase(dependencies.dataSource)
 
-    // Konsumer meldinger fra Kafka
+    // Konsumer periode meldinger fra Kafka
     thread {
         try {
             dependencies.periodeConsumer.start()
+        } catch (e: Exception) {
+            logger.error("Arbeidssøkerperiode consumer error: ${e.message}", e)
+            exitProcess(1)
+        }
+    }
+
+    // Konsumer opplysninger-om-arbeidssøker meldinger fra Kafka
+    thread {
+        try {
             dependencies.opplysningerOmArbeidssoekerConsumer.start()
+        } catch (e: Exception) {
+            logger.error("Opplysninger-om-arbeidssøker consumer error: ${e.message}", e)
+            exitProcess(1)
+        }
+    }
+
+    // Konsumer profilering meldinger fra Kafka
+    thread {
+        try {
             dependencies.profileringConsumer.start()
         } catch (e: Exception) {
-            logger.error("Consumer error: ${e.message}", e)
+            logger.error("Profilering consumer error: ${e.message}", e)
             exitProcess(1)
         }
     }

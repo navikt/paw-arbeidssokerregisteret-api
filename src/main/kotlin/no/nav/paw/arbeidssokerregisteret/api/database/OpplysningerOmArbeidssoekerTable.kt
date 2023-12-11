@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 
 object OpplysningerOmArbeidssoekerTable : LongIdTable("opplysninger_om_arbeidssoeker") {
     val opplysningerOmArbeidssoekerId = uuid("opplysninger_om_arbeidssoeker_id")
-    val periodeId = uuid("periode_id").references(PeriodeTable.periodeId)
+    val periodeId = uuid("periode_id")
     val sendtInnAvId = long("sendt_inn_av_id").references(MetadataTable.utfoertAvId)
     val utdanningId = long("utdanning_id").references(UtdanningTable.id)
     val helseId = long("helse_id").references(HelseTable.id)
