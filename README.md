@@ -8,6 +8,8 @@ https://arbeidssokerregisteret-api.intern.dev.nav.no/docs
 
 ## Flytdiagram
 
+![Flytdiagram](docs/flytdiagram.png)
+
 ## Teknologier
 
 Øvrige teknologier, rammeverk og biblioteker som er blitt tatt i bruk:

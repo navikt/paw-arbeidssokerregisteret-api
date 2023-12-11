@@ -54,6 +54,54 @@ paths:
                 type: "array"
                 items:
                   $ref: "#/components/schemas/OpplysningerOmArbeidssoekerResponse"
+  /api/v1/profilering/{periodeId}:
+    get:
+      description: ""
+      parameters:
+      - name: "periodeId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/ProfileringResponse"
+  /api/v1/profilering/opplysninger-om-arbeidssoeker/{opplysningerOmArbeidssoekerId}:
+    get:
+      description: ""
+      parameters:
+      - name: "opplysningerOmArbeidssoekerId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/ProfileringResponse"
   /api/v1/veileder/arbeidssoekerperioder:
     post:
       description: ""
@@ -114,6 +162,36 @@ paths:
                 type: "array"
                 items:
                   $ref: "#/components/schemas/OpplysningerOmArbeidssoekerResponse"
+  /api/v1/veileder/profilering:
+    post:
+      description: ""
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: "#/components/schemas/ProfileringRequest"
+        required: true
+      responses:
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/ProfileringResponse"
   /internal/isAlive:
     get:
       description: ""
@@ -283,12 +361,46 @@ components:
           type: "array"
           items:
             $ref: "#/components/schemas/BeskrivelseMedDetaljerResponse"
+    ProfileringResponse:
+      type: "object"
+      properties:
+        profileringId:
+          type: "string"
+          format: "uuid"
+        periodeId:
+          type: "string"
+          format: "uuid"
+        opplysningerOmArbeidssoeker:
+          $ref: "#/components/schemas/OpplysningerOmArbeidssoekerResponse"
+        sendtInnAv:
+          $ref: "#/components/schemas/MetadataResponse"
+        profilertTil:
+          type: "string"
+          enum:
+          - "UKJENT_VERDI"
+          - "UDEFINERT"
+          - "ANTATT_GODE_MULIGHETER"
+          - "ANTATT_BEHOV_FOR_VEILEDNING"
+          - "OPPGITT_HINDRINGER"
+        jobbetSammenhengendeSeksAvTolvSisteManeder:
+          type: "boolean"
+        alder:
+          type: "integer"
+          format: "int32"
     ArbeidssokerperiodeRequest:
       type: "object"
       properties:
         identitetsnummer:
           type: "string"
     OpplysningerOmArbeidssoekerRequest:
+      type: "object"
+      properties:
+        identitetsnummer:
+          type: "string"
+        periodeId:
+          type: "string"
+          format: "uuid"
+    ProfileringRequest:
       type: "object"
       properties:
         identitetsnummer:

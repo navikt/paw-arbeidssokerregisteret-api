@@ -64,7 +64,7 @@ fun Route.arbeidssokerRoutes(
                     call.respond(HttpStatusCode.OK, profilering)
                 }
             }
-            route("/profilering/{opplysningerOmArbeidssoekerId}") {
+            route("/profilering/opplysninger-om-arbeidssoeker/{opplysningerOmArbeidssoekerId}") {
                 get {
                     val opplysningerOmArbeidssoekerId = UUID.fromString(call.parameters["opplysningerOmArbeidssoekerId"])
 
