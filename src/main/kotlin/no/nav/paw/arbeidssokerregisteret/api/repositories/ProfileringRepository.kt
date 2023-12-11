@@ -13,6 +13,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.sql.SQLException
 import java.util.*
 
 class ProfileringRepository(private val database: Database) {
@@ -49,7 +50,7 @@ class ProfileringRepository(private val database: Database) {
                     it[jobbetSammenhengendeSeksAvTolvSisteManeder] = profilering.jobbetSammenhengendeSeksAvTolvSisteMnd
                     it[alder] = profilering.alder
                 }
-            } catch (e: Exception) {
+            } catch (e: SQLException) {
                 logger.error("Feil ved opprettelse av profilering", e)
                 throw e
             }

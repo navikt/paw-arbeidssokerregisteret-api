@@ -37,6 +37,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.sql.SQLException
 import java.util.*
 
 class OpplysningerOmArbeidssoekerRepository(private val database: Database) {
@@ -66,7 +67,7 @@ class OpplysningerOmArbeidssoekerRepository(private val database: Database) {
                         settInnDetaljer(beskrivelserId, detalj)
                     }
                 }
-            } catch (e: Exception) {
+            } catch (e: SQLException) {
                 logger.error("Feil ved opprettelse av opplysninger om arbeidssøker", e)
                 throw e
             }

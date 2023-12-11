@@ -18,6 +18,7 @@ import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
+import java.sql.SQLException
 import java.util.UUID
 
 class PeriodeRepository(private val database: Database) {
@@ -66,7 +67,7 @@ class PeriodeRepository(private val database: Database) {
     }
 
     fun opprettPeriode(periode: Periode) {
-        transaction {
+        transaction(database) {
             val startetId = settInnMetadata(periode.startet)
             val avsluttetId = periode.avsluttet?.let { settInnMetadata(it) }
 
@@ -114,7 +115,7 @@ class PeriodeRepository(private val database: Database) {
     }
 
     fun oppdaterPeriode(periode: Periode) {
-        transaction {
+        transaction(database) {
             try {
                 val eksisterendePeriode = PeriodeTable.select { PeriodeTable.periodeId eq periode.id }.singleOrNull()
 
@@ -125,7 +126,7 @@ class PeriodeRepository(private val database: Database) {
                     oppdaterMetadata(startetId, periode.startet)
                     periode.avsluttet?.let { avsluttetPeriode -> oppdaterAvsluttetMetadata(avsluttetId, avsluttetPeriode, periode.id) }
                 }
-            } catch (e: Exception) {
+            } catch (e: SQLException) {
                 logger.error("Feil ved opprettelse av periode", e)
                 throw e
             }

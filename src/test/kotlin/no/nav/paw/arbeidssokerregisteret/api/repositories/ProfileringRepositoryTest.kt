@@ -54,6 +54,32 @@ class ProfileringRepositoryTest : StringSpec({
 
         retrievedProfilering.size shouldBe 2
     }
+
+    "Hent ut profilering med OpplysningerOmArbeidssoekerId" {
+        val repository = ProfileringRepository(database)
+        val profilering = lagTestProfilering(periodeId1, opplysningerOmArbeidssoekerId1)
+        repository.opprettProfileringForArbeidssoeker(profilering)
+        val retrievedProfilering = repository.hentProfileringForArbeidssoekerMedOpplysningerOmArbeidssoekerId(opplysningerOmArbeidssoekerId1)
+
+        retrievedProfilering.size shouldBe 1
+    }
+
+    "Hent ut profilering med PeriodeId" {
+        val repository = ProfileringRepository(database)
+        val profilering = lagTestProfilering(periodeId1, opplysningerOmArbeidssoekerId1)
+        repository.opprettProfileringForArbeidssoeker(profilering)
+        val retrievedProfilering = repository.hentProfileringForArbeidssoekerMedPeriodeId(periodeId1)
+
+        retrievedProfilering.size shouldBe 1
+    }
+
+    "Hent ut ikke-eksisterende profilering" {
+        val repository = ProfileringRepository(database)
+
+        val retrievedProfilering = repository.hentProfileringForArbeidssoekerMedPeriodeId(UUID.randomUUID())
+
+        retrievedProfilering.size shouldBe 0
+    }
 })
 
 fun settInnTestOpplysningerOmArbeidssoeker(
