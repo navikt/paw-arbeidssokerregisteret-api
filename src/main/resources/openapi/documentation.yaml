@@ -234,6 +234,9 @@ components:
     ArbeidssoekerperiodeResponse:
       type: "object"
       properties:
+        periodeId:
+          type: "string"
+          format: "uuid"
         startet:
           $ref: "#/components/schemas/MetadataResponse"
         avsluttet:
@@ -346,8 +349,9 @@ components:
         periodeId:
           type: "string"
           format: "uuid"
-        opplysningerOmArbeidssoeker:
-          $ref: "#/components/schemas/OpplysningerOmArbeidssoekerResponse"
+        opplysningerOmArbeidssoekerId:
+          type: "string"
+          format: "uuid"
         sendtInnAv:
           $ref: "#/components/schemas/MetadataResponse"
         profilertTil:
