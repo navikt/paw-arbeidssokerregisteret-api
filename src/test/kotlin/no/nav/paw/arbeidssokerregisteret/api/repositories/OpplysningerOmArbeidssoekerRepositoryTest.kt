@@ -75,9 +75,9 @@ fun settInnTestPeriode(
     database: Database,
     periodeId: UUID
 ) {
-    val periodeRepository = PeriodeRepository(database)
+    val arbeidssoekerperiodeRepository = ArbeidssoekerperiodeRepository(database)
     val periode = hentTestPeriode(periodeId)
-    periodeRepository.opprettPeriode(periode)
+    arbeidssoekerperiodeRepository.opprettArbeidssoekerperiode(periode)
 }
 
 fun hentTestOpplysningerOmArbeidssoeker(

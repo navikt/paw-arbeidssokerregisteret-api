@@ -44,7 +44,7 @@ fun Application.module(
     // Konsumer periode meldinger fra Kafka
     thread {
         try {
-            dependencies.periodeConsumer.start()
+            dependencies.arbeidssoekerperiodeConsumer.start()
         } catch (e: Exception) {
             logger.error("Arbeidssøkerperiode consumer error: ${e.message}", e)
             exitProcess(1)
@@ -82,6 +82,6 @@ fun Application.module(
     routing {
         healthRoutes(dependencies.registry)
         swaggerRoutes()
-        arbeidssokerRoutes(dependencies.autorisasjonService, dependencies.periodeService, dependencies.opplysningerOmArbeidssoekerService, dependencies.profileringService)
+        arbeidssokerRoutes(dependencies.autorisasjonService, dependencies.arbeidssoekerperiodeService, dependencies.opplysningerOmArbeidssoekerService, dependencies.profileringService)
     }
 }

@@ -45,7 +45,7 @@ fun ApplicationCall.isMachineToMachineToken(): Boolean? =
         ?.getAsList("roles")
         ?.contains("access_as_application")
 
-fun ApplicationCall.getNavAnsattFromToken() =
+fun ApplicationCall.getNavAnsattFromToken(): NavAnsatt =
     if (this.isMachineToMachineToken() == true) {
         val navIdentFraHeader = this.request.headers["Nav-Ident"] ?: throw RuntimeException("Nav-Ident mangler i header")
         this.getNavAnsattWithNavIdentFromHeader(navIdentFraHeader)

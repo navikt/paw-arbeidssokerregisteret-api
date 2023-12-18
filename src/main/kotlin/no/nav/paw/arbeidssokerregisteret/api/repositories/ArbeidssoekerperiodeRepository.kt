@@ -21,15 +21,15 @@ import org.jetbrains.exposed.sql.update
 import java.sql.SQLException
 import java.util.UUID
 
-class PeriodeRepository(private val database: Database) {
-    fun hentPeriode(periodeId: UUID): Periode? =
+class ArbeidssoekerperiodeRepository(private val database: Database) {
+    fun hentArbeidssoekerperiode(periodeId: UUID): Periode? =
         transaction(database) {
             PeriodeTable.select { PeriodeTable.periodeId eq periodeId }.singleOrNull()?.let { resultRow ->
-                PeriodeConverter(this@PeriodeRepository).konverterResultRowToPeriode(resultRow)
+                PeriodeConverter(this@ArbeidssoekerperiodeRepository).konverterResultRowToPeriode(resultRow)
             }
         }
 
-    fun hentPerioder(identitetsnummer: Identitetsnummer): List<ArbeidssoekerperiodeResponse> =
+    fun hentArbeidssoekerperioder(identitetsnummer: Identitetsnummer): List<ArbeidssoekerperiodeResponse> =
         transaction(database) {
             PeriodeTable.select {
                 PeriodeTable.identitetsnummer eq identitetsnummer.verdi
@@ -66,12 +66,12 @@ class PeriodeRepository(private val database: Database) {
         }
     }
 
-    fun opprettPeriode(periode: Periode) {
+    fun opprettArbeidssoekerperiode(arbeidssoekerperiode: Periode) {
         transaction(database) {
-            val startetId = settInnMetadata(periode.startet)
-            val avsluttetId = periode.avsluttet?.let { settInnMetadata(it) }
+            val startetId = settInnMetadata(arbeidssoekerperiode.startet)
+            val avsluttetId = arbeidssoekerperiode.avsluttet?.let { settInnMetadata(it) }
 
-            settInnPeriode(periode.id, periode.identitetsnummer, startetId, avsluttetId)
+            settInnArbeidssoekerperiode(arbeidssoekerperiode.id, arbeidssoekerperiode.identitetsnummer, startetId, avsluttetId)
         }
     }
 
@@ -100,7 +100,7 @@ class PeriodeRepository(private val database: Database) {
         }
     }
 
-    private fun settInnPeriode(
+    private fun settInnArbeidssoekerperiode(
         periodeId: UUID,
         identitetsnummer: String,
         startetId: Long,
@@ -114,17 +114,17 @@ class PeriodeRepository(private val database: Database) {
         }
     }
 
-    fun oppdaterPeriode(periode: Periode) {
+    fun oppdaterArbeidssoekerperiode(arbeidssoekerperiode: Periode) {
         transaction(database) {
             try {
-                val eksisterendePeriode = PeriodeTable.select { PeriodeTable.periodeId eq periode.id }.singleOrNull()
+                val eksisterendePeriode = PeriodeTable.select { PeriodeTable.periodeId eq arbeidssoekerperiode.id }.singleOrNull()
 
                 eksisterendePeriode?.let {
                     val startetId = it[PeriodeTable.startetId]
                     val avsluttetId = it[PeriodeTable.avsluttetId]
 
-                    oppdaterMetadata(startetId, periode.startet)
-                    periode.avsluttet?.let { avsluttetPeriode -> oppdaterAvsluttetMetadata(avsluttetId, avsluttetPeriode, periode.id) }
+                    oppdaterMetadata(startetId, arbeidssoekerperiode.startet)
+                    arbeidssoekerperiode.avsluttet?.let { avsluttetPeriode -> oppdaterAvsluttetMetadata(avsluttetId, avsluttetPeriode, arbeidssoekerperiode.id) }
                 }
             } catch (e: SQLException) {
                 logger.error("Feil ved opprettelse av periode", e)
@@ -161,7 +161,7 @@ class PeriodeRepository(private val database: Database) {
     }
 }
 
-class PeriodeConverter(private val repository: PeriodeRepository) {
+class PeriodeConverter(private val repository: ArbeidssoekerperiodeRepository) {
     fun konverterResultRowToPeriode(resultRow: ResultRow): Periode {
         val periodeId = resultRow[PeriodeTable.periodeId]
         val identitetsnummer = resultRow[PeriodeTable.identitetsnummer]

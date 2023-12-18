@@ -4,15 +4,15 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import no.nav.paw.arbeidssokerregisteret.api.config.Config
 import no.nav.paw.arbeidssokerregisteret.api.config.createKafkaConsumer
+import no.nav.paw.arbeidssokerregisteret.api.kafka.consumers.ArbeidssoekerperiodeConsumer
 import no.nav.paw.arbeidssokerregisteret.api.kafka.consumers.OpplysningerOmArbeidssoekerConsumer
-import no.nav.paw.arbeidssokerregisteret.api.kafka.consumers.PeriodeConsumer
 import no.nav.paw.arbeidssokerregisteret.api.kafka.consumers.ProfileringConsumer
+import no.nav.paw.arbeidssokerregisteret.api.repositories.ArbeidssoekerperiodeRepository
 import no.nav.paw.arbeidssokerregisteret.api.repositories.OpplysningerOmArbeidssoekerRepository
-import no.nav.paw.arbeidssokerregisteret.api.repositories.PeriodeRepository
 import no.nav.paw.arbeidssokerregisteret.api.repositories.ProfileringRepository
+import no.nav.paw.arbeidssokerregisteret.api.services.ArbeidssoekerperiodeService
 import no.nav.paw.arbeidssokerregisteret.api.services.AutorisasjonService
 import no.nav.paw.arbeidssokerregisteret.api.services.OpplysningerOmArbeidssoekerService
-import no.nav.paw.arbeidssokerregisteret.api.services.PeriodeService
 import no.nav.paw.arbeidssokerregisteret.api.services.ProfileringService
 import no.nav.paw.arbeidssokerregisteret.api.services.TokenService
 import no.nav.paw.arbeidssokerregisteret.api.utils.generateDatasource
@@ -41,13 +41,13 @@ fun createDependencies(config: Config): Dependencies {
     val autorisasjonService = AutorisasjonService(poaoTilgangHttpClient)
 
     // Arbeidssøkerperiode avhengigheter
-    val periodeRepository = PeriodeRepository(database)
-    val periodeService = PeriodeService(periodeRepository)
-    val periodeConsumer =
-        PeriodeConsumer(
+    val arbeidssoekerperiodeRepository = ArbeidssoekerperiodeRepository(database)
+    val arbeidssoekerperiodeService = ArbeidssoekerperiodeService(arbeidssoekerperiodeRepository)
+    val arbeidssoekerperiodeConsumer =
+        ArbeidssoekerperiodeConsumer(
             config.kafka.periodeTopic,
             config.kafka.createKafkaConsumer(),
-            periodeService
+            arbeidssoekerperiodeService
         )
 
     // Situasjon avhengigheter
@@ -73,8 +73,8 @@ fun createDependencies(config: Config): Dependencies {
     return Dependencies(
         registry,
         dataSource,
-        periodeService,
-        periodeConsumer,
+        arbeidssoekerperiodeService,
+        arbeidssoekerperiodeConsumer,
         opplysningerOmArbeidssoekerService,
         opplysningerOmArbeidssoekerConsumer,
         profileringService,
@@ -86,8 +86,8 @@ fun createDependencies(config: Config): Dependencies {
 data class Dependencies(
     val registry: PrometheusMeterRegistry,
     val dataSource: DataSource,
-    val periodeService: PeriodeService,
-    val periodeConsumer: PeriodeConsumer,
+    val arbeidssoekerperiodeService: ArbeidssoekerperiodeService,
+    val arbeidssoekerperiodeConsumer: ArbeidssoekerperiodeConsumer,
     val opplysningerOmArbeidssoekerService: OpplysningerOmArbeidssoekerService,
     val opplysningerOmArbeidssoekerConsumer: OpplysningerOmArbeidssoekerConsumer,
     val profileringService: ProfileringService,

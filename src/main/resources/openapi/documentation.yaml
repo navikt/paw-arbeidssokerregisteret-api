@@ -29,7 +29,7 @@ paths:
               schema:
                 type: "array"
                 items:
-                  $ref: "#/components/schemas/PeriodeResponse"
+                  $ref: "#/components/schemas/ArbeidssoekerperiodeResponse"
   /api/v1/opplysninger-om-arbeidssoeker/{periodeId}:
     get:
       description: ""
@@ -78,30 +78,6 @@ paths:
                 type: "array"
                 items:
                   $ref: "#/components/schemas/ProfileringResponse"
-  /api/v1/profilering/opplysninger-om-arbeidssoeker/{opplysningerOmArbeidssoekerId}:
-    get:
-      description: ""
-      parameters:
-      - name: "opplysningerOmArbeidssoekerId"
-        in: "path"
-        required: true
-        schema:
-          type: "string"
-      responses:
-        "500":
-          description: "Internal Server Error"
-          content:
-            '*/*':
-              schema:
-                type: "string"
-        "200":
-          description: "OK"
-          content:
-            '*/*':
-              schema:
-                type: "array"
-                items:
-                  $ref: "#/components/schemas/ProfileringResponse"
   /api/v1/veileder/arbeidssoekerperioder:
     post:
       description: ""
@@ -109,21 +85,21 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: "#/components/schemas/ArbeidssokerperiodeRequest"
+              $ref: "#/components/schemas/ArbeidssoekerperiodeRequest"
         required: true
       responses:
-        "403":
-          description: "Forbidden"
-          content:
-            '*/*':
-              schema:
-                type: "object"
         "500":
           description: "Internal Server Error"
           content:
             '*/*':
               schema:
                 type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "object"
         "200":
           description: "OK"
           content:
@@ -131,7 +107,7 @@ paths:
               schema:
                 type: "array"
                 items:
-                  $ref: "#/components/schemas/PeriodeResponse"
+                  $ref: "#/components/schemas/ArbeidssoekerperiodeResponse"
   /api/v1/veileder/opplysninger-om-arbeidssoeker:
     post:
       description: ""
@@ -142,18 +118,18 @@ paths:
               $ref: "#/components/schemas/OpplysningerOmArbeidssoekerRequest"
         required: true
       responses:
-        "403":
-          description: "Forbidden"
-          content:
-            '*/*':
-              schema:
-                type: "object"
         "500":
           description: "Internal Server Error"
           content:
             '*/*':
               schema:
                 type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "object"
         "200":
           description: "OK"
           content:
@@ -172,18 +148,18 @@ paths:
               $ref: "#/components/schemas/ProfileringRequest"
         required: true
       responses:
-        "403":
-          description: "Forbidden"
-          content:
-            '*/*':
-              schema:
-                type: "object"
         "500":
           description: "Internal Server Error"
           content:
             '*/*':
               schema:
                 type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "object"
         "200":
           description: "OK"
           content:
@@ -255,7 +231,7 @@ components:
           type: "string"
         aarsak:
           type: "string"
-    PeriodeResponse:
+    ArbeidssoekerperiodeResponse:
       type: "object"
       properties:
         startet:
@@ -387,7 +363,7 @@ components:
         alder:
           type: "integer"
           format: "int32"
-    ArbeidssokerperiodeRequest:
+    ArbeidssoekerperiodeRequest:
       type: "object"
       properties:
         identitetsnummer:

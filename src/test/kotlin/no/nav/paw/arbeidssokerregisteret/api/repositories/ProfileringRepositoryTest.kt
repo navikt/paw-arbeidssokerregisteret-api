@@ -55,15 +55,6 @@ class ProfileringRepositoryTest : StringSpec({
         retrievedProfilering.size shouldBe 2
     }
 
-    "Hent ut profilering med OpplysningerOmArbeidssoekerId" {
-        val repository = ProfileringRepository(database)
-        val profilering = lagTestProfilering(periodeId1, opplysningerOmArbeidssoekerId1)
-        repository.opprettProfileringForArbeidssoeker(profilering)
-        val retrievedProfilering = repository.hentProfileringForArbeidssoekerMedOpplysningerOmArbeidssoekerId(opplysningerOmArbeidssoekerId1)
-
-        retrievedProfilering.size shouldBe 1
-    }
-
     "Hent ut profilering med PeriodeId" {
         val repository = ProfileringRepository(database)
         val profilering = lagTestProfilering(periodeId1, opplysningerOmArbeidssoekerId1)

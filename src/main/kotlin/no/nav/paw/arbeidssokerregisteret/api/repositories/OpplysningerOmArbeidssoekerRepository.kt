@@ -53,7 +53,7 @@ class OpplysningerOmArbeidssoekerRepository(private val database: Database) {
     fun opprettOpplysningerOmArbeidssoeker(opplysningerOmArbeidssoeker: OpplysningerOmArbeidssoeker) {
         transaction(database) {
             try {
-                val sendtInnAvId = PeriodeRepository(database).settInnMetadata(opplysningerOmArbeidssoeker.sendtInnAv)
+                val sendtInnAvId = ArbeidssoekerperiodeRepository(database).settInnMetadata(opplysningerOmArbeidssoeker.sendtInnAv)
                 val utdanningId = settInnUtdanning(opplysningerOmArbeidssoeker.utdanning)
                 val helseId = settInnHelse(opplysningerOmArbeidssoeker.helse)
                 val arbeidserfaringId = settInnArbeidserfaring(opplysningerOmArbeidssoeker.arbeidserfaring)

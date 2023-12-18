@@ -7,7 +7,5 @@ import java.util.*
 class ProfileringService(private val profileringRepository: ProfileringRepository) {
     fun hentProfileringForArbeidssoekerMedPeriodeId(periodeId: UUID) = profileringRepository.hentProfileringForArbeidssoekerMedPeriodeId(periodeId)
 
-    fun hentProfileringForArbeidssoekerMedOpplysningerOmArbeidssoekerId(opplysningerOmArbeidssoekerId: UUID) = profileringRepository.hentProfileringForArbeidssoekerMedOpplysningerOmArbeidssoekerId(opplysningerOmArbeidssoekerId)
-
     fun opprettProfileringForArbeidssoeker(profilering: Profilering) = profileringRepository.opprettProfileringForArbeidssoeker(profilering)
 }

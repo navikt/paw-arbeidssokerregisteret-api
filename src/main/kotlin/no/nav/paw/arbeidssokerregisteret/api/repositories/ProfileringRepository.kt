@@ -27,20 +27,10 @@ class ProfileringRepository(private val database: Database) {
         }
     }
 
-    fun hentProfileringForArbeidssoekerMedOpplysningerOmArbeidssoekerId(opplysningerOmArbeidssoekerId: UUID): List<ProfileringResponse> {
-        return transaction(database) {
-            ProfileringTable.select {
-                ProfileringTable.opplysningerOmArbeidssoekerId eq opplysningerOmArbeidssoekerId
-            }.map { resultRow ->
-                ProfileringConverter(this@ProfileringRepository).konverterTilProfileringResponse(resultRow)
-            }
-        }
-    }
-
     fun opprettProfileringForArbeidssoeker(profilering: Profilering) {
         transaction(database) {
             try {
-                val sendtInnAvId = PeriodeRepository(database).settInnMetadata(profilering.sendtInnAv)
+                val sendtInnAvId = ArbeidssoekerperiodeRepository(database).settInnMetadata(profilering.sendtInnAv)
                 ProfileringTable.insert {
                     it[profileringId] = profilering.id
                     it[periodeId] = profilering.periodeId
@@ -64,7 +54,7 @@ class ProfileringRepository(private val database: Database) {
             }.singleOrNull()?.let { OpplysningerOmArbeidssoekerConverter().konverterTilOpplysningerOmArbeidssoekerResponse(it) }
         }
 
-    fun hentMetadata(metadataId: Long) = PeriodeRepository(database).hentMetadata(metadataId)
+    fun hentMetadata(metadataId: Long) = ArbeidssoekerperiodeRepository(database).hentMetadata(metadataId)
 }
 
 class ProfileringConverter(private val profileringRepository: ProfileringRepository) {
