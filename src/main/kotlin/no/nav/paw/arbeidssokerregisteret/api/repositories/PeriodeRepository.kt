@@ -4,7 +4,7 @@ import no.nav.paw.arbeidssokerregisteret.api.database.BrukerTable
 import no.nav.paw.arbeidssokerregisteret.api.database.MetadataTable
 import no.nav.paw.arbeidssokerregisteret.api.database.PeriodeTable
 import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
-import no.nav.paw.arbeidssokerregisteret.api.domain.response.PeriodeResponse
+import no.nav.paw.arbeidssokerregisteret.api.domain.response.ArbeidssoekerperiodeResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.toMetadataResponse
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 import no.nav.paw.arbeidssokerregisteret.api.v1.Bruker
@@ -29,7 +29,7 @@ class PeriodeRepository(private val database: Database) {
             }
         }
 
-    fun hentPerioder(identitetsnummer: Identitetsnummer): List<PeriodeResponse> =
+    fun hentPerioder(identitetsnummer: Identitetsnummer): List<ArbeidssoekerperiodeResponse> =
         transaction(database) {
             PeriodeTable.select {
                 PeriodeTable.identitetsnummer eq identitetsnummer.verdi
@@ -40,7 +40,7 @@ class PeriodeRepository(private val database: Database) {
                 val startetMetadata = hentMetadata(startetId) ?: throw Error("Fant ikke startet metadata")
                 val avsluttetMetadata = avsluttetId?.let { hentMetadata(it) }
 
-                PeriodeResponse(startetMetadata.toMetadataResponse(), avsluttetMetadata?.toMetadataResponse())
+                ArbeidssoekerperiodeResponse(startetMetadata.toMetadataResponse(), avsluttetMetadata?.toMetadataResponse())
             }
         }
 

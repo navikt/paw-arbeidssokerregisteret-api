@@ -36,6 +36,7 @@ fun createDependencies(config: Config): Dependencies {
                 { tokenService.createMachineToMachineToken(config.poaoClientConfig.scope) }
             )
         )
+    // OBO vs StS token
 
     val autorisasjonService = AutorisasjonService(poaoTilgangHttpClient)
 

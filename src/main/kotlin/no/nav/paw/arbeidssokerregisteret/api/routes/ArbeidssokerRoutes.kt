@@ -8,11 +8,14 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import io.ktor.server.routing.get
 import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
+import no.nav.paw.arbeidssokerregisteret.api.domain.request.ArbeidssoekerperiodeRequest
+import no.nav.paw.arbeidssokerregisteret.api.domain.request.OpplysningerOmArbeidssoekerRequest
+import no.nav.paw.arbeidssokerregisteret.api.domain.request.ProfileringRequest
 import no.nav.paw.arbeidssokerregisteret.api.services.AutorisasjonService
 import no.nav.paw.arbeidssokerregisteret.api.services.OpplysningerOmArbeidssoekerService
 import no.nav.paw.arbeidssokerregisteret.api.services.PeriodeService
 import no.nav.paw.arbeidssokerregisteret.api.services.ProfileringService
-import no.nav.paw.arbeidssokerregisteret.api.utils.getNavAnsatt
+import no.nav.paw.arbeidssokerregisteret.api.utils.getNavAnsattFromToken
 import no.nav.paw.arbeidssokerregisteret.api.utils.getPidClaim
 import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 import java.util.UUID
@@ -81,9 +84,9 @@ fun Route.arbeidssokerRoutes(
         authenticate("azure") {
             route("/veileder/arbeidssoekerperioder") {
                 post {
-                    val (identitesnummer) = call.receive<ArbeidssokerperiodeRequest>()
+                    val (identitesnummer) = call.receive<ArbeidssoekerperiodeRequest>()
 
-                    val navAnsatt = call.getNavAnsatt()
+                    val navAnsatt = call.getNavAnsattFromToken()
 
                     val harNavAnsattTilgangTilBruker = autorisasjonService.verifiserTilgangTilBruker(navAnsatt, Identitetsnummer(identitesnummer))
 
@@ -92,7 +95,6 @@ fun Route.arbeidssokerRoutes(
                     }
 
                     val arbeidssoekerperioder = periodeService.hentPerioder(Identitetsnummer(identitesnummer))
-
                     call.respond(HttpStatusCode.OK, arbeidssoekerperioder)
                 }
             }
@@ -100,7 +102,7 @@ fun Route.arbeidssokerRoutes(
                 post {
                     val (identitetsnummer, periodeId) = call.receive<OpplysningerOmArbeidssoekerRequest>()
 
-                    val navAnsatt = call.getNavAnsatt()
+                    val navAnsatt = call.getNavAnsattFromToken()
 
                     val harNavAnsattTilgangTilBruker = autorisasjonService.verifiserTilgangTilBruker(navAnsatt, identitetsnummer)
 
@@ -117,7 +119,7 @@ fun Route.arbeidssokerRoutes(
                 post {
                     val (identitetsnummer, periodeId) = call.receive<ProfileringRequest>()
 
-                    val navAnsatt = call.getNavAnsatt()
+                    val navAnsatt = call.getNavAnsattFromToken()
 
                     val harNavAnsattTilgangTilBruker = autorisasjonService.verifiserTilgangTilBruker(navAnsatt, identitetsnummer)
 
@@ -133,17 +135,3 @@ fun Route.arbeidssokerRoutes(
         }
     }
 }
-
-data class ArbeidssokerperiodeRequest(
-    val identitetsnummer: String
-)
-
-data class OpplysningerOmArbeidssoekerRequest(
-    val identitetsnummer: Identitetsnummer,
-    val periodeId: UUID
-)
-
-data class ProfileringRequest(
-    val identitetsnummer: Identitetsnummer,
-    val periodeId: UUID
-)
