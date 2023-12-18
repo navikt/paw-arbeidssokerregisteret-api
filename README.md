@@ -9,6 +9,7 @@ https://arbeidssokerregisteret-api.intern.dev.nav.no/docs
 ## Flytdiagram
 
 ![Flytdiagram](docs/flytdiagram.png)
+[Link til flytdiagram](https://whimsical.com/paw-arbeidssokerregisteret-api-U87hbLkoU52ZVsnpYYccyg)
 
 ## Teknologier
 
