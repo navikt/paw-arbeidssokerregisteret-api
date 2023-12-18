@@ -123,6 +123,14 @@ For veileder:
 }
 ```
 
+For veileder med system-token (husk å legge til `Nav-Ident` i header på request):
+```json
+{
+  "oid": "989f736f-14db-45dc-b8d1-94d621dbf2bb",
+  "roles": ["access_as_application"]
+}
+```
+
 6. Trykk Sign in
 7. Kopier verdien for access_token og benytt denne som Bearer i Authorization-header
 
