@@ -20,7 +20,7 @@ spec:
   tokenx:
     enabled: true
   kafka:
-    pool: nav-dev
+    pool: {{ kafka }}
   env:
     - name: OTEL_METRICS_EXPORTER
       value: "none"
