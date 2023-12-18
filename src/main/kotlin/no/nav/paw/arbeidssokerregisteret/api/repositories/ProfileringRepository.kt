@@ -1,8 +1,6 @@
 package no.nav.paw.arbeidssokerregisteret.api.repositories
 
-import no.nav.paw.arbeidssokerregisteret.api.database.OpplysningerOmArbeidssoekerTable
 import no.nav.paw.arbeidssokerregisteret.api.database.ProfileringTable
-import no.nav.paw.arbeidssokerregisteret.api.domain.response.OpplysningerOmArbeidssoekerResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.ProfileringResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.toMetadataResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.toProfilertTilResponse
@@ -47,13 +45,6 @@ class ProfileringRepository(private val database: Database) {
         }
     }
 
-    fun hentOpplysningerOmArbeidssoeker(opplysningerOmArbeidssoekerId: UUID): OpplysningerOmArbeidssoekerResponse? =
-        transaction(database) {
-            OpplysningerOmArbeidssoekerTable.select {
-                OpplysningerOmArbeidssoekerTable.opplysningerOmArbeidssoekerId eq opplysningerOmArbeidssoekerId
-            }.singleOrNull()?.let { OpplysningerOmArbeidssoekerConverter().konverterTilOpplysningerOmArbeidssoekerResponse(it) }
-        }
-
     fun hentMetadata(metadataId: Long) = ArbeidssoekerperiodeRepository(database).hentMetadata(metadataId)
 }
 
@@ -67,13 +58,12 @@ class ProfileringConverter(private val profileringRepository: ProfileringReposit
         val jobbetSammenhengendeSeksAvTolvSisteManeder = resultRow[ProfileringTable.jobbetSammenhengendeSeksAvTolvSisteManeder]
         val alder = resultRow[ProfileringTable.alder]
 
-        val opplysningerOmArbeidssoeker = profileringRepository.hentOpplysningerOmArbeidssoeker(opplysningerOmArbeidssoekerId) ?: throw Error("Fant ikke opplysninger om arbeidssøker")
         val sendtInnAv = profileringRepository.hentMetadata(sendtInnAvId)?.toMetadataResponse() ?: throw Error("Fant ikke metadata")
 
         return ProfileringResponse(
             profileringId,
             periodeId,
-            opplysningerOmArbeidssoeker,
+            opplysningerOmArbeidssoekerId,
             sendtInnAv,
             profilertTil.toProfilertTilResponse(),
             jobbetSammenhengendeSeksAvTolvSisteManeder,

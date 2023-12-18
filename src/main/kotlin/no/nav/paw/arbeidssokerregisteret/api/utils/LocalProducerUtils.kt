@@ -96,14 +96,14 @@ class LocalProducerUtils {
                             Beskrivelse.AKKURAT_FULLFORT_UTDANNING,
                             mapOf(
                                 Pair("test", "test"),
-                                Pair("test", "test")
+                                Pair("test2", "test2")
                             )
                         ),
                         BeskrivelseMedDetaljer(
                             Beskrivelse.DELTIDSJOBB_VIL_MER,
                             mapOf(
-                                Pair("test", "test"),
-                                Pair("test", "test")
+                                Pair("test3", "test3"),
+                                Pair("test4", "test4")
                             )
                         )
                     )

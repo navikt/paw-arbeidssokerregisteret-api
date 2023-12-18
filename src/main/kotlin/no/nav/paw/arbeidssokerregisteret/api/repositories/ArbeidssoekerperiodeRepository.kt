@@ -34,13 +34,14 @@ class ArbeidssoekerperiodeRepository(private val database: Database) {
             PeriodeTable.select {
                 PeriodeTable.identitetsnummer eq identitetsnummer.verdi
             }.map { resultRow ->
+                val periodeId = resultRow[PeriodeTable.periodeId]
                 val startetId = resultRow[PeriodeTable.startetId]
                 val avsluttetId = resultRow[PeriodeTable.avsluttetId]
 
                 val startetMetadata = hentMetadata(startetId) ?: throw Error("Fant ikke startet metadata")
                 val avsluttetMetadata = avsluttetId?.let { hentMetadata(it) }
 
-                ArbeidssoekerperiodeResponse(startetMetadata.toMetadataResponse(), avsluttetMetadata?.toMetadataResponse())
+                ArbeidssoekerperiodeResponse(periodeId, startetMetadata.toMetadataResponse(), avsluttetMetadata?.toMetadataResponse())
             }
         }
 

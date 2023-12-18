@@ -1,9 +1,8 @@
 package no.nav.paw.arbeidssokerregisteret.api.domain.request
 
-import no.nav.paw.arbeidssokerregisteret.api.domain.Identitetsnummer
-import java.util.*
+import java.util.UUID
 
 data class ProfileringRequest(
-    val identitetsnummer: Identitetsnummer,
+    val identitetsnummer: String,
     val periodeId: UUID
 )

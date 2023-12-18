@@ -142,7 +142,7 @@ Kafka UI ligger i docker-compose, og finnes på http://localhost:9000
 
 Kjør `./gradlew produceLocalMessagesForTopics`
 
-Denne tasken sender to meldinger til `arbeidssokerperioder-beta-v1` topicen og en melding til `opplysninger-om-arbeidssoeker-beta-v1'` topicen.
+Denne tasken sender to meldinger til `arbeidssokerperioder-beta-v1`, en melding til `opplysninger-om-arbeidssoeker-beta-v1` og en melding til `arbeidssoker-profilering-beta-v1`.
 
 ### Consumer
 

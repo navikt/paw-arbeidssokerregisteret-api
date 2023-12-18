@@ -14,7 +14,7 @@ enum class ProfilertTilResponse {
 data class ProfileringResponse(
     val profileringId: UUID,
     val periodeId: UUID,
-    val opplysningerOmArbeidssoeker: OpplysningerOmArbeidssoekerResponse,
+    val opplysningerOmArbeidssoekerId: UUID,
     val sendtInnAv: MetadataResponse,
     val profilertTil: ProfilertTilResponse,
     val jobbetSammenhengendeSeksAvTolvSisteManeder: Boolean,

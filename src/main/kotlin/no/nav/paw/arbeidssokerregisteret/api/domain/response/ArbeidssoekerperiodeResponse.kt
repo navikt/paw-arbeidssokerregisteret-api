@@ -4,8 +4,10 @@ import no.nav.paw.arbeidssokerregisteret.api.v1.Bruker
 import no.nav.paw.arbeidssokerregisteret.api.v1.BrukerType
 import no.nav.paw.arbeidssokerregisteret.api.v1.Metadata
 import java.time.Instant
+import java.util.*
 
 data class ArbeidssoekerperiodeResponse(
+    val periodeId: UUID,
     val startet: MetadataResponse,
     val avsluttet: MetadataResponse? = null
 )

@@ -102,7 +102,7 @@ fun Route.arbeidssokerRoutes(
 
                     logger.info("Sjekker om NAV-ansatt har tilgang til bruker")
 
-                    val harNavAnsattTilgangTilBruker = autorisasjonService.verifiserTilgangTilBruker(navAnsatt, identitetsnummer)
+                    val harNavAnsattTilgangTilBruker = autorisasjonService.verifiserTilgangTilBruker(navAnsatt, Identitetsnummer(identitetsnummer))
 
                     if (!harNavAnsattTilgangTilBruker) {
                         logger.warn("NAV-ansatt har ikke tilgang til bruker")
@@ -126,7 +126,7 @@ fun Route.arbeidssokerRoutes(
 
                     logger.info("Sjekker om NAV-ansatt har tilgang til bruker")
 
-                    val harNavAnsattTilgangTilBruker = autorisasjonService.verifiserTilgangTilBruker(navAnsatt, identitetsnummer)
+                    val harNavAnsattTilgangTilBruker = autorisasjonService.verifiserTilgangTilBruker(navAnsatt, Identitetsnummer(identitetsnummer))
 
                     if (!harNavAnsattTilgangTilBruker) {
                         logger.warn("NAV-ansatt har ikke tilgang til bruker")
