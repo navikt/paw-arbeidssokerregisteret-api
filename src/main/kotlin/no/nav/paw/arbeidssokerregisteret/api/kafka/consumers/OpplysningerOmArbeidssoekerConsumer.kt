@@ -14,7 +14,6 @@ class OpplysningerOmArbeidssoekerConsumer(
     fun start() {
         logger.info("Lytter på topic $topic")
         consumer.subscribe(listOf(topic))
-        consumer.seekToBeginning(consumer.assignment()) // TODO: fjernes etter testing i dev
 
         while (true) {
             consumer.poll(Duration.ofMillis(500)).forEach { post ->

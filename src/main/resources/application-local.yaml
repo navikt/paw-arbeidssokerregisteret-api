@@ -26,7 +26,7 @@ database:
   password: admin
   name: arbeidssokerregisteretapi
 kafka:
-  gruppeId: paw.arbeidssokerregisteret-soek-api-v1
+  gruppeId: paw.arbeidssokerregisteret-soek-api-v2
   periodeTopic: paw.arbeidssokerperioder-beta-v1
   opplysningerOmArbeidssoekerTopic: paw.opplysninger-om-arbeidssoeker-beta-v1
   profileringTopic: paw.arbeidssoker-profilering-beta-v1
