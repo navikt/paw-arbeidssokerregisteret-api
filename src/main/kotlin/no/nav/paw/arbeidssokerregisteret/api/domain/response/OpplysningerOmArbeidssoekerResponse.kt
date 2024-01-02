@@ -37,6 +37,17 @@ enum class BeskrivelseResponse {
     ANNET
 }
 
+data class OpplysningerOmArbeidssoekerResponse(
+    val opplysningerOmArbeidssoekerId: UUID,
+    val periodeId: UUID,
+    val sendtInnAv: MetadataResponse,
+    val utdanning: UtdanningResponse,
+    val helse: HelseResponse,
+    val arbeidserfaring: ArbeidserfaringResponse,
+    val annet: AnnetResponse,
+    val jobbsituasjon: List<BeskrivelseMedDetaljerResponse>
+)
+
 data class ArbeidserfaringResponse(
     val harHattArbeid: JaNeiVetIkkeResponse
 )
@@ -51,22 +62,11 @@ data class UtdanningResponse(
     val godkjent: JaNeiVetIkkeResponse
 )
 
-data class BeskrivelseMedDetaljerResponse(
-    val beskrivelse: BeskrivelseResponse,
-    val detaljer: Map<String, String>
-)
-
 data class AnnetResponse(
     val andreForholdHindrerArbeid: JaNeiVetIkkeResponse
 )
 
-data class OpplysningerOmArbeidssoekerResponse(
-    val opplysningerOmArbeidssoekerId: UUID,
-    val periodeId: UUID,
-    val sendtInnAv: MetadataResponse,
-    val utdanning: UtdanningResponse,
-    val helse: HelseResponse,
-    val arbeidserfaring: ArbeidserfaringResponse,
-    val annet: AnnetResponse,
-    val jobbsituasjon: List<BeskrivelseMedDetaljerResponse>
+data class BeskrivelseMedDetaljerResponse(
+    val beskrivelse: BeskrivelseResponse,
+    val detaljer: Map<String, String>
 )

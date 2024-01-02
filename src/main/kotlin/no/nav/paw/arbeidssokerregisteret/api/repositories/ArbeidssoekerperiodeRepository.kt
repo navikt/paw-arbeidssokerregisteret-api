@@ -69,6 +69,8 @@ class ArbeidssoekerperiodeRepository(private val database: Database) {
 
     fun opprettArbeidssoekerperiode(arbeidssoekerperiode: Periode) {
         transaction(database) {
+            repetitionAttempts = 2
+            minRepetitionDelay = 200
             val startetId = settInnMetadata(arbeidssoekerperiode.startet)
             val avsluttetId = arbeidssoekerperiode.avsluttet?.let { settInnMetadata(it) }
 
@@ -90,14 +92,10 @@ class ArbeidssoekerperiodeRepository(private val database: Database) {
         return if (eksisterendeBruker != null) {
             eksisterendeBruker[BrukerTable.id].value
         } else {
-            try {
-                BrukerTable.insertAndGetId {
-                    it[brukerId] = bruker.id
-                    it[type] = bruker.type
-                }.value
-            } catch (e: Exception) {
-                BrukerTable.select { (BrukerTable.brukerId eq bruker.id) and (BrukerTable.type eq bruker.type) }.single()[BrukerTable.id].value
-            }
+            BrukerTable.insertAndGetId {
+                it[brukerId] = bruker.id
+                it[type] = bruker.type
+            }.value
         }
     }
 

@@ -41,6 +41,13 @@ fun Application.module(
     // Kjør migration på database
     migrateDatabase(dependencies.dataSource)
 
+    // Konfigurerer plugins
+    configureMetrics(dependencies.registry)
+    configureHTTP()
+    configureAuthentication(config.authProviders)
+    configureLogging()
+    configureSerialization()
+
     // Konsumer periode meldinger fra Kafka
     thread {
         try {
@@ -70,13 +77,6 @@ fun Application.module(
             exitProcess(1)
         }
     }
-
-    // Konfigurerer plugins
-    configureMetrics(dependencies.registry)
-    configureHTTP()
-    configureAuthentication(config.authProviders)
-    configureLogging()
-    configureSerialization()
 
     // Ruter
     routing {

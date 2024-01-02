@@ -22,7 +22,6 @@ import no.nav.paw.arbeidssokerregisteret.api.domain.response.MetadataResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.OpplysningerOmArbeidssoekerResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.UtdanningResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.UtdanningsnivaaResponse
-import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 import no.nav.paw.arbeidssokerregisteret.api.v1.Annet
 import no.nav.paw.arbeidssokerregisteret.api.v1.Arbeidserfaring
 import no.nav.paw.arbeidssokerregisteret.api.v1.Beskrivelse
@@ -37,7 +36,6 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.sql.SQLException
 import java.util.*
 
 class OpplysningerOmArbeidssoekerRepository(private val database: Database) {
@@ -52,24 +50,21 @@ class OpplysningerOmArbeidssoekerRepository(private val database: Database) {
 
     fun opprettOpplysningerOmArbeidssoeker(opplysningerOmArbeidssoeker: OpplysningerOmArbeidssoeker) {
         transaction(database) {
-            try {
-                val sendtInnAvId = ArbeidssoekerperiodeRepository(database).settInnMetadata(opplysningerOmArbeidssoeker.sendtInnAv)
-                val utdanningId = settInnUtdanning(opplysningerOmArbeidssoeker.utdanning)
-                val helseId = settInnHelse(opplysningerOmArbeidssoeker.helse)
-                val arbeidserfaringId = settInnArbeidserfaring(opplysningerOmArbeidssoeker.arbeidserfaring)
-                val annetId = settInnAnnet(opplysningerOmArbeidssoeker.annet)
-                val opplysningerOmArbeidssoekerId = settInnOpplysningerOmArbeidssoeker(opplysningerOmArbeidssoeker, sendtInnAvId, utdanningId, helseId, arbeidserfaringId, annetId)
+            repetitionAttempts = 2
+            minRepetitionDelay = 200
+            val sendtInnAvId = ArbeidssoekerperiodeRepository(database).settInnMetadata(opplysningerOmArbeidssoeker.sendtInnAv)
+            val utdanningId = settInnUtdanning(opplysningerOmArbeidssoeker.utdanning)
+            val helseId = settInnHelse(opplysningerOmArbeidssoeker.helse)
+            val arbeidserfaringId = settInnArbeidserfaring(opplysningerOmArbeidssoeker.arbeidserfaring)
+            val annetId = settInnAnnet(opplysningerOmArbeidssoeker.annet)
+            val opplysningerOmArbeidssoekerId = settInnOpplysningerOmArbeidssoeker(opplysningerOmArbeidssoeker, sendtInnAvId, utdanningId, helseId, arbeidserfaringId, annetId)
 
-                opplysningerOmArbeidssoeker.jobbsituasjon.beskrivelser.forEach { beskrivelseMedDetaljer ->
-                    val beskrivelseMedDetaljerId = settInnBeskrivelseMedDetaljer(opplysningerOmArbeidssoekerId)
-                    val beskrivelserId = settInnBeskrivelse(beskrivelseMedDetaljer.beskrivelse, beskrivelseMedDetaljerId)
-                    beskrivelseMedDetaljer.detaljer.forEach { detalj ->
-                        settInnDetaljer(beskrivelserId, detalj)
-                    }
+            opplysningerOmArbeidssoeker.jobbsituasjon.beskrivelser.forEach { beskrivelseMedDetaljer ->
+                val beskrivelseMedDetaljerId = settInnBeskrivelseMedDetaljer(opplysningerOmArbeidssoekerId)
+                val beskrivelserId = settInnBeskrivelse(beskrivelseMedDetaljer.beskrivelse, beskrivelseMedDetaljerId)
+                beskrivelseMedDetaljer.detaljer.forEach { detalj ->
+                    settInnDetaljer(beskrivelserId, detalj)
                 }
-            } catch (e: SQLException) {
-                logger.error("Feil ved opprettelse av opplysninger om arbeidssøker", e)
-                throw e
             }
         }
     }

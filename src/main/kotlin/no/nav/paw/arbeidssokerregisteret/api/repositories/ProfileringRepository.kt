@@ -4,14 +4,12 @@ import no.nav.paw.arbeidssokerregisteret.api.database.ProfileringTable
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.ProfileringResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.toMetadataResponse
 import no.nav.paw.arbeidssokerregisteret.api.domain.response.toProfilertTilResponse
-import no.nav.paw.arbeidssokerregisteret.api.utils.logger
 import no.nav.paw.arbeidssokerregisteret.api.v1.Profilering
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.sql.SQLException
 import java.util.*
 
 class ProfileringRepository(private val database: Database) {
@@ -27,20 +25,17 @@ class ProfileringRepository(private val database: Database) {
 
     fun opprettProfileringForArbeidssoeker(profilering: Profilering) {
         transaction(database) {
-            try {
-                val sendtInnAvId = ArbeidssoekerperiodeRepository(database).settInnMetadata(profilering.sendtInnAv)
-                ProfileringTable.insert {
-                    it[profileringId] = profilering.id
-                    it[periodeId] = profilering.periodeId
-                    it[opplysningerOmArbeidssoekerId] = profilering.opplysningerOmArbeidssokerId
-                    it[ProfileringTable.sendtInnAvId] = sendtInnAvId
-                    it[profilertTil] = profilering.profilertTil
-                    it[jobbetSammenhengendeSeksAvTolvSisteManeder] = profilering.jobbetSammenhengendeSeksAvTolvSisteMnd
-                    it[alder] = profilering.alder
-                }
-            } catch (e: SQLException) {
-                logger.error("Feil ved opprettelse av profilering", e)
-                throw e
+            repetitionAttempts = 2
+            minRepetitionDelay = 200
+            val sendtInnAvId = ArbeidssoekerperiodeRepository(database).settInnMetadata(profilering.sendtInnAv)
+            ProfileringTable.insert {
+                it[profileringId] = profilering.id
+                it[periodeId] = profilering.periodeId
+                it[opplysningerOmArbeidssoekerId] = profilering.opplysningerOmArbeidssokerId
+                it[ProfileringTable.sendtInnAvId] = sendtInnAvId
+                it[profilertTil] = profilering.profilertTil
+                it[jobbetSammenhengendeSeksAvTolvSisteManeder] = profilering.jobbetSammenhengendeSeksAvTolvSisteMnd
+                it[alder] = profilering.alder
             }
         }
     }
