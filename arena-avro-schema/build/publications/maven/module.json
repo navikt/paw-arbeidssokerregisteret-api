@@ -1,0 +1,80 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "no.nav.paw.arbeidssokerregisteret.api",
+    "module": "arena-avro-schema",
+    "version": "1.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.4"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "1.9.20"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "arena-avro-schema-1.0-SNAPSHOT.jar",
+          "url": "arena-avro-schema-1.0-SNAPSHOT.jar",
+          "size": 6639,
+          "sha512": "25e65334c721cadf51ce3e183f7139cd158ee8ad1eaaed4b0ce7943ef24aa7204cf97662f7351c1a84628c7ac706eeeab729885c4e5efebb72de9a287a1911c0",
+          "sha256": "e401488d67f090e73db7bdc2af6d1cc8130bb03c9654363c69d280c6fc7647dd",
+          "sha1": "834989e55138f763f1463b8feaa3fd60ce2f4ece",
+          "md5": "3f921b81fb326b23ed185d6c8789c0f3"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "1.9.20"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "arena-avro-schema-1.0-SNAPSHOT.jar",
+          "url": "arena-avro-schema-1.0-SNAPSHOT.jar",
+          "size": 6639,
+          "sha512": "25e65334c721cadf51ce3e183f7139cd158ee8ad1eaaed4b0ce7943ef24aa7204cf97662f7351c1a84628c7ac706eeeab729885c4e5efebb72de9a287a1911c0",
+          "sha256": "e401488d67f090e73db7bdc2af6d1cc8130bb03c9654363c69d280c6fc7647dd",
+          "sha1": "834989e55138f763f1463b8feaa3fd60ce2f4ece",
+          "md5": "3f921b81fb326b23ed185d6c8789c0f3"
+        }
+      ]
+    }
+  ]
+}
