@@ -1,0 +1,26 @@
+name: Build, push, and deploy
+
+on: [push]
+
+jobs:
+  build:
+    name: Build and push Docker container
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: 21
+          distribution: temurin
+          cache: gradle
+      - name: Set schema minor version
+        run: echo "SCHEMA_MINOR_VERSION=${{ github.run_number }}-${{ github.run_attempt }}" >> $GITHUB_ENV
+      - name: Build with Gradle and Publish artifact
+        working-directory: ./
+        run: ./gradlew -PschemaMinorVersion=${{ env.SCHEMA_MINOR_VERSION }} build test publish
+        env:
+          ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}

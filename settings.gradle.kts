@@ -3,7 +3,7 @@ plugins {
     kotlin("jvm") version "1.9.20" apply false
 }
 
-rootProject.name = "paw-arbeidssokerregisteret-event-prosessor"
+rootProject.name = "paw-arbeidssokerregisteret-api"
 include(
     "main-avro-schema",
     "arena-avro-schema"
