@@ -1,0 +1,1 @@
+# Opplysninger om arbeidssøker
