@@ -39,8 +39,8 @@ tasks.withType(Copy::class).configureEach {
         include("*.avdl", "vo/*.avdl")
         filter { line ->
             line.replace(
-                "@namespace(\"no.nav.paw.arbeidssokerregisteret.api\"",
-                "@namespace(\"no.nav.paw.arbeidssokerregisteret.arena\""
+                "no.nav.paw.arbeidssokerregisteret.api",
+                "no.nav.paw.arbeidssokerregisteret.arena"
             )
         }
     }
