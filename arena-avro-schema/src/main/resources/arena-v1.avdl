@@ -6,8 +6,8 @@ protocol ArenaArbeidssokerregisterTilstand {
 	import idl "opplysninger_om_arbeidssoeker-v3.avdl";
 
 	record ArenaArbeidssokerregisterTilstand {
-		Periode periode;
-		Profilering profilering;
+		no.nav.paw.arbeidssokerregisteret.arena.v1.Periode periode;
+		no.nav.paw.arbeidssokerregisteret.arena.v1.Profilering profilering;
 		OpplysningerOmArbeidssoeker opplysningerOmArbeidssoeker;
 	}
 }
