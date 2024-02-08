@@ -47,3 +47,10 @@ tasks.withType(Copy::class).configureEach {
     into("$buildTreePath/resources/main/")
 }
 
+tasks.withType(Jar::class) {
+    manifest {
+        attributes["Implementation-Version"] = project.version
+        attributes["Implementation-Title"] = project.name
+        attributes["Arbeidssokerregisteret-Modul"] = "avro-schema"
+    }
+}
