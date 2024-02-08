@@ -2,8 +2,39 @@
 
 Arbeidssøkerregisteret er basert på arbeidssøkerperioder. En periode har alltid en start dato og får en avsluttnings dato så snart den avsluttes. En person kan 0 eller 1 aktive perioder til en hver tid. 
 
-I tillegg til perioden inneholder også registeret en del opplysninger om arbeidssøkeren samt resultatet av profilering av arbeidssøkeren. Profileringen gjøre på bakgrunn av opplysningene og brukes til å gi brukeren behovs tilpasset oppføling. Innesendig av opplysninger er valgfritt og det er derfor ikke gitt at vi har opplysninger om en gitt person. Har vi ikke opplsyninger har vi heller ikke noe profileringsresultat. 
+I tillegg til perioden inneholder også registeret en del opplysninger om arbeidssøkeren samt resultatet av profilering av arbeidssøkeren. Profileringen gjøre på bakgrunn av opplysningene og brukes til å gi brukeren behovs tilpasset oppføling. Innesendig av opplysninger er valgfritt og det er derfor ikke gitt at vi har opplysninger om en gitt person. Har vi ikke opplsyninger har vi heller ikke noe profileringsresultat.
 
+Informasjonen i registeret kan hentes enten ved å abonnere på de aktuelle Kafka topicene eller bruke søke API. Schema for topics ligger i dette repositoriet:
+* [Periode record](main-avro-schema/src/main/resources/periode-v1.avdl)
+* [Opplysninger om arbeidssøker record](main-avro-schema/src/main/resources/opplysninger_om_arbeidssoeker-v3.avdl)
+* [Profilering record](main-avro-schema/src/main/resources/profilering-v1.avdl)
+
+For kotlin/java prosjekter kan man enkelt generere nødvendige klasser via et gradle plugin. Eksempel fra build.gradle.kts i [Hendelse håndtering](https://github.com/navikt/paw-arbeidssokerregisteret-event-prosessor):
+```kotlin
+import com.github.davidmc24.gradle.plugin.avro.GenerateAvroProtocolTask
+
+plugins {
+    kotlin("jvm")
+    id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1"    
+}
+
+val arbeidssokerregisteretSchemaVersion = "1.10-1"
+
+val schema by configurations.creating {
+  isTransitive = false
+}
+
+dependencies {
+    schema("no.nav.paw.arbeidssokerregisteret.api:main-avro-schema:$arbeidssokerregisteretSchemaVersion")
+    implementation("org.apache.avro:avro:1.11.0")
+}
+
+tasks.named("generateAvroProtocol", GenerateAvroProtocolTask::class.java) {
+  schema.forEach {
+    source(zipTree(it))
+  }
+}
+```
 
 * Kafka topics
   * [Periode topic](doc/periode_topic.md)
