@@ -5,6 +5,7 @@ plugins {
 
 val schemaMajorVersion: String by project
 val schemaMinorVersion: String by project
+val gitSha: String? by project
 version = "$schemaMajorVersion.$schemaMinorVersion"
 
 publishing {
@@ -31,5 +32,8 @@ tasks.withType(Jar::class) {
         attributes["Implementation-Version"] = project.version
         attributes["Implementation-Title"] = project.name
         attributes["Arbeidssokerregisteret-Modul"] = "avro-schema"
+        gitSha?.also { sha ->
+            attributes["Git-SHA"] = sha
+        }
     }
 }

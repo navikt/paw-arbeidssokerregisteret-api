@@ -24,6 +24,6 @@ jobs:
         run: echo "SCHEMA_MINOR_VERSION=${{ github.run_number }}-${{ github.run_attempt }}" >> $GITHUB_ENV
       - name: Build with Gradle and Publish artifact
         working-directory: ./
-        run: ./gradlew -PschemaMinorVersion=${{ env.SCHEMA_MINOR_VERSION }} build test publish
+        run: ./gradlew -PgitSha=${{ github.sha }} -PschemaMinorVersion=${{ env.SCHEMA_MINOR_VERSION }} build test publish
         env:
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
