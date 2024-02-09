@@ -2,11 +2,8 @@ name: Build and publish snapshot
 
 on:
   push:
-    branches:
-      - '!main'
-    paths:
-      - main-avro-schema/**
-      - arena-avro-schema/**
+    branches-ignore:
+      - main
 jobs:
   build:
     name: Build and publish maven artifacts
