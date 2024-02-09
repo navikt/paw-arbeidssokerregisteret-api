@@ -10,6 +10,10 @@ protocol OpplysningerOmArbeidssoeker {
 	/**
 	  * Inneholder diverse opplysninger om arbeidssøker som er relevant for å kunne
 	  * hjelpe arbeidssøkeren med å finne arbeid på best mulig måte.
+	  * I enkelte tilfeller kan en 'OpplysningerOmArbeidssoeker' oppdateres til å være
+	  * knyttet til en annen periodeId, altså ny melding men med samme 'id' hvor feltet periodeId er endret.
+	  * Utover dette vil ikke opplysningene endre seg, det vil heller komme
+	  * en ny melding med ny 'id'.
 	*/
 	record OpplysningerOmArbeidssoeker {
 		/**

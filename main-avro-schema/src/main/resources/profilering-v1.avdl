@@ -7,6 +7,8 @@ protocol Profilering {
 	  * Profilering av arbeidssøker
 	  * Inneholder informasjon som brukes til ruting av arbeidssøker til riktig veiledningstjeneste.
 	  * Profileringen er koblet til et bestemt sett opplysninger om arbeidssøker og en bestemt periode.
+	  * I tilfeller hvor 'opplysningerOmAbreidssøker' oppdateres til å gjelde periode vil det dukke opp en ny
+	  * profilering knyttet til den samme 'opplysningerOmArbeidssokerId' (periodeId vil være endret).
  	*/
 	record Profilering {
 		/**
