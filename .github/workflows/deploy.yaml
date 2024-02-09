@@ -1,10 +1,12 @@
 name: Build, push, and deploy
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
-    if: github.ref == 'refs/heads/main'
     name: Build and push Docker container
     runs-on: ubuntu-latest
     permissions:
