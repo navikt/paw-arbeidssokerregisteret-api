@@ -41,7 +41,7 @@ plugins {
     id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1"    
 }
 
-val arbeidssokerregisteretSchemaVersion = "1.10-1"
+val arbeidssokerregisteretSchemaVersion = "1.7843506781.4-1"
 
 val schema by configurations.creating {
   isTransitive = false
