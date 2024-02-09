@@ -1,14 +1,37 @@
 # paw-arbeidssokerregisteret-api
-
-Arbeidssøkerregisteret er basert på arbeidssøkerperioder. En periode har alltid en start dato og får en avsluttnings dato så snart den avsluttes. En person kan 0 eller 1 aktive perioder til en hver tid. 
+1. [Hvordan fungerer det](#hvordan-fungerer-det)
+2. [Kafka topics](#kafka-topics)
+   1. [Avro Schema](#avro-schema)
+   2. [Periode topic](#periode-topic)
+   3. [Opplysninger om arbeidssøker topic](#opplysninger-om-arbeidssoker-topic)
+   4. [Profilerings topic](#profilerngs-topic)
+3. REST API
+  1. [Søke API (internt for NAV)](https://github.com/navikt/paw-arbeidssokerregisteret-api-soek)
+  2. [Eksternt API](https://github.com/navikt/paw-arbeidssokerregisteret-eksternt-api)
+  3. [Start/Stopp av Perioder](https://github.com/navikt/paw-arbeidssokerregisteret-api-inngang)
+  
+## Hvordan Fungerer Det
+Arbeidssøkerregisteret er basert på arbeidssøkerperioder. En periode har alltid en start dato og får en avsluttnings dato så snart den avsluttes. En person kan 0 eller 1 aktive perioder til en hver tid.
 
 I tillegg til perioden inneholder også registeret en del opplysninger om arbeidssøkeren samt resultatet av profilering av arbeidssøkeren. Profileringen gjøre på bakgrunn av opplysningene og brukes til å gi brukeren behovs tilpasset oppføling. Innesendig av opplysninger er valgfritt og det er derfor ikke gitt at vi har opplysninger om en gitt person. Har vi ikke opplsyninger har vi heller ikke noe profileringsresultat.
 
-Informasjonen i registeret kan hentes enten ved å abonnere på de aktuelle Kafka topicene eller bruke søke API. Schema for topics ligger i dette repositoriet:
-* [Periode record](main-avro-schema/src/main/resources/periode-v1.avdl)
-* [Opplysninger om arbeidssøker record](main-avro-schema/src/main/resources/opplysninger_om_arbeidssoeker-v3.avdl)
-* [Profilering record](main-avro-schema/src/main/resources/profilering-v1.avdl)
+Informasjonen i registeret kan hentes enten ved å abonnere på de aktuelle Kafka topicene eller bruke søke API.
 
+Enkel oversikt over hva som skjer når når en periode startes via API:
+```mermaid
+sequenceDiagram
+    HttpClient->>InngangApi: Send start forespørsel (synkron)
+    InngangApi->>PDL: Hent person info
+    InngangApi->>KafkaKey: Hent kafka key for person
+    InngangApi->>Kafka: Publiser startet eller avvist hendelse til loggen
+    InngangApi->>HttpClient: Svar 200 eller feilkode.
+    Kafka->>HendelseHåndterer: Motta hendelse fra loggen
+    HendelseHåndterer->>Kafka: Filtrer hendelse opp mot gjeldene tilstand i Kafka state store
+    HendelseHåndterer->>Kafka: Publiser periode record        
+```
+
+## Kafka Topics
+Registeret består av 3 kafka topics. Meldingsformatet er Avro og skjema er tilgjengelig i dette repoet, blant annet som [maven artifacter](https://github.com/navikt/paw-arbeidssokerregisteret-api/packages/2061047).
 For kotlin/java prosjekter kan man enkelt generere nødvendige klasser via et gradle plugin. Eksempel fra build.gradle.kts i [Hendelse håndtering](https://github.com/navikt/paw-arbeidssokerregisteret-event-prosessor):
 ```kotlin
 import com.github.davidmc24.gradle.plugin.avro.GenerateAvroProtocolTask
@@ -36,44 +59,30 @@ tasks.named("generateAvroProtocol", GenerateAvroProtocolTask::class.java) {
 }
 ```
 
-* Kafka topics
-  * [Periode topic](doc/periode_topic.md)
-  * [Opplysninger om arbeidssøker topic](doc/opplysninger_topic.md)
-  * [Profilerings topic](doc/profilering_topic.md)
-* REST API
-  * [Søke API (internt for NAV)](https://github.com/navikt/paw-arbeidssokerregisteret-api-soek)
-  * [Eksternt API](https://github.com/navikt/paw-arbeidssokerregisteret-eksternt-api)
-  * [Start/Stopp av Perioder](https://github.com/navikt/paw-arbeidssokerregisteret-api-inngang)
-  
-* Repoer
-  * [Start/Stopp av Perioder](https://github.com/navikt/paw-arbeidssokerregisteret-api-inngang)
-  * [Hendelse håndtering](https://github.com/navikt/paw-arbeidssokerregisteret-event-prosessor)
-  * [Søke API(internt for NAV)](https://github.com/navikt/paw-arbeidssokerregisteret-api-soek)
-  * [Eksternt API](https://github.com/navikt/paw-arbeidssokerregisteret-eksternt-api)
-  * [Migrering]()
-  * [Arena adapter](https://github.com/navikt/paw-arbeidssokerregisteret-arena-adapter)
-  * [Feilsøkings verktøy](https://github.com/navikt/paw-arbeidssokerregisteret-feilsoking)
-  
-# Kort om de forskjellige delene:
+Samtlige topics er co-partitioned, dvs likt antall partisjoner og for en gitt person vil alle records ha samme key på tvers av alle topics.
 
-## Start/stopp av perioder
-Enkelt API for å starte og stoppe perioder. Dette vil være den eneste inngangen til registeret.
+### Periode Topic
+Topic navn: `paw.arbeidssokerperioder-{VERSION}`  
+Gjeldene versjon: `beta-v7`  
+Schema: [periode](main-avro-schema/src/main/resources/periode-v1.avdl)
 
-## Hendelse håndtering
-Dette er logikken i selve registeret. Den tar imot hendelser fra Start/Stopp API og andre fremtidige tjenester og sjekker disse opp mot gjeldene tilstand for den aktuelle brukeren før den eventuelt publiserer en Periode-Startet/Avsluttet eller opplysninger-mottatt melding på Kafka topics.
+Innholder samtlige arbeidssøker perioder. Alle perioder har en start dato. Når de avsluttes settes tidspunkt for avslutning. Dette tidspunktet vil aldri være frem i tid. 
 
-## Søke API
-API for å søke i arbeidssøkerperioder, opplysninger og profileringer. Får data via topics for perioder, opplysninger og profileringer.  
-Er bare tilgjengelig internt i NAV.
+### Opplysninger Om Arbeidssoker Topic
+Topic navn: `paw.opplysninger-om-arbeidssoeker-{VERSION}`  
+Gjeldene versjon: `beta-v7"`  
+Schema: [opplysninger_om_arbeidssoker](main-avro-schema/src/main/resources/opplysninger_om_arbeidssoeker-v3.avdl)
 
-## Eksternt API
-En forenklet utgave av Søke API, men enkel info om perioder. Denne henter også data direkte fra Kafka topics. Denne er tilgjengelig utenfor NAV via maskinporten autentisering.
+Inneholder opplysninger om arbeidssøkeren. Opplysningene er knyttet til en periode og en periode kan ha flere records med opplysninger knyttet til seg. I enkelte tilfeller vil systemet gjenbruke opplysninger når følgende hendelser inntreffer iløpet av 60 sekunder:
+1. Opplysninger sendes in for den aktive perioden (referert til som A)
+2. Perioden A avsluttes.
+3. En ny periode (B) startes.
 
-## Migrering
-Tjeneste som kontinuerlig importerer data fra veilarbregistrering og besvarelse til det nye registeret. Denne vil bli deaktivert når nytt register blir master.
+I slike tilfeller vil man først se at opplysningene som publiseres er knyttet til periode A, også kort tid etterpå publiseres opplysningene på nytt (med samme opplysnings id), men denne gangen knyttet til periode B.
 
-## Arena Adapter
-Adapter som samler data fra periode, opplysninger og profilering topics til et topic. Kun tilgjengelig for Arena og vil bli slettet så snart Arena ikke trenger det lenger.
+### Profilerngs Topic
+Topic navn: `paw.arbeidssoker-profilering-{VERSION}`  
+Gjeldene versjon: `beta-v1`  
+Schema: [periode](main-avro-schema/src/main/resources/profilering-v1.avdl)
 
-## Feilsøking
-Div verktøy for feilsøking i nytt register.
+Inneholder resultatet av profileringen som gjøres når det sendes inn opplysninger. En profilering vil alltid være knyttet til en opplysnings id og dermed også en periode id.

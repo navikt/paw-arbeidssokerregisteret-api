@@ -23,6 +23,8 @@ protocol Jobbsituasjon {
 	  	  * stilling 					-	    tekstlig beskrivelse av stillingen jobbsituasjonen gjelder (eksempel "Lærer")
 	  	  * stilling_styrk08 			- 		stillingens kode i STYRK08 (eksempel "2359")
 	  	  * prosent 					- 		prosentandel jobbstituasjonen gjelder for (feks kombinert med 'ER_PERMITERT' eller 'DELTIDSJOBB_VIL_MER')
+	  	  * siste_dag_med_loen_iso8601  - 		Siste dag det betales lønn for (feks ved oppsigelse).
+	  	  * siste_arbeidsdag_iso8601	-		Siste arbeidssdag.
 	  	  *
  		*/
 		map<string> detaljer;
