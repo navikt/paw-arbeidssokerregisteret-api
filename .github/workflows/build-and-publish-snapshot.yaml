@@ -1,13 +1,15 @@
-name: Build, push, and deploy
+name: Build and publish snapshot
 
 on:
   push:
     branches:
-      - main
-
+      - '!main'
+    paths:
+      - main-avro-schema/**
+      - arena-avro-schema/**
 jobs:
   build:
-    name: Build and push Docker container
+    name: Build and publish maven artifacts
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -21,7 +23,7 @@ jobs:
           distribution: temurin
           cache: gradle
       - name: Set schema minor version
-        run: echo "SCHEMA_MINOR_VERSION=${{ github.run_number }}-${{ github.run_attempt }}" >> $GITHUB_ENV
+        run: echo "SCHEMA_MINOR_VERSION=SNAPSHOT" >> $GITHUB_ENV
       - name: Build with Gradle and Publish artifact
         working-directory: ./
         run: ./gradlew -PschemaMinorVersion=${{ env.SCHEMA_MINOR_VERSION }} build test publish
