@@ -20,7 +20,8 @@ Informasjonen i registeret kan hentes enten ved å abonnere på de aktuelle Kafk
 Enkel oversikt over hva som skjer når når en periode startes via API:
 ```mermaid
 sequenceDiagram
-    HttpClient->>InngangApi: Send start forespørsel (synkron)
+    HttpClient->>InngangApi: (HTTP POST) Send start forespørsel
+    InngangApi->>PoaoTilgang: Dersom veileder, sjekk tilgang til person    
     InngangApi->>PDL: Hent person info
     InngangApi->>KafkaKey: Hent kafka key for person
     InngangApi->>Kafka: Publiser startet eller avvist hendelse til loggen
