@@ -1,6 +1,6 @@
 // OBS! Kun intern Arena bruk
 @namespace("no.nav.paw.arbeidssokerregisteret.arena.v3")
-protocol ArenaArbeidssokerregisterTilstand {
+protocol PeriodeListe {
 	import idl "periode-v1.avdl";
 
 	record PeriodeListe {
