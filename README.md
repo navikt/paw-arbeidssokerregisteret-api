@@ -1,13 +1,13 @@
 # paw-arbeidssokerregisteret-api
 1. [Hvordan fungerer det](#hvordan-fungerer-det)
 2. [Kafka topics](#kafka-topics)
-   2. [Periode topic](#periode-topic)
-   3. [Opplysninger om arbeidssøker topic](#opplysninger-om-arbeidssoker-topic)
-   4. [Profilerings topic](#profilerngs-topic)
+   1. [Periode topic](#periode-topic)
+   2. [Opplysninger om arbeidssøker topic](#opplysninger-om-arbeidssoker-topic)
+   3. [Profilerings topic](#profilerngs-topic)
 3. REST API
-  1. [Søke API (internt for NAV)](https://github.com/navikt/paw-arbeidssokerregisteret-api-soek)
-  2. [Eksternt API](https://github.com/navikt/paw-arbeidssokerregisteret-eksternt-api)
-  3. [Start/Stopp av Perioder](https://github.com/navikt/paw-arbeidssokerregisteret-api-inngang)
+   1. [Søke API (internt for NAV)](https://github.com/navikt/paw-arbeidssokerregisteret-api-soek)
+   2. [Eksternt API](https://github.com/navikt/paw-arbeidssokerregisteret-eksternt-api)
+   3. [Start/Stopp av Perioder](https://github.com/navikt/paw-arbeidssokerregisteret-api-inngang)
   
 ## Hvordan Fungerer Det
 Arbeidssøkerregisteret er basert på arbeidssøkerperioder. En periode har alltid en start dato og får en avsluttnings dato så snart den avsluttes. En person kan 0 eller 1 aktive perioder til en hver tid.
