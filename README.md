@@ -1,7 +1,6 @@
 # paw-arbeidssokerregisteret-api
 1. [Hvordan fungerer det](#hvordan-fungerer-det)
 2. [Kafka topics](#kafka-topics)
-   1. [Avro Schema](#avro-schema)
    2. [Periode topic](#periode-topic)
    3. [Opplysninger om arbeidssøker topic](#opplysninger-om-arbeidssoker-topic)
    4. [Profilerings topic](#profilerngs-topic)
