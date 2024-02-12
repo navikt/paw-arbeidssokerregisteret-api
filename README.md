@@ -61,6 +61,18 @@ tasks.named("generateAvroProtocol", GenerateAvroProtocolTask::class.java) {
 
 Samtlige topics er co-partitioned, dvs likt antall partisjoner og for en gitt person vil alle records ha samme key på tvers av alle topics.
 
+### Versjonering
+Avro schema og topics er versjonert. Ved endringer som ikke er bakoverkompatible vil følgende gjøres:
+* De aktuelle delen i schema endres fra -v(x) til -v(x+1), feks periode-v1.avdl til periode-v2.avdl (samme edring gjøres også for namespace i avro filen)
+* Major version på schema atrifactet økes med 1, feks fra 1.123.2-1 til 2.123.5-1.
+* Berørte topics for en ny versjon, feks paw.arbeidssokerperioder-v1 blir til paw.arbeidssokerperioder-v2
+* Gamle topics går over i vedlikeholdsmodus, dvs nye data blir publisert, men det blir ingen oppdateringer av selve schemaet.
+* Nye topics spoles opp og vil inneholde alt av data, record key, Periode.id og OpplysningerOmArbeidssoeker.id, vil forbli uendret i ny topic. Så dersom en periode-v1 har samme id som en periode-v2 er det den samme perioden. 
+
+Hvor lenge topics blir gående i vedlikeholds modus er ikke helt avgjort. I enkelte tilfeller vil eksterne endringer gjøre at det i praksis ikke blir mulig å vedlikeholde eldre topics. Feks dersom data som var obligatorisk ikke lenger er tilgjengelig eller ikke lenger er lov å samle inn.
+
+Konsumenter som skal bytte til en ny topic versjon må håndtere dette på en måte. Her er det flere muligheter, feks brukte periode.id og opplysningerOmArbeidssoeker.id for å holde orden på hva som alt er håndtert. Det er også mulig å lage høyvannsmerker basert på record.key, record.timestamp og topic. Timestamp settes når vi godtar en ekstern forespørsel, så en slik løsning vil måtte leve med den teoretiske muligheten for at en ny melding kan være eldre enn forrige melding fra samme topic med samme key. Å bruke offset er trolig den minst trygge måten å gjøre det på siden den nye versjonen kanskje inneholde fære eller flere meldinger enn den forrige versjonen av topicet. Feks ved endringer i hva som er gyldig/ikke gyldig data.
+
 ### Periode Topic
 Topic navn: `paw.arbeidssokerperioder-{VERSION}`  
 Gjeldene versjon: `beta-v7`  
