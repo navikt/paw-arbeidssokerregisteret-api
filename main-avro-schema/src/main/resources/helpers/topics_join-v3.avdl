@@ -7,6 +7,6 @@ protocol TopicsJoin {
 	record TopicsJoin {
 		no.nav.paw.arbeidssokerregisteret.api.v1.Periode? periode;
 		no.nav.paw.arbeidssokerregisteret.api.v1.Profilering? profilering;
-		OpplysningerOmArbeidssoeker? opplysningerOmArbeidssoeker;
+		no.nav.paw.arbeidssokerregisteret.api.v3.OpplysningerOmArbeidssoeker? opplysningerOmArbeidssoeker;
 	}
 }
