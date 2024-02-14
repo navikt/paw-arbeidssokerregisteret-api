@@ -4,6 +4,7 @@
    1. [Periode topic](#periode-topic)
    2. [Opplysninger om arbeidssøker topic](#opplysninger-om-arbeidssoker-topic)
    3. [Profilerings topic](#profilerngs-topic)
+   4. [Arena topic](#arena-topic)
 3. REST API
    1. [Søke API (internt for NAV)](https://github.com/navikt/paw-arbeidssokerregisteret-api-soek)
    2. [Eksternt API](https://github.com/navikt/paw-arbeidssokerregisteret-eksternt-api)
@@ -73,6 +74,8 @@ Hvor lenge topics blir gående i vedlikeholds modus er ikke helt avgjort. I enke
 
 Konsumenter som skal bytte til en ny topic versjon må håndtere dette på en måte. Her er det flere muligheter, feks brukte periode.id og opplysningerOmArbeidssoeker.id for å holde orden på hva som alt er håndtert. Det er også mulig å lage høyvannsmerker basert på record.key, record.timestamp og topic. Timestamp settes når vi godtar en ekstern forespørsel, så en slik løsning vil måtte leve med den teoretiske muligheten for at en ny melding kan være eldre enn forrige melding fra samme topic med samme key. Å bruke offset er trolig den minst trygge måten å gjøre det på siden den nye versjonen kanskje inneholde fære eller flere meldinger enn den forrige versjonen av topicet. Feks ved endringer i hva som er gyldig/ikke gyldig data.
 
+Avro record TopicJoin (`helpers/topics_join-v3.avdl`) kan brukes for å kombinere data fra flere topics. Dette kan feks være nyttig ved en eller annen form for `join` operasjon i Kafka Streams. 
+
 ### Periode Topic
 Topic navn: `paw.arbeidssokerperioder-{VERSION}`  
 Gjeldene versjon: `beta-v7`  
@@ -98,3 +101,11 @@ Gjeldene versjon: `beta-v1`
 Schema: [periode](main-avro-schema/src/main/resources/profilering-v1.avdl)
 
 Inneholder resultatet av profileringen som gjøres når det sendes inn opplysninger. En profilering vil alltid være knyttet til en opplysnings id og dermed også en periode id.
+
+### Arena Topic
+Topic navn: `paw.arbeidssoker-arena-{VERSION}`
+Gjeldene versjon: `beta-v1`
+Schema: [arena](arena-avro-schema/src/main/resources/arena-v3.avdl)
+
+Topic utelukkende for Arena. Endringer kan forkomme uten forvarsel basert på interne diskusjoner med Arena utviklere og topic blir slettet så snart Arena ikke lenger har behov for det.  
+`arena-avro-schema/src/main/resources/` inneholder en enkelt fil med en record. `avdl` filene som importeres opprettes som en del av byggeprosessen (de er basert på innholdet i main-avro-schema).
