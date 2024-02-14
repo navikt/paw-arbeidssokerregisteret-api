@@ -1,9 +1,0 @@
-// OBS! Kun intern Arena bruk
-@namespace("no.nav.paw.arbeidssokerregisteret.arena.v3")
-protocol PeriodeListe {
-	import idl "periode-v1.avdl";
-
-	record PeriodeListe {
-		array<no.nav.paw.arbeidssokerregisteret.arena.v1.Periode> perioder;
-	}
-}

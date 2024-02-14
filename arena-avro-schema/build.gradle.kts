@@ -37,7 +37,7 @@ publishing {
 
 tasks.withType(Copy::class).configureEach {
     from("$rootDir/main-avro-schema/src/main/resources/") {
-        include("*.avdl", "vo/*.avdl")
+        include("*.avdl", "vo/*.avdl", "helpers/*.avdl")
         filter { line ->
             line.replace(
                 "no.nav.paw.arbeidssokerregisteret.api",
