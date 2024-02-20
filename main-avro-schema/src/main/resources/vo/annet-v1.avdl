@@ -3,6 +3,6 @@ protocol Annet {
 	import idl "ja_nei_vet_ikke-v1.avdl";
 
 	record Annet {
-		JaNeiVetIkke andreForholdHindrerArbeid;
+		JaNeiVetIkke? andreForholdHindrerArbeid;
 	}
 }
