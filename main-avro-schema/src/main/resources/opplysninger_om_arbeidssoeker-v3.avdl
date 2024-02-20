@@ -34,7 +34,7 @@ protocol OpplysningerOmArbeidssoeker {
 		/**
 		  * Informasjon om arbeidssøkerens utdanning
  		*/
-		Utdanning utdanning;
+		Utdanning? utdanning;
 		/**
 		  * Informasjon om arbeidssøkerens helse
  		*/
