@@ -37,7 +37,7 @@ protocol OpplysningerOmArbeidssoeker {
 		/**
 		  * Informasjon om arbeidssøkerens helse
  		*/
-		no.nav.paw.arbeidssokerregisteret.api.v1.Helse helse;
+		no.nav.paw.arbeidssokerregisteret.api.v1.Helse? helse;
 
 		/**
 		  * Informasjon om arbeidssøkerens jobbsituasjon
