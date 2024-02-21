@@ -13,6 +13,8 @@ protocol OpplysningerOmArbeidssoeker {
 	  * knyttet til en annen periodeId, altså ny melding men med samme 'id' hvor feltet periodeId er endret.
 	  * Utover dette vil ikke opplysningene endre seg, det vil heller komme
 	  * en ny melding med ny 'id'.
+	  * Utdanning, helse og annet er valgfri informasjon, mens jobbsituasjon er obligatorisk.
+	  * Dersom det ikke er innhentet informasjon om utdanning, helse eller annet, skal disse feltene være null.
 	*/
 	record OpplysningerOmArbeidssoeker {
 		/**
