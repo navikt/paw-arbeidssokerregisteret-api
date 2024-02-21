@@ -43,9 +43,10 @@ protocol OpplysningerOmArbeidssoeker {
 		  * Informasjon om arbeidssøkerens jobbsituasjon
  		*/
 		no.nav.paw.arbeidssokerregisteret.api.v1.Jobbsituasjon jobbsituasjon;
+
 		/**
 		  * Er det annen informasjon om arbeidssøker som er relevant for å kunne hjelpe
  		*/
-		no.nav.paw.arbeidssokerregisteret.api.v1.Annet annet;
+		no.nav.paw.arbeidssokerregisteret.api.v1.Annet? annet;
 	}
 }
