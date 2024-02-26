@@ -32,9 +32,11 @@ sequenceDiagram
 ```
 
 ## Kafka Topics
-Alle topics er co-partitioned, dvs likt antall partisjoner og for en gitt person vil alle records ha samme key på tvers av alle topics.
-Nøkkelen er dermed ikke unik per bruker men samme bruker vil alltid få samme nøkkel. 
-Registeret består av 3 kafka topics. Meldingsformatet er Avro og skjema er tilgjengelig i dette repoet, blant annet som [maven artifacter](https://github.com/navikt/paw-arbeidssokerregisteret-api/packages/2061047).
+Viktige punkter angående Kafka topics:
+* Alle topics er co-partitioned, dvs likt antall partisjoner og for en gitt person vil alle records ha samme key på tvers av alle topics.
+* Nøkkelen(Record Key) er ikke unik per bruker, men samme bruker vil alltid få samme nøkkel.
+
+Registeret består av 3 kafka topics. Meldingsformatet er Avro og skjema er tilgjengelig i dette repoet, blant annet som [maven artifacter](https://github.com/navikt/paw-arbeidssokerregisteret-api/releases).
 For kotlin/java prosjekter kan man enkelt generere nødvendige klasser via et gradle plugin. Eksempel fra build.gradle.kts i [Hendelse håndtering](https://github.com/navikt/paw-arbeidssokerregisteret-event-prosessor):
 ```kotlin
 import com.github.davidmc24.gradle.plugin.avro.GenerateAvroProtocolTask
@@ -62,28 +64,30 @@ tasks.named("generateAvroProtocol", GenerateAvroProtocolTask::class.java) {
 }
 ```
 
-Samtlige topics er co-partitioned, dvs likt antall partisjoner og for en gitt person vil alle records ha samme key på tvers av alle topics.
-
 ### Versjonering
 Avro schema og topics er versjonert. Ved endringer som ikke er bakoverkompatible vil følgende gjøres:
 * De aktuelle delen i schema endres fra -v(x) til -v(x+1), feks periode-v1.avdl til periode-v2.avdl (samme edring gjøres også for namespace i avro filen)
 * Major version på schema atrifactet økes med 1, feks fra 1.123.2-1 til 2.123.5-1.
 * Berørte topics for en ny versjon, feks paw.arbeidssokerperioder-v1 blir til paw.arbeidssokerperioder-v2
-* Gamle topics går over i vedlikeholdsmodus, dvs nye data blir publisert, men det blir ingen oppdateringer av selve schemaet.
+* Gamle topics går over i vedlikeholdsmodus, dvs nye data blir publisert, men det blir ingen oppdateringer av selve schemaet og ingen nye applikasjoner legges til i ACL. 
 * Nye topics spoles opp og vil inneholde alt av data, record key, Periode.id og OpplysningerOmArbeidssoeker.id, vil forbli uendret i ny topic. Så dersom en periode-v1 har samme id som en periode-v2 er det den samme perioden. 
 
 Hvor lenge topics blir gående i vedlikeholds modus er ikke helt avgjort. I enkelte tilfeller vil eksterne endringer gjøre at det i praksis ikke blir mulig å vedlikeholde eldre topics. Feks dersom data som var obligatorisk ikke lenger er tilgjengelig eller ikke lenger er lov å samle inn.
 
 Konsumenter som skal bytte til en ny topic versjon må håndtere dette på en måte. Her er det flere muligheter, feks brukte periode.id og opplysningerOmArbeidssoeker.id for å holde orden på hva som alt er håndtert. Det er også mulig å lage høyvannsmerker basert på record.key, record.timestamp og topic. Timestamp settes når vi godtar en ekstern forespørsel, så en slik løsning vil måtte leve med den teoretiske muligheten for at en ny melding kan være eldre enn forrige melding fra samme topic med samme key. Å bruke offset er trolig den minst trygge måten å gjøre det på siden den nye versjonen kanskje inneholde fære eller flere meldinger enn den forrige versjonen av topicet. Feks ved endringer i hva som er gyldig/ikke gyldig data.
 
-Avro record TopicJoin (`helpers/topics_join-v3.avdl`) kan brukes for å kombinere data fra flere topics. Dette kan feks være nyttig ved en eller annen form for `join` operasjon i Kafka Streams. 
+Avro record TopicJoin (`helpers/topics_join-v4.avdl`) kan brukes for å kombinere data fra flere topics. Dette kan feks være nyttig ved en eller annen form for egen `join` operasjon i Kafka Streams. 
 
 ### Periode Topic
 Topic navn: `paw.arbeidssokerperioder-{VERSION}`  
 Gjeldene versjon: `beta-v7`  
 Schema: [periode](main-avro-schema/src/main/resources/periode-v1.avdl)
 
-Innholder samtlige arbeidssøker perioder. Alle perioder har en start dato. Når de avsluttes settes tidspunkt for avslutning. Dette tidspunktet vil aldri være frem i tid. 
+* Innholder samtlige arbeidssøker perioder.
+* Alle perioder har en start dato.
+* Når de avsluttes settes tidspunkt for avslutning. Dette tidspunktet vil aldri være frem i tid.
+* Identitesnummeret kan endre seg, det vil da komme en ny record hvor identitetsnummeret er endret.
+* Record timestamp matcher tidspunktet vi godtok 'start' forespørselen.
 
 ### Opplysninger Om Arbeidssoker Topic
 Topic navn: `paw.opplysninger-om-arbeidssoeker-{VERSION}`  
@@ -95,14 +99,20 @@ Inneholder opplysninger om arbeidssøkeren. Opplysningene er knyttet til en peri
 2. Perioden A avsluttes.
 3. En ny periode (B) startes.
 
-I slike tilfeller vil man først se at opplysningene som publiseres er knyttet til periode A, også kort tid etterpå publiseres opplysningene på nytt (med samme opplysnings id), men denne gangen knyttet til periode B.
+I slike tilfeller vil man først se at opplysningene som publiseres er knyttet til periode A, også kort tid etterpå publiseres opplysningene på nytt (med samme opplysnings id), men denne gangen knyttet til periode B.  
+Endringer av opplysninger vil alltid føre til en ny record med ny opplysnings id.   
+Record timestamp matcher tidspunktet vi mottok opplysningene.
+
 
 ### Profilerngs Topic
 Topic navn: `paw.arbeidssoker-profilering-{VERSION}`  
 Gjeldene versjon: `beta-v1`  
 Schema: [periode](main-avro-schema/src/main/resources/profilering-v1.avdl)
 
-Inneholder resultatet av profileringen som gjøres når det sendes inn opplysninger. En profilering vil alltid være knyttet til en opplysnings id og dermed også en periode id.
+Inneholder resultatet av profileringen som gjøres når det sendes inn opplysninger.  
+En profilering vil alltid være knyttet til en opplysnings id og dermed også en periode id.
+Record timestamp matcher i praksis record timestamp for opplysningene, men kan i noen tilfeller(migrert data) matche record timestamp for perioden.  
+Profilering.sendtInnAv.tidspunkt kan benyttes for å se når selve profilering ble utført. Så i praksis viser Record timestamp når profileringen ideelt sett gjelder fra, mens '....tidspunkt' viser når den ble utført. 
 
 ### Arena Topic
 Topic navn: `paw.arbeidssoker-arena-{VERSION}`
