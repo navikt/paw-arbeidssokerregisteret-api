@@ -5,8 +5,8 @@ protocol TopicsJoin {
 	import idl "../opplysninger_om_arbeidssoeker-v4.avdl";
 
 	record TopicsJoin {
-		no.nav.paw.arbeidssokerregisteret.api.v1.Periode? periode;
-		no.nav.paw.arbeidssokerregisteret.api.v1.Profilering? profilering;
-		no.nav.paw.arbeidssokerregisteret.api.v4.OpplysningerOmArbeidssoeker? opplysningerOmArbeidssoeker;
+		no.nav.paw.arbeidssokerregisteret.api.v1.Periode? periode = null;
+		no.nav.paw.arbeidssokerregisteret.api.v1.Profilering? profilering = null;
+		no.nav.paw.arbeidssokerregisteret.api.v4.OpplysningerOmArbeidssoeker? opplysningerOmArbeidssoeker = null;
 	}
 }

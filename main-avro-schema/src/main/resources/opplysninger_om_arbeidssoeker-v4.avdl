@@ -35,11 +35,11 @@ protocol OpplysningerOmArbeidssoeker {
 		/**
 		  * Informasjon om arbeidssøkerens utdanning
  		*/
-		Utdanning? utdanning;
+		Utdanning? utdanning = null;
 		/**
 		  * Informasjon om arbeidssøkerens helse
  		*/
-		no.nav.paw.arbeidssokerregisteret.api.v1.Helse? helse;
+		no.nav.paw.arbeidssokerregisteret.api.v1.Helse? helse = null;
 
 		/**
 		  * Informasjon om arbeidssøkerens jobbsituasjon
@@ -49,6 +49,6 @@ protocol OpplysningerOmArbeidssoeker {
 		/**
 		  * Er det annen informasjon om arbeidssøker som er relevant for å kunne hjelpe
  		*/
-		no.nav.paw.arbeidssokerregisteret.api.v1.Annet? annet;
+		no.nav.paw.arbeidssokerregisteret.api.v1.Annet? annet = null;
 	}
 }

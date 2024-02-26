@@ -14,7 +14,7 @@ protocol Utdanning {
 		  * de dette feltet.
 		  *
  		*/
-		no.nav.paw.arbeidssokerregisteret.api.v1.JaNeiVetIkke? bestaatt;
+		no.nav.paw.arbeidssokerregisteret.api.v1.JaNeiVetIkke? bestaatt = null;
 
 		/**
 		  * Bare inkludert dersom informasjonen er innhetet, feks for
@@ -22,6 +22,6 @@ protocol Utdanning {
 		  * de dette feltet.
 		  *
  		*/
-		no.nav.paw.arbeidssokerregisteret.api.v1.JaNeiVetIkke? godkjent;
+		no.nav.paw.arbeidssokerregisteret.api.v1.JaNeiVetIkke? godkjent = null;
 	}
 }
