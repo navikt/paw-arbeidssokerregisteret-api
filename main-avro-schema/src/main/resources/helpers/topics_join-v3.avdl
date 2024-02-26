@@ -4,6 +4,10 @@ protocol TopicsJoin {
 	import idl "../profilering-v1.avdl";
 	import idl "../opplysninger_om_arbeidssoeker-v4.avdl";
 
+	/**
+	  * Enkel hjelpeklasse som kan brukes for å hente ut data fra flere forskjellige topics,
+	  * feks ved enkel 'join' på periode id med kafka streams.
+ 	*/
 	record TopicsJoin {
 		no.nav.paw.arbeidssokerregisteret.api.v1.Periode? periode = null;
 		no.nav.paw.arbeidssokerregisteret.api.v1.Profilering? profilering = null;

@@ -11,7 +11,7 @@ protocol Utdanning {
 		/**
 		  * Bare inkludert dersom informasjonen er innhetet, feks for
 		  * nus kode 0,1,2 og 9 gir det ikke mening å hente inn info for
-		  * de dette feltet.
+		  * dette feltet.
 		  *
  		*/
 		no.nav.paw.arbeidssokerregisteret.api.v1.JaNeiVetIkke? bestaatt = null;
@@ -19,7 +19,7 @@ protocol Utdanning {
 		/**
 		  * Bare inkludert dersom informasjonen er innhetet, feks for
 		  * nus kode 0,1,2 og 9 gir det ikke mening å hente inn info for
-		  * de dette feltet.
+		  * dette feltet.
 		  *
  		*/
 		no.nav.paw.arbeidssokerregisteret.api.v1.JaNeiVetIkke? godkjent = null;

@@ -34,10 +34,12 @@ protocol OpplysningerOmArbeidssoeker {
 
 		/**
 		  * Informasjon om arbeidssøkerens utdanning
+		  * Dersom det ikke var relevant å innhente informasjon om utdanning er dette feltet 'null'.
  		*/
 		Utdanning? utdanning = null;
 		/**
 		  * Informasjon om arbeidssøkerens helse
+		  * Dersom det ikke var relevant å innhente informasjon om helse er dette feltet 'null'.
  		*/
 		no.nav.paw.arbeidssokerregisteret.api.v1.Helse? helse = null;
 
@@ -48,6 +50,7 @@ protocol OpplysningerOmArbeidssoeker {
 
 		/**
 		  * Er det annen informasjon om arbeidssøker som er relevant for å kunne hjelpe
+		  * Dersom det ikke var relevant å innhente annen informasjon er dette feltet 'null'.
  		*/
 		no.nav.paw.arbeidssokerregisteret.api.v2.Annet? annet = null;
 	}

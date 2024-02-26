@@ -36,6 +36,8 @@ Viktige punkter angående Kafka topics:
 * Alle topics er co-partitioned, dvs likt antall partisjoner og for en gitt person vil alle records ha samme key på tvers av alle topics.
 * Nøkkelen(Record Key) er ikke unik per bruker, men samme bruker vil alltid få samme nøkkel.
 
+Dette betyr blant annet at man kan lage enkle egne Kafka Streams joins operasjoner på PeriodeId uten å måtte repartisjonere. Alt som skal til er en enkel KeyValue store med [TopicJoin](`helpers/topics_join-v4.avdl`).
+
 Registeret består av 3 kafka topics. Meldingsformatet er Avro og skjema er tilgjengelig i dette repoet, blant annet som [maven artifacter](https://github.com/navikt/paw-arbeidssokerregisteret-api/releases).
 For kotlin/java prosjekter kan man enkelt generere nødvendige klasser via et gradle plugin. Eksempel fra build.gradle.kts i [Hendelse håndtering](https://github.com/navikt/paw-arbeidssokerregisteret-event-prosessor):
 ```kotlin
@@ -75,8 +77,6 @@ Avro schema og topics er versjonert. Ved endringer som ikke er bakoverkompatible
 Hvor lenge topics blir gående i vedlikeholds modus er ikke helt avgjort. I enkelte tilfeller vil eksterne endringer gjøre at det i praksis ikke blir mulig å vedlikeholde eldre topics. Feks dersom data som var obligatorisk ikke lenger er tilgjengelig eller ikke lenger er lov å samle inn.
 
 Konsumenter som skal bytte til en ny topic versjon må håndtere dette på en måte. Her er det flere muligheter, feks brukte periode.id og opplysningerOmArbeidssoeker.id for å holde orden på hva som alt er håndtert. Det er også mulig å lage høyvannsmerker basert på record.key, record.timestamp og topic. Timestamp settes når vi godtar en ekstern forespørsel, så en slik løsning vil måtte leve med den teoretiske muligheten for at en ny melding kan være eldre enn forrige melding fra samme topic med samme key. Å bruke offset er trolig den minst trygge måten å gjøre det på siden den nye versjonen kanskje inneholde fære eller flere meldinger enn den forrige versjonen av topicet. Feks ved endringer i hva som er gyldig/ikke gyldig data.
-
-Avro record TopicJoin (`helpers/topics_join-v4.avdl`) kan brukes for å kombinere data fra flere topics. Dette kan feks være nyttig ved en eller annen form for egen `join` operasjon i Kafka Streams. 
 
 ### Periode Topic
 Topic navn: `paw.arbeidssokerperioder-{VERSION}`  
