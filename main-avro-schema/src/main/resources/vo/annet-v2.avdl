@@ -1,0 +1,8 @@
+@namespace("no.nav.paw.arbeidssokerregisteret.api.v2")
+protocol Annet {
+	import idl "ja_nei_vet_ikke-v1.avdl";
+
+	record Annet {
+		no.nav.paw.arbeidssokerregisteret.api.v1.JaNeiVetIkke? andreForholdHindrerArbeid = null;
+	}
+}
