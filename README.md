@@ -11,11 +11,14 @@
    3. [Start/Stopp av Perioder](https://github.com/navikt/paw-arbeidssokerregisteret-api-inngang)
   
 ## Hvordan Fungerer Det
-Arbeidssøkerregisteret er basert på arbeidssøkerperioder. En periode har alltid en start dato og får en avsluttnings dato så snart den avsluttes. En person kan 0 eller 1 aktive perioder til en hver tid.
+Arbeidssøkerregisteret er basert på arbeidssøkerperioder. En periode har alltid en start dato og får en avsluttnings dato så snart den avsluttes. En person kan ha 0 eller 1 aktive perioder til en hver tid.
 
-I tillegg til perioden inneholder også registeret en del opplysninger om arbeidssøkeren samt resultatet av profilering av arbeidssøkeren. Profileringen gjøre på bakgrunn av opplysningene og brukes til å gi brukeren behovs tilpasset oppføling. Innesendig av opplysninger er valgfritt og det er derfor ikke gitt at vi har opplysninger om en gitt person. Har vi ikke opplsyninger har vi heller ikke noe profileringsresultat.
+I tillegg til perioden inneholder også registeret en del opplysninger om arbeidssøkeren samt resultatet av profilering av arbeidssøkeren. 
+Profileringen gjøres på bakgrunn av opplysningene og brukes som besluttningsstøtte i veileders vurderingen av brukerens oppfølgisbehov. 
+Innesendig av opplysninger er valgfritt og det er derfor ikke gitt at vi har opplysninger om en gitt person. 
+Har vi ikke opplsyninger har vi heller ikke noe profileringsresultat.
 
-Informasjonen i registeret kan hentes enten ved å abonnere på de aktuelle Kafka topicene eller bruke søke API.
+Informasjonen i registeret kan hentes enten ved å abonnere på de aktuelle Kafka topicene eller bruke oppslag API.
 
 Enkel oversikt over hva som skjer når når en periode startes via API:
 ```mermaid
