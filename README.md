@@ -32,6 +32,8 @@ sequenceDiagram
 ```
 
 ## Kafka Topics
+Alle topics er co-partitioned, dvs likt antall partisjoner og for en gitt person vil alle records ha samme key på tvers av alle topics.
+Nøkkelen er dermed ikke unik per bruker men samme bruker vil alltid få samme nøkkel. 
 Registeret består av 3 kafka topics. Meldingsformatet er Avro og skjema er tilgjengelig i dette repoet, blant annet som [maven artifacter](https://github.com/navikt/paw-arbeidssokerregisteret-api/packages/2061047).
 For kotlin/java prosjekter kan man enkelt generere nødvendige klasser via et gradle plugin. Eksempel fra build.gradle.kts i [Hendelse håndtering](https://github.com/navikt/paw-arbeidssokerregisteret-event-prosessor):
 ```kotlin
