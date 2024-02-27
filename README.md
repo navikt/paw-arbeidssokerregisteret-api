@@ -6,8 +6,8 @@
    3. [Profilerings topic](#profilerngs-topic)
    4. [Arena topic](#arena-topic)
 3. REST API
-   1. [Søke API (internt for NAV)](https://github.com/navikt/paw-arbeidssokerregisteret-api-soek)
-   2. [Eksternt API](https://github.com/navikt/paw-arbeidssokerregisteret-eksternt-api)
+   1. [Oppslag API (internt for NAV)](https://github.com/navikt/paw-arbeidssoekerregisteret-api-oppslag)
+   2. [Eksternt API](https://github.com/navikt/paw-arbeidssoekerregisteret-eksternt-api)
    3. [Start/Stopp av Perioder](https://github.com/navikt/paw-arbeidssokerregisteret-api-inngang)
   
 ## Hvordan Fungerer Det
