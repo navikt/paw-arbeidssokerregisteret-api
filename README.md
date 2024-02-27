@@ -33,7 +33,7 @@ sequenceDiagram
 
 ## Kafka Topics
 Viktige punkter angående Kafka topics:
-* Tilgang til topics er styrt av ACL. Den foretrukne måten å be om tilgang på er via PR til paw-iac. Her finner man config for de aktuelle topicene. Skirvetilgang til repoet er begrenset så worflowen blir 'fork' + 'PR'. Husk å inkludere relevant info for tilgang (PVK og den type ting) i PR.
+* Tilgang til topics er styrt av ACL. Den foretrukne måten å be om tilgang på er via PR til paw-iac. Her finner man config for de aktuelle topicene. Skirvetilgang til repoet er begrenset så worflowen blir 'fork' + 'PR'. Husk å inkludere relevant info for tilgang (link til behandlingskatalog) i PR.
 * Alle topics er co-partitioned, dvs likt antall partisjoner og for en gitt person vil alle records ha samme key på tvers av alle topics.
 * Nøkkelen(Record Key) er ikke unik per bruker, men samme bruker vil alltid få samme nøkkel.
 
