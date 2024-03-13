@@ -97,8 +97,8 @@ Schema: [periode](main-avro-schema/src/main/resources/periode-v1.avdl)
 
 ### Opplysninger Om Arbeidssoker Topic
 Topic navn: `paw.opplysninger-om-arbeidssoeker-{VERSION}`  
-Gjeldene versjon: `beta-v7"`  
-Schema: [opplysninger_om_arbeidssoker](main-avro-schema/src/main/resources/opplysninger_om_arbeidssoeker-v3.avdl)
+Gjeldene versjon: `beta-v7`
+Schema: [opplysninger_om_arbeidssoker](main-avro-schema/src/main/resources/opplysninger_om_arbeidssoeker-v4.avdl)
 
 Inneholder opplysninger om arbeidssøkeren. Opplysningene er knyttet til en periode og en periode kan ha flere records med opplysninger knyttet til seg. I enkelte tilfeller vil systemet gjenbruke opplysninger når følgende hendelser inntreffer iløpet av 60 sekunder:
 1. Opplysninger sendes in for den aktive perioden (referert til som A)
@@ -110,7 +110,7 @@ Endringer av opplysninger vil alltid føre til en ny record med ny opplysnings i
 Record timestamp matcher tidspunktet vi mottok opplysningene.
 
 
-### Profilerngs Topic
+### Profilerings Topic
 Topic navn: `paw.arbeidssoker-profilering-{VERSION}`  
 Gjeldene versjon: `beta-v1`  
 Schema: [periode](main-avro-schema/src/main/resources/profilering-v1.avdl)
