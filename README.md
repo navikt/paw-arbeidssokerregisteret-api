@@ -86,7 +86,7 @@ Konsumenter som skal bytte til en ny topic versjon må håndtere dette på en m�
 
 ### Periode Topic
 Topic navn: `paw.arbeidssokerperioder-{VERSION}`  
-Gjeldene versjon: `beta-v7`  
+Gjeldene versjon: `v1`  
 Schema: [periode](main-avro-schema/src/main/resources/periode-v1.avdl)
 
 * Innholder samtlige arbeidssøker perioder.
@@ -97,7 +97,7 @@ Schema: [periode](main-avro-schema/src/main/resources/periode-v1.avdl)
 
 ### Opplysninger Om Arbeidssoker Topic
 Topic navn: `paw.opplysninger-om-arbeidssoeker-{VERSION}`  
-Gjeldene versjon: `beta-v7`
+Gjeldene versjon: `v1`
 Schema: [opplysninger_om_arbeidssoker](main-avro-schema/src/main/resources/opplysninger_om_arbeidssoeker-v4.avdl)
 
 Inneholder opplysninger om arbeidssøkeren. Opplysningene er knyttet til en periode og en periode kan ha flere records med opplysninger knyttet til seg. I enkelte tilfeller vil systemet gjenbruke opplysninger når følgende hendelser inntreffer iløpet av 60 sekunder:
@@ -112,7 +112,7 @@ Record timestamp matcher tidspunktet vi mottok opplysningene.
 
 ### Profilerings Topic
 Topic navn: `paw.arbeidssoker-profilering-{VERSION}`  
-Gjeldene versjon: `beta-v1`  
+Gjeldene versjon: `beta-v15`  
 Schema: [periode](main-avro-schema/src/main/resources/profilering-v1.avdl)
 
 Inneholder resultatet av profileringen som gjøres når det sendes inn opplysninger.  
@@ -122,7 +122,7 @@ Profilering.sendtInnAv.tidspunkt kan benyttes for å se når selve profilering b
 
 ### Arena Topic
 Topic navn: `paw.arbeidssoker-arena-{VERSION}`
-Gjeldene versjon: `beta-v1`
+Gjeldene versjon: `beta-v15`
 Schema: [arena](arena-avro-schema/src/main/resources/arena-v3.avdl)
 
 Topic utelukkende for Arena. Endringer kan forkomme uten forvarsel basert på interne diskusjoner med Arena utviklere og topic blir slettet så snart Arena ikke lenger har behov for det.  
