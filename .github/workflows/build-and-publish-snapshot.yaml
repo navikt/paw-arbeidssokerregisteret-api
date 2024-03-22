@@ -33,8 +33,8 @@ jobs:
       - name: Build with Gradle and Publish artifact
         working-directory: ./
         run: |
-          echo "(image med versjon)image=${{ env.IMAGE }}:${{ env.VERSION }}" 
-          echo "image=${{ env.IMAGE }}:${{ env.VERSION }}" >> $GITHUB_OUTPUT
+          echo "(image med versjon)image=${{ env.IMAGE }}:${{ env.SCHEMA_MINOR_VERSION }}" 
+          echo "image=${{ env.IMAGE }}:${{ env.SCHEMA_MINOR_VERSION }}" >> $GITHUB_OUTPUT
           ./gradlew -PschemaMinorVersion=${{ env.SCHEMA_MINOR_VERSION }} -Pimage=${{ env.IMAGE }} build test jib
           echo "DIGEST=$(cat schema-registry/build/jib-image.digest)" >> $GITHUB_ENV
         env:
