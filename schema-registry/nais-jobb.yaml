@@ -11,5 +11,3 @@ spec:
   readiness:
     path: /isready
   image: {{ image }}
-  kafka:
-    pool: nav-dev
