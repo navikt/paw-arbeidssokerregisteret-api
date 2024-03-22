@@ -20,5 +20,6 @@ spec:
     periodSeconds: 5
     port: 8080
     timeout: 1
+  image: {{ image }}
   kafka:
     pool: nav-dev
