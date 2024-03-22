@@ -1,5 +1,5 @@
 apiVersion: nais.io/v1
-kind: Naisjob
+kind: Application
 metadata:
   name: paw-arbeidssokerregisteret-api-schema-registry
   namespace: paw
