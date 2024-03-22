@@ -4,6 +4,8 @@ plugins {
     application
 }
 
+val schemaMinorVersion: String by project
+version = schemaMinorVersion
 val jvmVersion = JavaVersion.VERSION_21
 val image: String? by project
 
@@ -14,5 +16,5 @@ dependencies {
 }
 jib {
     from.image = "ghcr.io/navikt/baseimages/temurin:${jvmVersion.majorVersion}"
-    to.image = "${image ?: rootProject.name}:${project.version}"
+    to.image = "${image ?: rootProject.name}:${version}"
 }
