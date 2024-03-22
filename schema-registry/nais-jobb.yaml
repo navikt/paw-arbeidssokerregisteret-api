@@ -1,25 +1,19 @@
 apiVersion: nais.io/v1
-kind: Application
+kind: Naisjob
 metadata:
   name: paw-arbeidssokerregisteret-api-schema-registry
   namespace: paw
   labels:
     team: paw
 spec:
+  replicas:
+    min: 1
+    max: 1
+  port: 8080
   liveness:
-    failureThreshold: 10
-    initialDelay: 20
     path: /isalive
-    periodSeconds: 5
-    port: 8080
-    timeout: 1
   readiness:
-    failureThreshold: 10
-    initialDelay: 20
     path: /isready
-    periodSeconds: 5
-    port: 8080
-    timeout: 1
   image: {{ image }}
   kafka:
     pool: nav-dev
