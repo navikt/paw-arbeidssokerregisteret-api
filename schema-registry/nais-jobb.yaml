@@ -9,15 +9,16 @@ spec:
   image: {{ image }}
   kafka:
     pool: nav-dev
+  restartPolicy: Never
   readiness:
-    failureThreshold: 10
+    failureThreshold: 5
     initialDelay: 20
     path: /isReady
     periodSeconds: 5
     port: 8080
     timeout: 1
   liveness:
-    failureThreshold: 10
+    failureThreshold: 5
     initialDelay: 20
     path: /isAlive
     periodSeconds: 5
