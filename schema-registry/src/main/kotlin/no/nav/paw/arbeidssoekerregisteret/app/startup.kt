@@ -62,11 +62,11 @@ fun main() {
         }
     }.start(wait = false)
     result.join()
-    logger.info("Opplasting ferdig")
+    logger.info("Opplasting ferdig: http kode ${result.get()}")
     if (result.get() == HttpStatusCode.OK) {
         exitProcess(0)
     } else {
-        Thread.sleep(Duration.ofMinutes(5).toMillis())
+        Thread.sleep(Duration.ofMinutes(11).toMillis())
         exitProcess(1)
     }
 }
