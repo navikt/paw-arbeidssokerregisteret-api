@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":arena-avro-schema"))
     schema(project(":arena-avro-schema"))
     schema(project(":main-avro-schema"))
-    implementation("org.apache.avro:avro:1.11.0")
+    api("org.apache.avro:avro:1.11.0")
 }
 
 tasks.named("generateAvroProtocol", GenerateAvroProtocolTask::class.java) {
