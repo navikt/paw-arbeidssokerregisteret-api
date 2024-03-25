@@ -17,6 +17,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core:2.3.9")
     implementation("io.ktor:ktor-server-netty:2.3.9")
     implementation("io.confluent:kafka-schema-registry-client:7.6.0")
+    implementation(project(":test-schema"))
 }
 jib {
     from.image = "ghcr.io/navikt/baseimages/temurin:${jvmVersion.majorVersion}"
