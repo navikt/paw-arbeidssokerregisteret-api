@@ -29,5 +29,10 @@ protocol Periode {
 		  * Inneholder informasjon om når perioden ble avsluttet og hvem som avsluttet den
 		  */
 		Metadata? avsluttet;
+
+		/**
+		  * Opplasting av schema skal feile når vi legger til dette feltet i schema
+		  */
+		string testFelt;
 	}
 }

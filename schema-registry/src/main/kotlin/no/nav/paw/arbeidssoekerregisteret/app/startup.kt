@@ -74,7 +74,7 @@ fun main() {
 fun uploadSchema(schemaRegistryClient: SchemaRegistryClient): CompletableFuture<HttpStatusCode> =
     CompletableFuture.supplyAsync {
         val avroSchema = AvroSchema(Periode.`SCHEMA$`)
-        val schemaResponse = schemaRegistryClient.register("paw.arbeidssokerperioder-beta-v15", avroSchema, true)
+        val schemaResponse = schemaRegistryClient.registerWithResponse("paw.arbeidssokerperioder-beta-v15-value", avroSchema, true)
         logger.info("Schema response: $schemaResponse")
         HttpStatusCode.OK
     }
