@@ -39,14 +39,14 @@ fun main() {
     }.start(wait = false)
     result.join()
     logger.info("Opplasting ferdig")
-    Thread.sleep(Duration.ofMinutes(5).toMillis())
+    Thread.sleep(Duration.ofMinutes(25).toMillis())
     logger.info("Avslutter jobb")
     exitProcess(if (result.get() == HttpStatusCode.OK) 0 else 1)
 }
 
 fun uploadSchema(): CompletableFuture<HttpStatusCode> =
     CompletableFuture.supplyAsync {
-        Thread.sleep(1000)
+        Thread.sleep(60000)
         HttpStatusCode.InternalServerError
     }
 
