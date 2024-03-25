@@ -1,23 +1,47 @@
 package no.nav.paw.arbeidssoekerregisteret.app
 
+import io.confluent.kafka.schemaregistry.SchemaProvider
+import io.confluent.kafka.schemaregistry.avro.AvroSchema
+import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient
+import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig
+import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientFactory
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.util.*
 import kotlinx.coroutines.*
+import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import kotlin.system.exitProcess
 
 
+const val SCHEMA_REG_URL = "KAFKA_SCHEMA_REGISTRY"
+const val SCHEMA_REG_USER = "KAFKA_SCHEMA_REGISTRY_USER"
+const val SCHEMA_REG_PASSWORD = "KAFKA_SCHEMA_REGISTRY_PASSWORD"
+
+private fun schemaRegistryConfig(): Map<String, Any> =
+    mapOf(
+        SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
+        SchemaRegistryClientConfig.USER_INFO_CONFIG to "${System.getenv(SCHEMA_REG_USER)}:${System.getenv(SCHEMA_REG_PASSWORD)}",
+    )
+
 fun main() {
     val logger = LoggerFactory.getLogger("app")
     logger.info("Starter")
-    val result = uploadSchema()
+    val client = SchemaRegistryClientFactory.newClient(
+        listOf(System.getenv(SCHEMA_REG_URL)),
+        10,
+        listOf(AvroSchemaProvider().also { it.configure(schemaRegistryConfig()) }),
+        schemaRegistryConfig(),
+        emptyMap()
+    )
+    val result = uploadSchema(client)
         .exceptionally { exception ->
             logger.error("Schema upload failed", exception)
             HttpStatusCode.InternalServerError
@@ -39,15 +63,19 @@ fun main() {
     }.start(wait = false)
     result.join()
     logger.info("Opplasting ferdig")
-    Thread.sleep(Duration.ofMinutes(25).toMillis())
-    logger.info("Avslutter jobb")
-    exitProcess(if (result.get() == HttpStatusCode.OK) 0 else 1)
+    if (result.get() == HttpStatusCode.OK) {
+        exitProcess(0)
+    } else {
+        Thread.sleep(Duration.ofMinutes(5).toMillis())
+        exitProcess(1)
+    }
 }
 
-fun uploadSchema(): CompletableFuture<HttpStatusCode> =
+fun uploadSchema(schemaRegistryClient: SchemaRegistryClient): CompletableFuture<HttpStatusCode> =
     CompletableFuture.supplyAsync {
-        Thread.sleep(60000)
-        HttpStatusCode.InternalServerError
+        val avroSchema = AvroSchema(Periode.`SCHEMA$`)
+        schemaRegistryClient.register("paw.arbeidssokerperioder-beta-v15", avroSchema, true)
+        HttpStatusCode.OK
     }
 
 fun getCodeAndMsg(result: CompletableFuture<HttpStatusCode>): Pair<HttpStatusCode, String> = when {
@@ -58,3 +86,4 @@ fun getCodeAndMsg(result: CompletableFuture<HttpStatusCode>): Pair<HttpStatusCod
         if (result.get() == HttpStatusCode.OK) "Schema upload successful" else "Schema upload failed"
     )
 }
+
