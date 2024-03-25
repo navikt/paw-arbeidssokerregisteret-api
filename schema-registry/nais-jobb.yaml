@@ -6,10 +6,20 @@ metadata:
   labels:
     team: paw
 spec:
-  liveness:
-    path: /isalive
-  readiness:
-    path: /isready
   image: {{ image }}
   kafka:
     pool: nav-dev
+  readiness:
+    failureThreshold: 10
+    initialDelay: 20
+    path: /isReady
+    periodSeconds: 5
+    port: 8080
+    timeout: 1
+  liveness:
+    failureThreshold: 10
+    initialDelay: 20
+    path: /isAlive
+    periodSeconds: 5
+    port: 8080
+    timeout: 1
