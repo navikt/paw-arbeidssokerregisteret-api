@@ -40,7 +40,8 @@ fun main() {
     result.join()
     logger.info("Opplasting ferdig")
     Thread.sleep(Duration.ofMinutes(5).toMillis())
-    exitProcess(0)
+    logger.info("Avslutter jobb")
+    exitProcess(if (result.get() == HttpStatusCode.OK) 0 else 1)
 }
 
 fun uploadSchema(): CompletableFuture<HttpStatusCode> =
