@@ -30,9 +30,9 @@ private fun schemaRegistryConfig(): Map<String, Any> =
         SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
         SchemaRegistryClientConfig.USER_INFO_CONFIG to "${System.getenv(SCHEMA_REG_USER)}:${System.getenv(SCHEMA_REG_PASSWORD)}",
     )
-
+val logger = LoggerFactory.getLogger("app")
 fun main() {
-    val logger = LoggerFactory.getLogger("app")
+
     logger.info("Starter")
     val client = SchemaRegistryClientFactory.newClient(
         listOf(System.getenv(SCHEMA_REG_URL)),
@@ -74,7 +74,8 @@ fun main() {
 fun uploadSchema(schemaRegistryClient: SchemaRegistryClient): CompletableFuture<HttpStatusCode> =
     CompletableFuture.supplyAsync {
         val avroSchema = AvroSchema(Periode.`SCHEMA$`)
-        schemaRegistryClient.register("paw.arbeidssokerperioder-beta-v15", avroSchema, true)
+        val schemaResponse = schemaRegistryClient.register("paw.arbeidssokerperioder-beta-v15", avroSchema, true)
+        logger.info("Schema response: $schemaResponse")
         HttpStatusCode.OK
     }
 
