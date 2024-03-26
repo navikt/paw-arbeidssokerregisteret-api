@@ -1,47 +1,35 @@
 package no.nav.paw.arbeidssoekerregisteret.app
 
-import io.confluent.kafka.schemaregistry.SchemaProvider
 import io.confluent.kafka.schemaregistry.avro.AvroSchema
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient
-import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientFactory
+import io.confluent.kafka.schemaregistry.client.rest.entities.requests.RegisterSchemaResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.util.*
-import kotlinx.coroutines.*
-import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
+import org.apache.avro.Schema
+import org.apache.avro.specific.SpecificRecord
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import kotlin.system.exitProcess
 
 
-const val SCHEMA_REG_URL = "KAFKA_SCHEMA_REGISTRY"
-const val SCHEMA_REG_USER = "KAFKA_SCHEMA_REGISTRY_USER"
-const val SCHEMA_REG_PASSWORD = "KAFKA_SCHEMA_REGISTRY_PASSWORD"
-
-private fun schemaRegistryConfig(): Map<String, Any> =
-    mapOf(
-        SchemaRegistryClientConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
-        SchemaRegistryClientConfig.USER_INFO_CONFIG to "${System.getenv(SCHEMA_REG_USER)}:${System.getenv(SCHEMA_REG_PASSWORD)}",
-    )
 val logger = LoggerFactory.getLogger("app")
 fun main() {
-
     logger.info("Starter")
     val client = SchemaRegistryClientFactory.newClient(
         listOf(System.getenv(SCHEMA_REG_URL)),
         10,
-        listOf(AvroSchemaProvider().also { it.configure(schemaRegistryConfig()) }),
-        schemaRegistryConfig(),
+        listOf(AvroSchemaProvider().also { it.configure(schemaRegistryProperties) }),
+        schemaRegistryProperties,
         emptyMap()
     )
-    val result = uploadSchema(client)
+//    val result = client.uploadSchemas()
         .exceptionally { exception ->
             logger.error("Schema upload failed", exception)
             HttpStatusCode.InternalServerError
@@ -61,24 +49,42 @@ fun main() {
             }
         }
     }.start(wait = false)
+
     result.join()
     logger.info("Opplasting ferdig: http kode ${result.get()}")
     if (result.get() == HttpStatusCode.OK) {
         exitProcess(0)
     } else {
+        //Må vente lenge nok til at deploy steget gir opp og feiler
         Thread.sleep(Duration.ofMinutes(11).toMillis())
         exitProcess(1)
     }
 }
 
-fun uploadSchema(schemaRegistryClient: SchemaRegistryClient): CompletableFuture<HttpStatusCode> =
+fun SchemaRegistryClient.uploadSchemas(): CompletableFuture<HttpStatusCode> =
     CompletableFuture.supplyAsync {
-        val avroSchema = AvroSchema(Periode.`SCHEMA$`)
-        schemaRegistryClient.updateCompatibility("paw.arbeidssokerperioder-beta-v15-value", "FULL_TRANSITIVE")
-        val schemaResponse = schemaRegistryClient.registerWithResponse("paw.arbeidssokerperioder-beta-v15-value", avroSchema, true)
-        logger.info("Schema response: $schemaResponse")
+        subjectMap
+            .onEach { (_, subject) ->
+                runCatching { setFullTransitiveCompatibility(subject) }
+                    .onFailure { logger.error("Failed to set compatibility for $subject", it) }
+                    .getOrThrow()
+            }
+            .forEach(::uploadSchema)
         HttpStatusCode.OK
     }
+
+fun SchemaRegistryClient.uploadSchema(schema: Schema, subject: String): HttpStatusCode =
+    runCatching {
+        val avroSchema = AvroSchema(schema)
+        registerWithResponse(subject, avroSchema, true)
+    }
+        .onFailure { logger.error("Failed to upload schema for $subject", it) }
+        .onSuccess { logger.info("Schema uploaded for $subject") }
+        .map { HttpStatusCode.OK }
+        .getOrElse { HttpStatusCode.InternalServerError }
+
+fun SchemaRegistryClient.setFullTransitiveCompatibility(subject: String): String =
+    updateCompatibility(subject, COMPATIBILITY_LEVEL_FULL_TRANSITIVE)
 
 fun getCodeAndMsg(result: CompletableFuture<HttpStatusCode>): Pair<HttpStatusCode, String> = when {
     !result.isDone -> Pair(HttpStatusCode.ServiceUnavailable, "not done yet")

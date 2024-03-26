@@ -1,5 +1,4 @@
 import com.github.davidmc24.gradle.plugin.avro.GenerateAvroProtocolTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
