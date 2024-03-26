@@ -67,8 +67,9 @@ fun SchemaRegistryClient.uploadSchemas(): CompletableFuture<HttpStatusCode> =
                     .onFailure { logger.error("Failed to set compatibility for $subject", it) }
                     .getOrThrow()
             }
-            .forEach(::uploadSchema)
-        HttpStatusCode.OK
+            .map{(schema, subject) -> uploadSchema(schema, subject)}
+            .firstOrNull { it != HttpStatusCode.OK }
+            ?: HttpStatusCode.OK
     }
 
 fun SchemaRegistryClient.uploadSchema(schema: Schema, subject: String): HttpStatusCode =
