@@ -4,7 +4,6 @@ import io.confluent.kafka.schemaregistry.avro.AvroSchema
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientFactory
-import io.confluent.kafka.schemaregistry.client.rest.entities.requests.RegisterSchemaResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -12,7 +11,6 @@ import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.apache.avro.Schema
-import org.apache.avro.specific.SpecificRecord
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.util.concurrent.CompletableFuture
@@ -29,7 +27,7 @@ fun main() {
         schemaRegistryProperties,
         emptyMap()
     )
-//    val result = client.uploadSchemas()
+    val result = client.uploadSchemas()
         .exceptionally { exception ->
             logger.error("Schema upload failed", exception)
             HttpStatusCode.InternalServerError
