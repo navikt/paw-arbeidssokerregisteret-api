@@ -1,5 +1,5 @@
 // OBS! Kun intern Arena bruk
-@namespace("no.nav.paw.arbeidssokerregisteret.arena.v4")
+@namespace("no.nav.paw.arbeidssokerregisteret.arena.v5")
 protocol ArenaArbeidssokerregisterTilstand {
 	import idl "periode-v1.avdl";
 	import idl "profilering-v1.avdl";
@@ -7,7 +7,7 @@ protocol ArenaArbeidssokerregisterTilstand {
 
 	record ArenaArbeidssokerregisterTilstand {
 		no.nav.paw.arbeidssokerregisteret.arena.v1.Periode periode;
-		no.nav.paw.arbeidssokerregisteret.arena.v1.Profilering profilering;
-		OpplysningerOmArbeidssoeker opplysningerOmArbeidssoeker;
+		no.nav.paw.arbeidssokerregisteret.arena.v1.Profilering? profilering;
+		no.nav.paw.arbeidssokerregisteret.arena.v4.OpplysningerOmArbeidssoeker? opplysningerOmArbeidssoeker;
 	}
 }
