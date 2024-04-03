@@ -8,7 +8,7 @@ metadata:
 spec:
   image: {{ image }}
   kafka:
-    pool: nav-dev
+    pool: {{ kafka }}
   restartPolicy: Never
   readiness:
     failureThreshold: 5
