@@ -37,6 +37,8 @@ protocol Jobbsituasjon {
 												Kan også brukes for andre beskriverlser som er knyttet til en stilling, feks "DELTIDSJOBB_VIL_MER"
 	  	  * prosent 					- 		prosentandel jobbstituasjonen gjelder for (feks kombinert med 'ER_PERMITERT' eller 'DELTIDSJOBB_VIL_MER'), eksempel "50".
 	  	  * siste_dag_med_loenn_iso8601  - 		Siste dag det betales lønn for (feks ved oppsigelse)(eksempel 2019-01-27).
+	  	  										Enkelte kilder, inkludert migrering har brukt 'siste_dag_med_loen_iso8601' (en 'n'), enbefaler
+	  	  										derfor å normalisere til 'siste_dag_med_loenn_iso8601' (to 'n') ved lesing for å fange begge verianter.
 	  	  * siste_arbeidsdag_iso8601	-		Siste arbeidssdag. Ikke nødvendigvis siste dag det betales lønn for, feks ved konkurs(eksempel 2019-01-27).
 	  	  *
  		*/
