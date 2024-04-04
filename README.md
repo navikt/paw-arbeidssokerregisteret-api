@@ -112,7 +112,7 @@ Record timestamp matcher tidspunktet vi mottok opplysningene.
 
 ### Profilerings Topic
 Topic navn: `paw.arbeidssoker-profilering-{VERSION}`  
-Gjeldene versjon: `beta-v15`  
+Gjeldene versjon: `v1`  
 Schema: [periode](main-avro-schema/src/main/resources/profilering-v1.avdl)
 
 Inneholder resultatet av profileringen som gjøres når det sendes inn opplysninger.  
@@ -122,7 +122,7 @@ Profilering.sendtInnAv.tidspunkt kan benyttes for å se når selve profilering b
 
 ### Arena Topic
 Topic navn: `paw.arbeidssoker-arena-{VERSION}`
-Gjeldene versjon: `beta-v15`
+Gjeldene versjon: `v1`
 Schema: [arena](arena-avro-schema/src/main/resources/arena-v3.avdl)
 
 Topic utelukkende for Arena. Endringer kan forkomme uten forvarsel basert på interne diskusjoner med Arena utviklere og topic blir slettet så snart Arena ikke lenger har behov for det.  

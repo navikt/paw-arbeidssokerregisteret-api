@@ -25,7 +25,7 @@ val subjectMap: Map<Schema, String> = mapOf(
     Periode.`SCHEMA$` to "paw.arbeidssokerperioder-v1",
     OpplysningerOmArbeidssoeker.`SCHEMA$` to "paw.opplysninger-om-arbeidssoeker-v1",
     Profilering.`SCHEMA$` to "paw.arbeidssoker-profilering-v1",
-    ArenaArbeidssokerregisterTilstand.`SCHEMA$` to "paw.arbeidssoker-arena-beta-v16",
+    ArenaArbeidssokerregisterTilstand.`SCHEMA$` to "paw.arbeidssoker-arena-v1",
 ).mapValues { (_, v) -> "$v-value"}
 
 const val COMPATIBILITY_LEVEL_FULL_TRANSITIVE = "FULL_TRANSITIVE"
