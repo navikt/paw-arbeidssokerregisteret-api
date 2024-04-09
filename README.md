@@ -123,7 +123,7 @@ Profilering.sendtInnAv.tidspunkt kan benyttes for å se når selve profilering b
 ### Arena Topic
 Topic navn: `paw.arbeidssoker-arena-{VERSION}`
 Gjeldene versjon: `v1`
-Schema: [arena](arena-avro-schema/src/main/resources/arena-v3.avdl)
+Schema: [arena](arena-avro-schema/src/main/resources/arena-v5.avdl)
 
 Topic utelukkende for Arena. Endringer kan forkomme uten forvarsel basert på interne diskusjoner med Arena utviklere og topic blir slettet så snart Arena ikke lenger har behov for det.  
 `arena-avro-schema/src/main/resources/` inneholder en enkelt fil med en record. `avdl` filene som importeres opprettes som en del av byggeprosessen (de er basert på innholdet i main-avro-schema).
