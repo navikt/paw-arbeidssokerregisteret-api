@@ -1,5 +1,8 @@
+import java.time.Instant
+
 plugins {
     kotlin("jvm")
+    java
     `maven-publish`
 }
 
@@ -35,5 +38,6 @@ tasks.withType(Jar::class) {
         gitSha?.also { sha ->
             attributes["Git-SHA"] = sha
         }
+        attributes["build-timestamp"] = Instant.now().toString()
     }
 }
