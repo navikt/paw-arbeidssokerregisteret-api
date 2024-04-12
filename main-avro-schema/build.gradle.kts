@@ -34,6 +34,7 @@ tasks.withType(Jar::class) {
     manifest {
         attributes["Implementation-Version"] = project.version
         attributes["Implementation-Title"] = project.name
+        attributes["Group"] = project.group.toString()
         attributes["Arbeidssokerregisteret-Modul"] = "avro-schema"
         gitSha?.also { sha ->
             attributes["Git-SHA"] = sha
