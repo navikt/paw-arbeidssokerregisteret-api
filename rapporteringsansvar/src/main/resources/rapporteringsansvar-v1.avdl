@@ -44,7 +44,7 @@ protocol Ansvar {
 		  * TarAnsvar: Løsningen tar ansvar for meldeplikten for den aktuelle perioden
 		  * FraskrivAnsvar: Løsningen fraskriver seg ansvar for meldeplikten for den aktuelle perioden
  		*/
-		union {TarAnsvar, AvslutterAnsvar} ansvar;
+		union {TarAnsvar, AvslutterAnsvar} handling;
 	}
 }
 
