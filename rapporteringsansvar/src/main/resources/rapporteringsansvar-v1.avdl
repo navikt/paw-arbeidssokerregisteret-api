@@ -1,0 +1,50 @@
+@namespace("no.nav.paw.rapportering.ansvar.v1")
+protocol Ansvar {
+	record TarAnsvar {
+		/**
+		  * Meldeplikt interval i millisekunder.
+		  * Denne gir registeret et hint om hvor ofte løsningen vil sende meldinger,
+		  * registeret vil ikke gjøre noe når fristen utløper.
+		  s*/
+		long interval_ms;
+
+		/**
+		  * Grace periode i millisekunder.
+		  * Hvor lenge den som tar ansvar venter etter at intervallet er utløpt før den
+		  * terminerer sine tjenester og fraskriver seg ansvaret. Feks  før dagpengene stoppes og
+		  * og dagpengeløsningen fraskriver seg ansvaret for meldeplikten.
+		  * Dette brukes av registeret for å å kunne oppdage 'døde' klienter.
+		  */
+		long grace_ms;
+
+	}
+
+	record AvslutterAnsvar {}
+
+	record AnsvarEndret {
+		/**
+		 * UUID for perioden som meldingen gjelder,
+		 * hentes fra Periode topic eller oppslags api.
+		 */
+		@logicalType("uuid")
+		string periodeId;
+
+		/**
+		  * Namespace til team/løsning som sender meldingen
+		  */
+		string namespace;
+
+		/** Unik id (innenfor oppgitt namespace) for løsningen som sender meldingen,
+		  * feks 'service name'
+		  */
+		string id;
+
+		/**
+		  * Handling som skal utføres:
+		  * TarAnsvar: Løsningen tar ansvar for meldeplikten for den aktuelle perioden
+		  * FraskrivAnsvar: Løsningen fraskriver seg ansvar for meldeplikten for den aktuelle perioden
+ 		*/
+		union {TarAnsvar, AvslutterAnsvar} ansvar;
+	}
+}
+
