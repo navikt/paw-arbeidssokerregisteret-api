@@ -6,7 +6,7 @@ protocol Ansvar {
 		  * Denne gir registeret et hint om hvor ofte løsningen vil sende meldinger,
 		  * registeret vil ikke gjøre noe når fristen utløper.
 		  s*/
-		long interval_ms;
+		long intervalMS;
 
 		/**
 		  * Grace periode i millisekunder.
@@ -15,7 +15,7 @@ protocol Ansvar {
 		  * og dagpengeløsningen fraskriver seg ansvaret for meldeplikten.
 		  * Dette brukes av registeret for å å kunne oppdage 'døde' klienter.
 		  */
-		long grace_ms;
+		long graceMS;
 
 	}
 
