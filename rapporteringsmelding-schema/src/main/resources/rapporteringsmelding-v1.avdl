@@ -1,0 +1,28 @@
+@namespace("no.nav.paw.rapportering.melding.v1")
+protocol Rapportering {
+	record Melding {
+		/**
+		 * UUID for perioden som meldingen gjelder,
+		 * hentes fra Periode topic eller oppslags api.
+		 */
+		@logicalType("uuid")
+		string periodeId;
+
+		/**
+		  * Namespace til team/løsning som sender meldingen
+		  */
+		string namespace;
+
+		/** Unik id (innenfor oppgitt namespace) for løsningen som sender meldingen,
+		  * feks 'service name'
+		  */
+		string id;
+
+		@logicalType("timestamp-millis")
+		long gjelderFra;
+
+		@logicalType("timestamp-millis")
+		long gjelderTil;
+	}
+}
+
