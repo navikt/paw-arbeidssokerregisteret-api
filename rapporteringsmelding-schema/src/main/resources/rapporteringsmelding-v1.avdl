@@ -14,7 +14,7 @@ protocol Rapportering {
 		string namespace;
 
 		/** Unik id (innenfor oppgitt namespace) for løsningen som sender meldingen,
-		  * feks 'service name'
+		  * feks 'service name', navn på løsningen osv...
 		  */
 		string id;
 
@@ -23,6 +23,9 @@ protocol Rapportering {
 
 		@logicalType("timestamp-millis")
 		long gjelderTil;
+
+		boolean harJobbetIDennePerioden;
+		boolean vilFortsetteSomArbeidssoeker;
+
 	}
 }
-
