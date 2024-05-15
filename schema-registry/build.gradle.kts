@@ -25,8 +25,12 @@ dependencies {
     implementation("io.confluent:kafka-schema-registry-client:7.6.0")
     implementation(project(":main-avro-schema"))
     implementation(project(":arena-avro-schema"))
+    implementation(project(":rapporteringsansvar-schema"))
+    implementation(project(":rapporteringsmelding-schema"))
     schema(project(":arena-avro-schema"))
     schema(project(":main-avro-schema"))
+    schema(project(":rapporteringsansvar-schema"))
+    schema(project(":rapporteringsmelding-schema"))
     api("org.apache.avro:avro:1.11.0")
 }
 jib {
