@@ -8,7 +8,8 @@ include(
     "main-avro-schema",
     "arena-avro-schema",
     "schema-registry",
-    "rapporteringsansvar"
+    "rapporteringsansvar-schema",
+    "rapporteringsmelding-schema"
 )
 
 dependencyResolutionManagement {
