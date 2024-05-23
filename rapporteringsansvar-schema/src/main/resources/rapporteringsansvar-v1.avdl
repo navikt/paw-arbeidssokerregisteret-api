@@ -5,7 +5,7 @@ protocol Ansvar {
 		  * Meldeplikt interval i millisekunder.
 		  * Denne gir registeret et hint om hvor ofte løsningen vil sende meldinger,
 		  * registeret vil ikke gjøre noe når fristen utløper.
-		  s*/
+		  */
 		long intervalMS;
 
 		/**
@@ -35,7 +35,7 @@ protocol Ansvar {
 		string namespace;
 
 		/** Unik id (innenfor oppgitt namespace) for løsningen som sender meldingen,
-		  * feks 'service name'
+		  * feks 'service name' eller noe annet.
 		  */
 		string id;
 
