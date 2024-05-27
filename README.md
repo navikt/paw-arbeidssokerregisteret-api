@@ -37,10 +37,8 @@ sequenceDiagram
 ## Kafka Topics
 Viktige punkter angående Kafka topics:
 * Tilgang til topics er styrt av ACL. Den foretrukne måten å be om tilgang på er via PR til paw-iac. Her finner man config for de aktuelle topicene. Skrivetilgang til repoet er begrenset så workflowen blir 'fork' + 'PR'. Husk å inkludere relevant info for tilgang (link til behandlingskatalog) i PR.
-* Alle topics er co-partitioned, dvs. likt antall partisjoner og for en gitt person vil alle records ha samme key på tvers av alle topics.
-* Nøkkelen(Record Key) er ikke unik per bruker, men samme bruker vil alltid få samme nøkkel.
-
-Dette betyr blant annet at man kan lage enkle egne Kafka Streams joins operasjoner på PeriodeId uten å måtte repartisjonere. Alt som skal til er en enkel KeyValue store med [TopicJoin](`helpers/topics_join-v4.avdl`).
+* Alle topics er co-partitioned, dvs. likt antall partisjoner og for en gitt person vil alle records havne på samme pertisjon. Dette betyr blant annet at man kan lage enkle egne Kafka Streams joins operasjoner (join Periode, Opplysninger, Profilerig) på PeriodeId uten å måtte repartisjonere. Alt som skal til er en enkel KeyValue store med [TopicJoin](`helpers/topics_join-v4.avdl`).
+* Record.key for topics knyttet til arbeidssøkerregisteret er ikke unike og brukes utelukkende til å garantere at alle meldinger for en gitt person publiseres på samme partisjon for et topic med 6 partisjoner. Dette betyr at Record.key ikke kan brukes til å se om to meldinger tilhører samme person. Det er viktig å være klar over at dette gjelder begge veier. Det at to meldinger har forskjellige Record.key betyr ikke at de ikke er for samme person. 
 
 Registeret består av 3 kafka topics. Meldingsformatet er Avro og skjema er tilgjengelig i dette repoet, blant annet som [maven artifacter](https://github.com/navikt/paw-arbeidssokerregisteret-api/releases).
 For kotlin/java prosjekter kan man enkelt generere nødvendige klasser via et gradle plugin. Eksempel fra build.gradle.kts i [Hendelse håndtering](https://github.com/navikt/paw-arbeidssokerregisteret-event-prosessor):
