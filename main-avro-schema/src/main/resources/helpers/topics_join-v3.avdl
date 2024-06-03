@@ -1,16 +1,16 @@
-@namespace("no.nav.paw.arbeidssokerregisteret.api.helpers.v4")
+@namespace("no.nav.paw.arbeidssokerregisteret.api.helpers.v5")
 protocol TopicsJoin {
-	import idl "../periode-v1.avdl";
-	import idl "../profilering-v1.avdl";
-	import idl "../opplysninger_om_arbeidssoeker-v4.avdl";
+	import idl "../periode-v2.avdl";
+	import idl "../profilering-v2.avdl";
+	import idl "../opplysninger_om_arbeidssoeker-v5.avdl";
 
 	/**
 	  * Enkel hjelpeklasse som kan brukes for å hente ut data fra flere forskjellige topics,
 	  * feks ved enkel 'join' på periode id med kafka streams.
  	*/
 	record TopicsJoin {
-		no.nav.paw.arbeidssokerregisteret.api.v1.Periode? periode = null;
-		no.nav.paw.arbeidssokerregisteret.api.v1.Profilering? profilering = null;
-		no.nav.paw.arbeidssokerregisteret.api.v4.OpplysningerOmArbeidssoeker? opplysningerOmArbeidssoeker = null;
+		no.nav.paw.arbeidssokerregisteret.api.v2.Periode? periode = null;
+		no.nav.paw.arbeidssokerregisteret.api.v2.Profilering? profilering = null;
+		no.nav.paw.arbeidssokerregisteret.api.v5.OpplysningerOmArbeidssoeker? opplysningerOmArbeidssoeker = null;
 	}
 }

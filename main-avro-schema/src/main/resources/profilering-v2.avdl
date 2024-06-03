@@ -1,6 +1,6 @@
-@namespace("no.nav.paw.arbeidssokerregisteret.api.v1")
+@namespace("no.nav.paw.arbeidssokerregisteret.api.v2")
 protocol Profilering {
-	import idl "vo/metadata-v1.avdl";
+	import idl "vo/metadata-v2.avdl";
 	import idl "vo/profilert_til-v1.avdl";
 
 	/**
@@ -31,11 +31,11 @@ protocol Profilering {
 		  * Profileringen er en automatisk prosess så 'sendtInnAv.utfoertAv' vil alltid peke på en
 		  * 'SYSTEM' bruker med id på formen '[APP_NAVN]:[VERSJON]'
  		*/
-		Metadata sendtInnAv;
+		no.nav.paw.arbeidssokerregisteret.api.v2.Metadata sendtInnAv;
 		/**
 		  * Selve profileringsresultatet
  		*/
-		ProfilertTil profilertTil;
+		no.nav.paw.arbeidssokerregisteret.api.v1.ProfilertTil profilertTil;
 		boolean jobbetSammenhengendeSeksAvTolvSisteMnd;
 		int? alder;
 	}

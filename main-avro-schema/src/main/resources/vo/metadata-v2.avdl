@@ -1,4 +1,4 @@
-@namespace("no.nav.paw.arbeidssokerregisteret.api.v1")
+@namespace("no.nav.paw.arbeidssokerregisteret.api.v2")
 protocol Endring {
 	import idl "bruker-v1.avdl";
 
@@ -11,7 +11,7 @@ protocol Endring {
 		 */
 		@logicalType("timestamp-millis")
 		long tidspunkt;
-		Bruker utfoertAv;
+		no.nav.paw.arbeidssokerregisteret.api.v1.Bruker utfoertAv;
 		/**
 		 * Navn på systemet som utførte endringen eller ble benyttet til å utføre endringen.
 		 */

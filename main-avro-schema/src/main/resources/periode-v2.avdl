@@ -1,6 +1,6 @@
-@namespace("no.nav.paw.arbeidssokerregisteret.api.v1")
+@namespace("no.nav.paw.arbeidssokerregisteret.api.v2")
 protocol Periode {
-	import idl "vo/metadata-v1.avdl";
+	import idl "vo/metadata-v2.avdl";
 
 	/**
 	  * En periode er en tidsperiode hvor en bruker har vært registrert som arbeidssøker.
