@@ -23,7 +23,7 @@ protocol Endring {
 		/**
 		 *Avvik i tid mellom kilde og register.
  		 */
-		TidspunktFraKilde? tidspunktFraKilde;
+		TidspunktFraKilde? tidspunktFraKilde = null;
 	}
 
 	/**
