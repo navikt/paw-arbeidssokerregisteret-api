@@ -20,5 +20,38 @@ protocol Endring {
 	  	 * Aarasek til endringen. Feks "Flyttet ut av landet" eller lignende.
 		 */
 		string aarsak;
+		/**
+		 *Avvik i tid mellom kilde og register.
+ 		 */
+		TidspunktFraKilde? tidspunktFraKilde;
+	}
+
+	/**
+	 * Ukjent verdi settes aldri direkte, men brukes som standardverdi og
+	 * for å indikere at en verdi er ukjent for mottaker av melding, dvs at
+	 * at den er satt til en verdi som ikke er definert i Avro-skjemaet til mottaker.
+	 *
+	 * FORSINKELSE - Grunnen til avvik mellom kilde og register er generell forsinkelse
+	 * 				 som oppstår i asynkrone systemer.
+	 *
+	 * RETTING - 	Grunnen til avvik mellom kilde og register er at en feil i kilde er rettet
+	 *              med virking bakover i tid.
+	 */
+	enum AvviksType {
+		UKJENT_VERDI,
+		FORSINKELSE,
+		RETTING
+	} = UKJENT_VERDI;
+
+	record TidspunktFraKilde {
+		/**
+		 * Tidspunktet melding ideelt sett skulle vært registert på.
+		 */
+		@logicalType("timestamp-millis")
+		long tidspunkt;
+		/**
+		 * Årsaken til til avvik i tid mellom kilde og register.
+		 */
+		AvviksType avviksType;
 	}
 }
