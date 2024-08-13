@@ -30,7 +30,9 @@ protocol Ansvar {
 		string periodeId;
 
 		/**
-		  * Namespace til team/løsning som sender meldingen
+		  * Namespace til team/løsning som sender meldingen.
+		  * Dersom flere team deler samme løsning, må de selv bli enige om felles namespace, feks ved oppdeling hvor et team
+		  * har ansvaret for oppstart og et annet for avsltutning.
 		  */
 		string namespace;
 
