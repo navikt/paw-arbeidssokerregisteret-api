@@ -1,4 +1,4 @@
-@namespace("no.nav.paw.rapportering.melding.v1")
+@namespace("no.nav.paw.rapportering.melding.v1.vo")
 protocol Svar {
 
 	import idl "metadata-v1.avdl";
