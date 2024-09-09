@@ -1,33 +1,27 @@
-namespace no.nav.paw.rapportering.melding.v1;
+@namespace("no.nav.paw.rapportering.melding.v1")
+protocol Melding {
+	import idl "vo/svar-v1.avdl";
 
-// Optional: main schema (using it creates a .avsc equivalent file)
-schema Melding;
-
-import idl "vo/svar-v1.avdl";
-
-record Melding {
-	/**
-	 * UUID for perioden som meldingen gjelder,
-	 * hentes fra Periode topic eller oppslags api.
-	 */
-	@logicalType("uuid")
-	string periodeId;
-
-	/**
-	  * Namespace til team/løsning som sender meldingen (forventes å match namespace som har tatt ansvar).
-	  * Dersom flere team deler samme løsning, må de selv bli enige om felles namespace, feks ved oppdeling hvor et team
-	  * har ansvaret for oppstart og et annet for avsltutning.
-	  */
-	string namespace;
-
-	/** Unik id (innenfor oppgitt namespace) for løsningen som sender meldingen,
-	  * feks 'service name', navn på løsningen osv...
-	  */
-	string id;
-
-	/**
-	  * Svar fra bruker, inkludert metadata.
-	 */
-	Svar svar;
-
+	record Melding {
+		/**
+		 * UUID for perioden som meldingen gjelder,
+		 * hentes fra Periode topic eller oppslags api.
+		 */
+		@logicalType("uuid")
+		string periodeId;
+		/**
+		  * Namespace til team/løsning som sender meldingen (forventes å match namespace som har tatt ansvar).
+		  * Dersom flere team deler samme løsning, må de selv bli enige om felles namespace, feks ved oppdeling hvor et team
+		  * har ansvaret for oppstart og et annet for avsltutning.
+		  */
+		string namespace;
+		/** Unik id (innenfor oppgitt namespace) for løsningen som sender meldingen,
+		  * feks 'service name', navn på løsningen osv...
+		  */
+		string id;
+		/**
+	      * Svar fra bruker, inkludert metadata.
+	 	  */
+		no.nav.paw.rapportering.melding.v1.vo.Svar svar;
+	}
 }
