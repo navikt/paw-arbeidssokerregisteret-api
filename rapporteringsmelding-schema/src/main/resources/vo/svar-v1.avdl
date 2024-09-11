@@ -4,7 +4,7 @@ protocol Svar {
 	import idl "metadata-v1.avdl";
 
 	record Svar {
-		Metadata sendInn;
+		Metadata sendtInn;
 
 		@logicalType("timestamp-millis")
 		long gjelderFra;
