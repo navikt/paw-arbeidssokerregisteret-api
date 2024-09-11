@@ -5,7 +5,7 @@ protocol Svar {
 
 	record Svar {
 		Metadata sendtInn;
-
+		
 		@logicalType("timestamp-millis")
 		long gjelderFra;
 
