@@ -15,10 +15,12 @@ protocol Melding {
 		  * har ansvaret for oppstart og et annet for avsltutning.
 		  */
 		string namespace;
-		/** Unik id (innenfor oppgitt namespace) for løsningen som sender meldingen,
-		  * feks 'service name', navn på løsningen osv...
+		/**
+		  * Unik id for melding. Duplikater sees på som nettverkshikke eller lignende og skal trygt kunne ignoreres.
 		  */
+		@logicalType("uuid")
 		string id;
+
 		/**
 	      * Svar fra bruker, inkludert metadata.
 	 	  */
