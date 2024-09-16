@@ -30,7 +30,7 @@ tasks.withType(Jar::class) {
         attributes["Implementation-Version"] = project.version
         attributes["Implementation-Title"] = project.name
         attributes["Group"] = project.group.toString()
-        attributes["Arbeidssokerregisteret-Modul"] = "meldeplikt-ansvar-avro-schema"
+        attributes["Arbeidssokerregisteret-Modul"] = "bekreftelsesansvar-schema"
         attributes["build-timestamp"] = Instant.now().toString()
     }
 }
