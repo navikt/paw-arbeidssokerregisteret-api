@@ -114,10 +114,11 @@ Topic navn: `paw.arbeidssoker-profilering-{VERSION}`
 Gjeldene versjon: `v1`  
 Schema: [periode](main-avro-schema/src/main/resources/profilering-v1.avdl)
 
-Inneholder resultatet av profileringen som gjøres når det sendes inn opplysninger.  
+Inneholder resultatet av profileringen som gjøres når det sendes inn opplysninger.
+Kun opplysninger sendt inn etter 1.1 2024 er profilert i nytt register.
 En profilering vil alltid være tilknyttet en opplysning id og dermed også en periode id.
 Record timestamp matcher i praksis record timestamp for opplysningene, men kan i noen tilfeller (f.eks: for migrert data) matche record timestamp for perioden.  
-Profilering.sendtInnAv.tidspunkt kan benyttes for å se når selve profilering ble utført. Så i praksis viser Record timestamp når profileringen ideelt sett gjelder fra, og '....tidspunkt' viser når den ble utført. 
+Profilering.sendtInnAv.tidspunkt kan benyttes for å se når selve profilering ble utført. Så i praksis viser Record timestamp når profileringen ideelt sett gjelder fra, og '....tidspunkt' viser når den ble utført. NB: Setting av Record timestamp ble endret etter at initiell import av gammel data var ferdig slik at det nå er tidspunkt for når profileringen ble utført som brukes.
 
 ### Arena Topic
 Topic navn: `paw.arbeidssoker-arena-{VERSION}`
