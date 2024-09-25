@@ -38,8 +38,8 @@ sequenceDiagram
 ## Kafka Topics
 Viktige punkter angående Kafka topics:
 * Tilgang til topics er styrt av ACL. Den foretrukne måten å be om tilgang på er via PR til paw-iac. Her finner man config for de aktuelle topicene. Skrivetilgang til repoet er begrenset så workflowen blir 'fork' + 'PR'. Husk å inkludere relevant info for tilgang (link til behandlingskatalog) i PR.
-* Alle topics er co-partitioned, dvs. likt antall partisjoner og for en gitt person vil alle records ha samme key på tvers av alle topics.
-* Nøkkelen(Record Key) er ikke unik per bruker, men samme bruker vil alltid få samme nøkkel.
+* Alle topics er co-partitioned, dvs. likt antall partisjoner og for en gitt person vil alle records havne på samme partisjonsnummer på tvers av alle topics.
+* Nøkkelen(Record Key) er ikke unik per bruker, og bruke utelukkende til å garantere at meldinger for en bruker alltid havner på samme partisjon på et topic med 6 partisjoner. Dette betyr at to meldinger med forskjellige nøkler kan tilhøre samme person. 
 
 Dette betyr blant annet at man kan lage enkle egne Kafka Streams joins operasjoner på PeriodeId uten å måtte repartisjonere. Alt som skal til er en enkel KeyValue store med [TopicJoin](`helpers/topics_join-v4.avdl`).
 
@@ -128,7 +128,7 @@ Gjeldene versjon: `beta-v1`
 Schema: [bekreftelse](bekreftelsesmelding-schema/src/main/resources/bekreftelsesmelding-v1.avdl)
 
 Hver X. dag (normalt hver 14. dag, men konsumenter må takle at dette intervallet endres) må bruker bekrefte av vedkommende fremdeles ønsker å være arbeidssker og oppgit om vedkommende har jobbet i den aktuelle perioden. Dersom vedkommende ikke lenger ønsker å være arbeidssøker blir perioden avsluttet.
-Dette topicet vil inneholde svar fra alle arbeidssøkere uavhengig av om de har ytelser eller annet som har egne bekreftelsesrutiner.
+Dette topicet vil inneholde svar fra alle arbeidssøkere uavhengig av om de har ytelser eller annet som har egne bekreftelsesrutiner.  
 
 ### Arena Topic
 Topic navn: `paw.arbeidssoker-arena-{VERSION}`  
