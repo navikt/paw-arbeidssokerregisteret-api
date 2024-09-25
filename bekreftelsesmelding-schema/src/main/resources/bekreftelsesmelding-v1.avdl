@@ -3,12 +3,14 @@ protocol Bekreftelse {
 	import idl "vo/svar-v1.avdl";
 
 	record Bekreftelse {
+
 		/**
 		 * UUID for perioden som meldingen gjelder,
 		 * hentes fra Periode topic eller oppslags api.
 		 */
 		@logicalType("uuid")
 		string periodeId;
+
 		/**
 		  * Namespace til team/løsning som sender meldingen (forventes å match namespace som har tatt ansvar).
 		  * Dersom flere team deler samme løsning, må de selv bli enige om felles namespace, feks ved oppdeling hvor et team
@@ -16,6 +18,7 @@ protocol Bekreftelse {
 		  * hekte på postfix identifikator dersom man har flere løsninger som skal kunne overta ansvaret innenfor et NAIS namespace.
 		  */
 		string namespace;
+
 		/**
 		  * Unik id for melding. Duplikater sees på som nettverkshikke eller lignende og skal trygt kunne ignoreres.
 		  */
