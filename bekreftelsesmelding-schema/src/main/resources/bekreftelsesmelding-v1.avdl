@@ -12,7 +12,8 @@ protocol Bekreftelse {
 		/**
 		  * Namespace til team/løsning som sender meldingen (forventes å match namespace som har tatt ansvar).
 		  * Dersom flere team deler samme løsning, må de selv bli enige om felles namespace, feks ved oppdeling hvor et team
-		  * har ansvaret for oppstart og et annet for avsltutning.
+		  * har ansvaret for oppstart og et annet for avsltutning. Det enkleste er å bare bruke NAIS namespace for teamet også eventuelt
+		  * hekte på postfix identifikator dersom man har flere løsninger som skal kunne overta ansvaret innenfor et NAIS namespace.
 		  */
 		string namespace;
 		/**
