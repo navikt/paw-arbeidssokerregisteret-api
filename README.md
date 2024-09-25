@@ -4,6 +4,7 @@
    1. [Periode topic](#periode-topic)
    2. [Opplysninger om arbeidssøker topic](#opplysninger-om-arbeidssoker-topic)
    3. [Profilerings topic](#profilerngs-topic)
+   4. [Bekreftelse](#bekreftelse-topic)
    4. [Arena topic](#arena-topic)
 3. REST API
    1. [Oppslag API (internt for NAV)](https://github.com/navikt/paw-arbeidssoekerregisteret-api-oppslag)
@@ -124,6 +125,7 @@ Profilering.sendtInnAv.tidspunkt kan benyttes for å se når selve profilering b
 Topic navn: `paw.arbeidssoker-bekreftelse-{VERSION}`
 Gjeldene versjon: `beta-v1`
 Schema: [bekreftelse](bekreftelsesmelding-schema/src/main/resources/bekreftelsesmelding-v1.avdl)
+
 Hver X. dag (normalt hver 14. dag, men konsumenter må takle at dette intervallet endres) må bruker bekrefte av vedkommende fremdeles ønsker å være arbeidssker og oppgit om vedkommende har jobbet i den aktuelle perioden. Dersom vedkommende ikke lenger ønsker å være arbeidssøker blir perioden avsluttet.
 Dette topicet vil inneholde svar fra alle arbeidssøkere uavhengig av om de har ytelser eller annet som har egne bekreftelsesrutiner.
 
