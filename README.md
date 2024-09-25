@@ -122,16 +122,16 @@ Record timestamp matcher i praksis record timestamp for opplysningene, men kan i
 Profilering.sendtInnAv.tidspunkt kan benyttes for å se når selve profilering ble utført. Så i praksis viser Record timestamp når profileringen ideelt sett gjelder fra, og '....tidspunkt' viser når den ble utført. NB: Setting av Record timestamp ble endret etter at initiell import av gammel data var ferdig slik at det nå er tidspunkt for når profileringen ble utført som brukes.
 
 ### Bekreftelse Topic
-Topic navn: `paw.arbeidssoker-bekreftelse-{VERSION}`
-Gjeldene versjon: `beta-v1`
+Topic navn: `paw.arbeidssoker-bekreftelse-{VERSION}`  
+Gjeldene versjon: `beta-v1`  
 Schema: [bekreftelse](bekreftelsesmelding-schema/src/main/resources/bekreftelsesmelding-v1.avdl)
 
 Hver X. dag (normalt hver 14. dag, men konsumenter må takle at dette intervallet endres) må bruker bekrefte av vedkommende fremdeles ønsker å være arbeidssker og oppgit om vedkommende har jobbet i den aktuelle perioden. Dersom vedkommende ikke lenger ønsker å være arbeidssøker blir perioden avsluttet.
 Dette topicet vil inneholde svar fra alle arbeidssøkere uavhengig av om de har ytelser eller annet som har egne bekreftelsesrutiner.
 
 ### Arena Topic
-Topic navn: `paw.arbeidssoker-arena-{VERSION}`
-Gjeldene versjon: `v1`
+Topic navn: `paw.arbeidssoker-arena-{VERSION}`  
+Gjeldene versjon: `v1`  
 Schema: [arena](arena-avro-schema/src/main/resources/arena-v5.avdl)
 
 Topic utelukkende for Arena. Endringer kan forekomme uten forvarsel basert på interne diskusjoner med Arena utviklere og topic blir slettet så snart Arena ikke lenger har behov for det.  
