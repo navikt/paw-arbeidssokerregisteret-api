@@ -13,7 +13,7 @@ protocol Ansvar {
 		  * Hvor lenge den som tar ansvar venter etter at intervallet er utløpt før den
 		  * terminerer sine tjenester og fraskriver seg ansvaret. Feks  før dagpengene stoppes og
 		  * og dagpengeløsningen fraskriver seg ansvaret for meldeplikten.
-		  * Dette brukes av registeret for å å kunne oppdage 'døde' klienter.
+		  * Dette brukes av registeret for å å kunne oppdage 'døde' klienter, men har ingen funksjonell betydning.
 		  */
 		long graceMS;
 
