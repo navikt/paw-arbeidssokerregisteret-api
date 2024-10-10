@@ -1,25 +1,7 @@
 @namespace("no.nav.paw.bekreftelse.ansvar.v1")
 protocol Ansvar {
-	record TarAnsvar {
-		/**
-		  * Meldeplikt interval i millisekunder.
-		  * Denne gir registeret et hint om hvor ofte løsningen vil sende meldinger,
-		  * registeret vil ikke gjøre noe når fristen utløper.
-		  */
-		long intervalMS;
-
-		/**
-		  * Grace periode i millisekunder.
-		  * Hvor lenge den som tar ansvar venter etter at intervallet er utløpt før den
-		  * terminerer sine tjenester og fraskriver seg ansvaret. Feks  før dagpengene stoppes og
-		  * og dagpengeløsningen fraskriver seg ansvaret for meldeplikten.
-		  * Dette brukes av registeret for å å kunne oppdage 'døde' klienter, men har ingen funksjonell betydning.
-		  */
-		long graceMS;
-
-	}
-
-	record AvslutterAnsvar {}
+	import idl "vo/TarAnsvar-v1.avdl";
+	import idl "vo/AvslutterAnsvar-v1.avdl";
 
 	record AnsvarEndret {
 		/**
@@ -30,6 +12,7 @@ protocol Ansvar {
 		string periodeId;
 
 		/**
+		  * Unik id for ansvar. Nye meldinger med samme periodeId og ansvarId overskriver tidligere meldinger.
 		  * Namespace til team/løsning som sender meldingen.
 		  * Dersom flere team deler samme løsning, må de selv bli enige om felles namespace, feks ved oppdeling hvor et team
 		  * har ansvaret for oppstart og et annet for avsltutning.
@@ -37,7 +20,7 @@ protocol Ansvar {
 		string namespace;
 
 		/** Unik id (innenfor oppgitt namespace) for løsningen som sender meldingen,
-		  * feks 'service name' eller noe annet.
+		  * feks 'service name' eller noe annet. Brukes bare til sporing og feilsøking.
 		  */
 		string id;
 
@@ -46,7 +29,10 @@ protocol Ansvar {
 		  * TarAnsvar: Løsningen tar ansvar for meldeplikten for den aktuelle perioden
 		  * FraskrivAnsvar: Løsningen fraskriver seg ansvar for meldeplikten for den aktuelle perioden
  		*/
-		union {TarAnsvar, AvslutterAnsvar} handling;
+		union {
+			no.nav.paw.bekreftelse.ansvar.v1.vo.TarAnsvar,
+			no.nav.paw.bekreftelse.ansvar.v1.vo.AvslutterAnsvar
+		} handling;
 	}
 }
 

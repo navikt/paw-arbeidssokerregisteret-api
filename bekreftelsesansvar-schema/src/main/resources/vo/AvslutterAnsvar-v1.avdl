@@ -1,0 +1,5 @@
+@namespace("no.nav.paw.bekreftelse.ansvar.v1.vo")
+protocol AvslutterAnsvar {
+	record AvslutterAnsvar {}
+}
+
