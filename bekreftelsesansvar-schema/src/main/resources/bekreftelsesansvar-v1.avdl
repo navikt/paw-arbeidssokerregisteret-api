@@ -1,5 +1,6 @@
 @namespace("no.nav.paw.bekreftelse.ansvar.v1")
 protocol Ansvar {
+	import idl "vo/system-v1.avdl";
 	import idl "vo/TarAnsvar-v1.avdl";
 	import idl "vo/AvslutterAnsvar-v1.avdl";
 
@@ -12,17 +13,9 @@ protocol Ansvar {
 		string periodeId;
 
 		/**
-		  * Unik id for ansvar. Nye meldinger med samme periodeId og ansvarId overskriver tidligere meldinger.
-		  * Namespace til team/løsning som sender meldingen.
-		  * Dersom flere team deler samme løsning, må de selv bli enige om felles namespace, feks ved oppdeling hvor et team
-		  * har ansvaret for oppstart og et annet for avsltutning.
+		  * Hvilket system/løsning som sender meldingen.
 		  */
-		string namespace;
-
-		/** Unik id (innenfor oppgitt namespace) for løsningen som sender meldingen,
-		  * feks 'service name' eller noe annet. Brukes bare til sporing og feilsøking.
-		  */
-		string id;
+		no.nav.paw.bekreftelse.ansvar.v1.vo.System system;
 
 		/**
 		  * Handling som skal utføres:
