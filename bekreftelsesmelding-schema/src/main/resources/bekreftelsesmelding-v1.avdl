@@ -18,6 +18,12 @@ protocol Bekreftelse {
 		no.nav.paw.bekreftelse.melding.v1.vo.System system;
 
 		/**
+		  * Unik id for meldingen. Duplikater sees på som nettverkshikke eller lignende og skal trygt kunne ignoreres.
+		  */
+		@logicalType("uuid")
+		string id;
+
+		/**
 	      * Svar fra bruker, inkludert metadata.
 	 	  */
 		no.nav.paw.bekreftelse.melding.v1.vo.Svar svar;
