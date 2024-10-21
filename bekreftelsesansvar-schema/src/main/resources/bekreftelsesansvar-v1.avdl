@@ -1,6 +1,6 @@
 @namespace("no.nav.paw.bekreftelse.ansvar.v1")
 protocol Ansvar {
-	import idl "vo/system-v1.avdl";
+	import idl "vo/bekreftelsesloesning-v1.avdl";
 	import idl "vo/TarAnsvar-v1.avdl";
 	import idl "vo/AvslutterAnsvar-v1.avdl";
 
@@ -13,9 +13,9 @@ protocol Ansvar {
 		string periodeId;
 
 		/**
-		  * Hvilket system/løsning som sender meldingen.
+		  * Hvilket løsning/system som sender meldingen.
 		  */
-		no.nav.paw.bekreftelse.ansvar.v1.vo.System system;
+		no.nav.paw.bekreftelse.ansvar.v1.vo.Bekreftelsesloesning bekreftelsesloesning;
 
 		/**
 		  * Handling som skal utføres:
