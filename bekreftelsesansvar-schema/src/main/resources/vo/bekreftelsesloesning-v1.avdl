@@ -1,7 +1,7 @@
 @namespace("no.nav.paw.bekreftelse.ansvar.v1.vo")
-protocol System {
+protocol Bekreftelsesloesning {
 
-	enum System {
+	enum Bekreftelsesloesning {
 		UKJENT_VERDI,
 		ARBEIDSSOEKERREGISTERET,
 		DAGPENGER
