@@ -1,0 +1,31 @@
+@namespace("no.nav.paw.bekreftelse.paavegneav.v1")
+protocol PaaVegneAv {
+	import idl "vo/bekreftelsesloesning-v1.avdl";
+	import idl "vo/start-v1.avdl";
+	import idl "vo/stopp-v1.avdl";
+
+	record PaaVegneAv {
+		/**
+		 * UUID for perioden som meldingen gjelder,
+		 * hentes fra Periode topic eller oppslags api.
+		 */
+		@logicalType("uuid")
+		string periodeId;
+
+		/**
+		  * Hvilket løsning/system som sender meldingen.
+		  */
+		no.nav.paw.bekreftelse.paavegneav.v1.vo.Bekreftelsesloesning bekreftelsesloesning;
+
+		/**
+		  * Handling som skal utføres:
+		  * Start: Løsningen starter innsending av bekreftelse på vegne av arbeidssøker for den aktuelle perioden.
+		  * Stopp: Løsningen stopper innsending av bekreftelse på vegne av arbeidssøker for den aktuelle perioden.
+ 		*/
+		union {
+			no.nav.paw.bekreftelse.paavegneav.v1.vo.Start,
+			no.nav.paw.bekreftelse.paavegneav.v1.vo.Stopp
+		} handling;
+	}
+}
+

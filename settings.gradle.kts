@@ -8,7 +8,7 @@ include(
     "main-avro-schema",
     "arena-avro-schema",
     "schema-registry",
-    "bekreftelsesansvar-schema",
+    "bekreftelse-paavegneav-schema",
     "bekreftelsesmelding-schema"
 )
 

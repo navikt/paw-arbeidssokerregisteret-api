@@ -25,11 +25,11 @@ dependencies {
     implementation("io.confluent:kafka-schema-registry-client:7.6.0")
     implementation(project(":main-avro-schema"))
     implementation(project(":arena-avro-schema"))
-    implementation(project(":bekreftelsesansvar-schema"))
+    implementation(project(":bekreftelse-paavegneav-schema"))
     implementation(project(":bekreftelsesmelding-schema"))
     schema(project(":arena-avro-schema"))
     schema(project(":main-avro-schema"))
-    schema(project(":bekreftelsesansvar-schema"))
+    schema(project(":bekreftelse-paavegneav-schema"))
     schema(project(":bekreftelsesmelding-schema"))
     api("org.apache.avro:avro:1.11.0")
 }
