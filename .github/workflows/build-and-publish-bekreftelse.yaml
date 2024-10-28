@@ -79,6 +79,6 @@ jobs:
         run: echo "VERSION=$(date +'%y.%m.%d').${{ github.run_number }}-${{ github.run_attempt }}" >> $GITHUB_ENV
       - name: Build with Gradle and Publish artifact
         working-directory: ./
-        run: ./gradlew -Pversion=${{ env.VERSION }} :bekreftelsesansvar-schema:publish :bekreftelsesmelding-schema:publish
+        run: ./gradlew -Pversion=${{ env.VERSION }} :bekreftelse-paavegneav-schema:publish :bekreftelsesmelding-schema:publish
         env:
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}

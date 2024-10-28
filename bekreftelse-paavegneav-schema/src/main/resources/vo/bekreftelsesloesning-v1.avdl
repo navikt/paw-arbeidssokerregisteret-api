@@ -1,4 +1,4 @@
-@namespace("no.nav.paw.bekreftelse.ansvar.v1.vo")
+@namespace("no.nav.paw.bekreftelse.paavegneav.v1.vo")
 protocol Bekreftelsesloesning {
 
 	enum Bekreftelsesloesning {
