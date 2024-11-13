@@ -123,7 +123,7 @@ Profilering.sendtInnAv.tidspunkt kan benyttes for å se når selve profilering b
 
 ### Bekreftelse Topic
 Topic navn: `paw.arbeidssoker-bekreftelse-{VERSION}`  
-Gjeldene versjon: `beta-v1`  
+Gjeldene versjon: `beta-v3`  
 Schema: [bekreftelse](bekreftelsesmelding-schema/src/main/resources/bekreftelsesmelding-v1.avdl)
 
 Hver X. dag (normalt hver 14. dag, men konsumenter må takle at dette intervallet endres) må bruker bekrefte av vedkommende fremdeles ønsker å være arbeidssøker og oppgi om vedkommende har jobbet i den aktuelle perioden. Dersom vedkommende ikke lenger ønsker å være arbeidssøker blir perioden avsluttet.
