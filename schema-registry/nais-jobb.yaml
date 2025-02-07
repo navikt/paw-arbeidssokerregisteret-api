@@ -7,6 +7,9 @@ metadata:
     team: paw
 spec:
   image: {{ image }}
+  env:
+    - name: SCHEMA_DOMAIN
+      value: {{ schema_domain }}
   kafka:
     pool: {{ kafka }}
   restartPolicy: Never

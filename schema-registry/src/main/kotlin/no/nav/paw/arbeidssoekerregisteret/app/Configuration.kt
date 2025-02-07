@@ -18,11 +18,17 @@ val schemaRegistryProperties: Map<String, Any> = mapOf(
     SchemaRegistryClientConfig.USER_INFO_CONFIG to schemaRegUserInfo,
 )
 
-val subjectMap: Map<Schema, String> = mapOf(
-    Periode.`SCHEMA$` to "paw.arbeidssokerperioder-v1",
-    OpplysningerOmArbeidssoeker.`SCHEMA$` to "paw.opplysninger-om-arbeidssoeker-v1",
-    Profilering.`SCHEMA$` to "paw.arbeidssoker-profilering-v1",
-    ArenaArbeidssokerregisterTilstand.`SCHEMA$` to "paw.arbeidssoker-arena-v1",
-).mapValues { (_, v) -> "$v-value"}
+val subjectMap: Map<Schema, String> get() {
+    val domain = requireNotNull(getenv("SCHEMA_DOMAIN"), {"SCHEMA_DOMAIN must be defined"}).lowercase()
+    return when (domain) {
+        "main_production" -> mapOf(
+            Periode.`SCHEMA$` to "paw.arbeidssokerperioder-v1",
+            OpplysningerOmArbeidssoeker.`SCHEMA$` to "paw.opplysninger-om-arbeidssoeker-v1",
+            Profilering.`SCHEMA$` to "paw.arbeidssoker-profilering-v1",
+            ArenaArbeidssokerregisterTilstand.`SCHEMA$` to "paw.arbeidssoker-arena-v1",
+        ).mapValues { (_, v) -> "$v-value"}
+        else -> throw IllegalArgumentException("Unsupported domain")
+    }
+}
 
 const val COMPATIBILITY_LEVEL_FULL_TRANSITIVE = "FULL_TRANSITIVE"
