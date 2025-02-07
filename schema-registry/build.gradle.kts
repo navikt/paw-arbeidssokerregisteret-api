@@ -2,7 +2,7 @@ import com.github.davidmc24.gradle.plugin.avro.GenerateAvroProtocolTask
 
 plugins {
     kotlin("jvm")
-    id("com.google.cloud.tools.jib") version "3.4.1"
+    id("com.google.cloud.tools.jib") version "3.4.4"
     id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1"
     application
 }
@@ -16,21 +16,21 @@ val schema by configurations.creating {
 }
 
 dependencies {
-    implementation("ch.qos.logback:logback-classic:1.4.14")
-    implementation("net.logstash.logback:logstash-logback-encoder:7.3")
-    implementation("no.nav.common:log:3.2024.02.21_11.18-8f9b43befae1")
+    implementation("ch.qos.logback:logback-classic:1.5.16")
+    implementation("net.logstash.logback:logstash-logback-encoder:8.0")
+    implementation("no.nav.common:log:3.2024.05.23_05.46-2b29fa343e8e")
 
-    implementation("io.ktor:ktor-server-core:2.3.9")
-    implementation("io.ktor:ktor-server-netty:2.3.9")
-    implementation("io.confluent:kafka-schema-registry-client:7.6.0")
+    implementation("io.ktor:ktor-server-core:3.0.3")
+    implementation("io.ktor:ktor-server-netty:3.0.3")
+    implementation("io.confluent:kafka-schema-registry-client:7.8.0")
     implementation(project(":main-avro-schema"))
     implementation(project(":arena-avro-schema"))
     schema(project(":arena-avro-schema"))
     schema(project(":main-avro-schema"))
-    api("org.apache.avro:avro:1.11.0")
+    api("org.apache.avro:avro:1.12.0")
 }
 jib {
-    from.image = "ghcr.io/navikt/baseimages/temurin:${jvmVersion.majorVersion}"
+    from.image = "gcr.io/distroless/java${jvmVersion}-debian12"
     to.image = "${image ?: rootProject.name}:${version}"
 }
 

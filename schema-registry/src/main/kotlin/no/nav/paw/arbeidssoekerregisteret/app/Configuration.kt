@@ -8,11 +8,8 @@ import no.nav.paw.arbeidssokerregisteret.arena.v5.ArenaArbeidssokerregisterTilst
 import org.apache.avro.Schema
 import java.lang.System.getenv
 
-private const val SCHEMA_REG_USER = "KAFKA_SCHEMA_REGISTRY_USER"
-private const val SCHEMA_REG_PASSWORD = "KAFKA_SCHEMA_REGISTRY_PASSWORD"
-private val schemaRegPwd = getenv(SCHEMA_REG_PASSWORD)
-
-private val schemaRegUser = getenv(SCHEMA_REG_USER)
+private val schemaRegPwd = getenv("KAFKA_SCHEMA_REGISTRY_PASSWORD")
+private val schemaRegUser = getenv("KAFKA_SCHEMA_REGISTRY_USER")
 private val schemaRegUserInfo = "$schemaRegUser:$schemaRegPwd"
 
 const val SCHEMA_REG_URL = "KAFKA_SCHEMA_REGISTRY"
