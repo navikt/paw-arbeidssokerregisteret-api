@@ -21,6 +21,7 @@ val schemaRegistryProperties: Map<String, Any> = mapOf(
 val subjectMap: Map<Schema, String> get() {
     val domain = requireNotNull(getenv("SCHEMA_DOMAIN"), {"SCHEMA_DOMAIN must be defined"}).lowercase()
     return when (domain) {
+        "no_schema" -> emptyMap()
         "main_production" -> mapOf(
             Periode.`SCHEMA$` to "paw.arbeidssokerperioder-v1",
             OpplysningerOmArbeidssoeker.`SCHEMA$` to "paw.opplysninger-om-arbeidssoeker-v1",
