@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - 'schema-registry/**'
-      - 'workflows/schema-reg.yaml'
+      - '.github/workflows/schema-reg.yaml'
       - 'settings.gradle.kts'
       - 'gradle.properties'
 env:
