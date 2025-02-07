@@ -20,6 +20,7 @@ val schemaRegistryProperties: Map<String, Any> = mapOf(
 
 val subjectMap: Map<Schema, String> get() {
     val domain = requireNotNull(getenv("SCHEMA_DOMAIN"), {"SCHEMA_DOMAIN must be defined"}).lowercase()
+    logger.info("Using schema domain $domain")
     return when (domain) {
         "no_schema" -> emptyMap()
         "main_production" -> mapOf(
