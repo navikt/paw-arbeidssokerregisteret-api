@@ -76,7 +76,7 @@ jobs:
           distribution: temurin
           cache: gradle
       - name: Set version
-        run: echo "VERSION=$(date +'%y.%m.%d').${{ github.run_number }}-${{ github.run_attempt }}" >> $GITHUB_ENV
+        run: echo "VERSION=1.$(date +'%y.%m.%d').${{ github.run_number }}-${{ github.run_attempt }}" >> $GITHUB_ENV
       - name: Build with Gradle and Publish artifact
         working-directory: ./
         run: ./gradlew -Pversion=${{ env.VERSION }} :bekreftelse-paavegneav-schema:publish :bekreftelsesmelding-schema:publish
