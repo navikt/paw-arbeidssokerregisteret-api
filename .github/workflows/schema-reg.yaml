@@ -29,8 +29,6 @@ jobs:
           java-version: 21
           distribution: temurin
           cache: gradle
-      - name: Set schema minor version
-        run: echo "SCHEMA_MINOR_VERSION=${{ github.run_id }}.${{ github.run_number }}-${{ github.run_attempt }}" >> $GITHUB_ENV
       - name: Set schema client image version
         run: echo "SCHEMA_REG_CLIENT_IMAGE_VERSION=$(date +'%y.%m.%d').${{ github.run_number }}-${{ github.run_attempt }}" >> $GITHUB_ENV
       - name: Login GAR
@@ -45,7 +43,7 @@ jobs:
         run: |
           echo "(image med versjon)image=${{ env.IMAGE }}:${{ env.SCHEMA_REG_CLIENT_IMAGE_VERSION }}" 
           echo "image=${{ env.IMAGE }}:${{ env.SCHEMA_REG_CLIENT_IMAGE_VERSION }}" >> $GITHUB_OUTPUT
-          ./gradlew -PschemaMinorVersion=${{ env.SCHEMA_MINOR_VERSION }} -Pimage=${{ env.IMAGE }} :schema-registry:build :schema-registry:test :schema-registry:jib
+          ./gradlew -PschemaMinorVersion=${{ env.SCHEMA_REG_CLIENT_IMAGE_VERSION }} -Pimage=${{ env.IMAGE }} :schema-registry:build :schema-registry:test :schema-registry:jib
           echo "DIGEST=$(cat schema-registry/build/jib-image.digest)" >> $GITHUB_ENV
         env:
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
