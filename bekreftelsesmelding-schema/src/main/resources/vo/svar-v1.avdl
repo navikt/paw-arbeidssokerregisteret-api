@@ -1,0 +1,18 @@
+@namespace("no.nav.paw.bekreftelse.melding.v1.vo")
+protocol Svar {
+
+	import idl "metadata-v1.avdl";
+
+	record Svar {
+		Metadata sendtInnAv;
+		
+		@logicalType("timestamp-millis")
+		long gjelderFra;
+
+		@logicalType("timestamp-millis")
+		long gjelderTil;
+
+		boolean harJobbetIDennePerioden;
+		boolean vilFortsetteSomArbeidssoeker;
+	}
+}

@@ -7,7 +7,9 @@ rootProject.name = "paw-arbeidssokerregisteret-api"
 include(
     "main-avro-schema",
     "arena-avro-schema",
-    "schema-registry"
+    "schema-registry",
+    "bekreftelse-paavegneav-schema",
+    "bekreftelsesmelding-schema"
 )
 
 dependencyResolutionManagement {

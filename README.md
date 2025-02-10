@@ -4,6 +4,7 @@
    1. [Periode topic](#periode-topic)
    2. [Opplysninger om arbeidssøker topic](#opplysninger-om-arbeidssoker-topic)
    3. [Profilerings topic](#profilerngs-topic)
+   4. [Bekreftelse](#bekreftelse-topic)
    4. [Arena topic](#arena-topic)
 3. REST API
    1. [Oppslag API (internt for NAV)](https://github.com/navikt/paw-arbeidssoekerregisteret-api-oppslag)
@@ -120,9 +121,24 @@ En profilering vil alltid være tilknyttet en opplysning id og dermed også en p
 Record timestamp matcher i praksis record timestamp for opplysningene, men kan i noen tilfeller (f.eks: for migrert data) matche record timestamp for perioden.  
 Profilering.sendtInnAv.tidspunkt kan benyttes for å se når selve profilering ble utført. Så i praksis viser Record timestamp når profileringen ideelt sett gjelder fra, og '....tidspunkt' viser når den ble utført. NB: Setting av Record timestamp ble endret etter at initiell import av gammel data var ferdig slik at det nå er tidspunkt for når profileringen ble utført som brukes.
 
+### Bekreftelse Topic
+Topic navn: `paw.arbeidssoker-bekreftelse-{VERSION}`  
+Gjeldene versjon: `beta-v3`  
+Schema: [bekreftelse](bekreftelsesmelding-schema/src/main/resources/bekreftelsesmelding-v1.avdl)
+
+Hver X. dag (normalt hver 14. dag, men konsumenter må takle at dette intervallet endres) må bruker bekrefte av vedkommende fremdeles ønsker å være arbeidssøker og oppgi om vedkommende har jobbet i den aktuelle perioden. Dersom vedkommende ikke lenger ønsker å være arbeidssøker blir perioden avsluttet.
+Dette topicet vil inneholde svar fra alle arbeidssøkere uavhengig av om de har ytelser eller annet som har egne bekreftelse rutiner.  
+
+### 'Bekreftelse På Veien Av' Topic
+Topic navn: `paw.arbeidssoker-bekreftelse-paavegneav-{VERSION}`  
+Gjeldene versjon: `beta-v1`  
+Schema: [bekreftelse på veiene av](bekreftelse-paavegneav-schema/src/main/resources/bekreftelse_paa_vegne_av-v1.avdl)
+
+Brukes for å la andre systemer varsle om at de vil innhente bekreftelse på vegne av Arbeidssøkerregisteret.
+
 ### Arena Topic
-Topic navn: `paw.arbeidssoker-arena-{VERSION}`
-Gjeldene versjon: `v1`
+Topic navn: `paw.arbeidssoker-arena-{VERSION}`  
+Gjeldene versjon: `v1`  
 Schema: [arena](arena-avro-schema/src/main/resources/arena-v5.avdl)
 
 Topic utelukkende for Arena. Endringer kan forekomme uten forvarsel basert på interne diskusjoner med Arena utviklere og topic blir slettet så snart Arena ikke lenger har behov for det.  

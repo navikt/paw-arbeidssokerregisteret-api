@@ -1,0 +1,31 @@
+@namespace("no.nav.paw.bekreftelse.melding.v1")
+protocol Bekreftelse {
+	import idl "vo/bekreftelsesloesning-v1.avdl";
+	import idl "vo/svar-v1.avdl";
+
+	record Bekreftelse {
+
+		/**
+		 * UUID for perioden som meldingen gjelder,
+		 * hentes fra Periode topic eller oppslags api.
+		 */
+		@logicalType("uuid")
+		string periodeId;
+
+		/**
+		  * Hvilket løsning/system som sender meldingen.
+		  */
+		no.nav.paw.bekreftelse.melding.v1.vo.Bekreftelsesloesning bekreftelsesloesning;
+
+		/**
+		  * Unik id for meldingen. Duplikater sees på som nettverkshikke eller lignende og skal trygt kunne ignoreres.
+		  */
+		@logicalType("uuid")
+		string id;
+
+		/**
+	      * Svar fra bruker, inkludert metadata.
+	 	  */
+		no.nav.paw.bekreftelse.melding.v1.vo.Svar svar;
+	}
+}
