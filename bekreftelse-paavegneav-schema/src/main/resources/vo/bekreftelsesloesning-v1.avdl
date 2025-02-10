@@ -4,6 +4,7 @@ protocol Bekreftelsesloesning {
 	enum Bekreftelsesloesning {
 		UKJENT_VERDI,
 		ARBEIDSSOEKERREGISTERET,
-		DAGPENGER
+		DAGPENGER,
+		FRISKMELDT_TIL_ARBEIDSFORMIDLING
 	} = UKJENT_VERDI;
 }
