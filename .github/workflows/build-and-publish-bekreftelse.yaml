@@ -1,9 +1,9 @@
-name: Build and publish snapshot
+name: Build and publish bekreftelse
 
 on:
   push:
     branches:
-      - meldeplikt
+      - main
 env:
   IMAGE: europe-north1-docker.pkg.dev/${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}/paw/paw-arbeidssokerregisteret-api-schema-registry
 
