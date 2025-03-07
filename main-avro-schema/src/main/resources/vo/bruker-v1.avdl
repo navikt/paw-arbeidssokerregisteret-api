@@ -19,5 +19,11 @@ protocol Bruker {
 		  * For veileder vil det være NAV identen til veilederen.
  		*/
 		string id;
+
+		/**
+		  * Sikkerthets nivå benyttet for å autentisere brukeren. Verdien her vil avhenge av hvilken autentiseringsmekanisme som er benyttet.
+		  * For eksempel vil en bruker som er autentisert med ID-porten får verdi idporten-loa-{low,substantial,high}
+		  */
+		string? sikkerhetsnivaa = null;
 	}
 }
