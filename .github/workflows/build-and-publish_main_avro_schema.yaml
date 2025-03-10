@@ -81,7 +81,7 @@ jobs:
           distribution: temurin
           cache: gradle
       - name: Set schema minor version
-        run: echo "SCHEMA_MINOR_VERSION=${{ github.run_id }}.${{ github.run_number }}-${{ github.run_attempt }}" >> $GITHUB_ENV
+        run: echo "SCHEMA_MINOR_VERSION=$(date +'%y.%m.%d').${{ github.run_number }}-${{ github.run_attempt }}" >> $GITHUB_ENV
       - name: Build with Gradle and Publish artifact
         working-directory: ./
         run: |
