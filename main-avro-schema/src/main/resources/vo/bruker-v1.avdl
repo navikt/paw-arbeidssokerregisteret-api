@@ -21,8 +21,10 @@ protocol Bruker {
 		string id;
 
 		/**
-		  * Sikkerthets nivå benyttet for å autentisere brukeren. Verdien her vil avhenge av hvilken autentiseringsmekanisme som er benyttet.
-		  * For eksempel vil en bruker som er autentisert med ID-porten får verdi idporten-loa-{low,substantial,high}
+		  * Sikkerthets nivå benyttet for å autentisere brukeren.
+		  Verdien her vil avhenge av hvilken autentiseringsmekanisme som er benyttet.
+		  Anbefalt standard er "ISSUER:ACR", feks for TokenX vil man da kunne få: "tokenx:Level4", ved manglende ACR
+		  vil registeret benytte "undefined", feks for azure: "azure:undefined"
 		  */
 		string? sikkerhetsnivaa = null;
 	}
