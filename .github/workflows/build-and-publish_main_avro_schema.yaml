@@ -1,4 +1,4 @@
-name: Build and publish snapshot
+name: Build and publish Main Avro Schema
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
           distribution: temurin
           cache: gradle
       - name: Set schema minor version
-        run: echo "SCHEMA_MINOR_VERSION=${{ github.run_id }}.${{ github.run_number }}-${{ github.run_attempt }}" >> $GITHUB_ENV
+        run: echo "SCHEMA_MINOR_VERSION=$(date +'%y.%m.%d').${{ github.run_number }}-${{ github.run_attempt }}" >> $GITHUB_ENV
       - name: Login GAR
         uses: nais/login@v0
         with:
