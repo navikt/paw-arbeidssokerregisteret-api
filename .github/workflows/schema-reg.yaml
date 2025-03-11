@@ -65,5 +65,5 @@ jobs:
         env:
           CLUSTER: prod-gcp
           RESOURCE: schema-registry/nais-jobb.yaml
-          VAR: image=${{ needs.build.outputs.image }},kafka=nav-prod,schema_domain=no_schema
+          VAR: image=${{ needs.build.outputs.image }},kafka=nav-prod,schema_domain=no-schema
 

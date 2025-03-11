@@ -24,14 +24,14 @@ val subjectMap: Map<String, Schema> get() {
     val domain = requireNotNull(getenv("SCHEMA_DOMAIN"), {"SCHEMA_DOMAIN must be defined"}).lowercase()
     logger.info("Using schema domain $domain")
     return when (domain) {
-        "no_schema" -> emptyMap()
-        "main_production" -> mapOf(
+        "no-schema" -> emptyMap()
+        "main-production" -> mapOf(
             "paw.arbeidssokerperioder-v1" to Periode.`SCHEMA$`,
             "paw.opplysninger-om-arbeidssoeker-v1" to OpplysningerOmArbeidssoeker.`SCHEMA$`,
             "paw.arbeidssoker-profilering-v1" to Profilering.`SCHEMA$`,
             "paw.arbeidssoker-arena-v1" to ArenaArbeidssokerregisterTilstand.`SCHEMA$`,
         ).mapKeys { (v, _) -> "$v-value"}
-        "bekreftelse_production" -> mapOf(
+        "bekreftelse-production" -> mapOf(
             "paw.arbeidssoker-bekreftelse-v1" to Bekreftelse.`SCHEMA$`,
             "paw.arbeidssoker-bekreftelse-dagpenger-v1" to Bekreftelse.`SCHEMA$`,
             "paw.arbeidssoker-bekreftelse-friskmeldt-til-arbeidsformidling-v1" to Bekreftelse.`SCHEMA$`,
