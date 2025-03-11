@@ -50,7 +50,7 @@ jobs:
           image_ref: ${{ env.IMAGE }}@${{ env.DIGEST }}
 
   verify-prod:
-    name: Verify schema compatibility in prod
+    name: Verify in prod-gcp
     permissions:
       contents: read
       id-token: write
