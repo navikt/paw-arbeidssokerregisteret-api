@@ -25,13 +25,13 @@ val subjectMap: Map<String, Schema> get() {
     logger.info("Using schema domain $domain")
     return when (domain) {
         "no-schema" -> emptyMap()
-        "main-production" -> mapOf(
+        "main" -> mapOf(
             "paw.arbeidssokerperioder-v1" to Periode.`SCHEMA$`,
             "paw.opplysninger-om-arbeidssoeker-v1" to OpplysningerOmArbeidssoeker.`SCHEMA$`,
             "paw.arbeidssoker-profilering-v1" to Profilering.`SCHEMA$`,
             "paw.arbeidssoker-arena-v1" to ArenaArbeidssokerregisterTilstand.`SCHEMA$`,
         ).mapKeys { (v, _) -> "$v-value"}
-        "bekreftelse-production" -> mapOf(
+        "bekreftelse" -> mapOf(
             "paw.arbeidssoker-bekreftelse-v1" to Bekreftelse.`SCHEMA$`,
             "paw.arbeidssoker-bekreftelse-dagpenger-v1" to Bekreftelse.`SCHEMA$`,
             "paw.arbeidssoker-bekreftelse-friskmeldt-til-arbeidsformidling-v1" to Bekreftelse.`SCHEMA$`,

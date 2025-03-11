@@ -58,7 +58,7 @@ jobs:
         env:
           CLUSTER: prod-gcp
           RESOURCE: schema-registry/nais-jobb.yaml
-          VAR: image=${{ needs.build.outputs.image }},kafka=nav-prod,schema_domain=bekreftelse-production
+          VAR: image=${{ needs.build.outputs.image }},kafka=nav-prod,schema_domain=bekreftelse
 
   publish:
     name: Publish maven artifacts
