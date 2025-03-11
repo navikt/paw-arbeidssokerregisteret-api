@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'bekreftelse-paavegneav-schema/**'
+      - 'bekreftelsesmelding-schema/**'
+      - '.github/workflows/build-and-publish-bekreftelse.yaml'
 env:
   IMAGE: europe-north1-docker.pkg.dev/${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}/paw/paw-arbeidssokerregisteret-api-schema-registry
 
@@ -57,7 +61,7 @@ jobs:
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod-gcp
-          RESOURCE: schema-registry/nais-jobb-bekreftelse.yaml
+          RESOURCE: schema-registry/nais-jobb.yaml
           VAR: image=${{ needs.build.outputs.image }},kafka=nav-prod,schema_domain=bekreftelse
 
   publish:

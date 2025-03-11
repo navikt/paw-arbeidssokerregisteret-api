@@ -62,7 +62,7 @@ jobs:
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod-gcp
-          RESOURCE: schema-registry/nais-jobb-main.yaml
+          RESOURCE: schema-registry/nais-jobb.yaml
           VAR: image=${{ needs.build.outputs.image }},kafka=nav-prod,schema_domain=main
 
   publish:
