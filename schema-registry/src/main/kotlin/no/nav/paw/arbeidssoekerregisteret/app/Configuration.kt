@@ -5,6 +5,8 @@ import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 import no.nav.paw.arbeidssokerregisteret.api.v1.Profilering
 import no.nav.paw.arbeidssokerregisteret.api.v4.OpplysningerOmArbeidssoeker
 import no.nav.paw.arbeidssokerregisteret.arena.v5.ArenaArbeidssokerregisterTilstand
+import no.nav.paw.bekreftelse.melding.v1.Bekreftelse
+import no.nav.paw.bekreftelse.paavegneav.v1.PaaVegneAv
 import org.apache.avro.Schema
 import java.lang.System.getenv
 
@@ -18,17 +20,25 @@ val schemaRegistryProperties: Map<String, Any> = mapOf(
     SchemaRegistryClientConfig.USER_INFO_CONFIG to schemaRegUserInfo,
 )
 
-val subjectMap: Map<Schema, String> get() {
+val subjectMap: Map<String, Schema> get() {
     val domain = requireNotNull(getenv("SCHEMA_DOMAIN"), {"SCHEMA_DOMAIN must be defined"}).lowercase()
     logger.info("Using schema domain $domain")
     return when (domain) {
         "no_schema" -> emptyMap()
         "main_production" -> mapOf(
-            Periode.`SCHEMA$` to "paw.arbeidssokerperioder-v1",
-            OpplysningerOmArbeidssoeker.`SCHEMA$` to "paw.opplysninger-om-arbeidssoeker-v1",
-            Profilering.`SCHEMA$` to "paw.arbeidssoker-profilering-v1",
-            ArenaArbeidssokerregisterTilstand.`SCHEMA$` to "paw.arbeidssoker-arena-v1",
-        ).mapValues { (_, v) -> "$v-value"}
+            "paw.arbeidssokerperioder-v1" to Periode.`SCHEMA$`,
+            "paw.opplysninger-om-arbeidssoeker-v1" to OpplysningerOmArbeidssoeker.`SCHEMA$`,
+            "paw.arbeidssoker-profilering-v1" to Profilering.`SCHEMA$`,
+            "paw.arbeidssoker-arena-v1" to ArenaArbeidssokerregisterTilstand.`SCHEMA$`,
+        ).mapKeys { (v, _) -> "$v-value"}
+        "bekreftelse_production" -> mapOf(
+            "paw.arbeidssoker-bekreftelse-v1" to Bekreftelse.`SCHEMA$`,
+            "paw.arbeidssoker-bekreftelse-dagpenger-v1" to Bekreftelse.`SCHEMA$`,
+            "paw.arbeidssoker-bekreftelse-friskmeldt-til-arbeidsformidling-v1" to Bekreftelse.`SCHEMA$`,
+            "paw.arbeidssoker-bekreftelse-paavegneav-v1" to PaaVegneAv.`SCHEMA$`,
+            "paw.arbeidssoker-bekreftelse-paavegneav-dagpenger-v1" to PaaVegneAv.`SCHEMA$`,
+            "paw.arbeidssoker-bekreftelse-paavegneav-friskmeldt-til-arbeidsformidling-v1" to PaaVegneAv.`SCHEMA$`,
+        ).mapKeys { (v, _) -> "$v-value" }
         else -> throw IllegalArgumentException("Unsupported domain")
     }
 }

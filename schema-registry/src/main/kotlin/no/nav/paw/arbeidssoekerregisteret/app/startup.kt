@@ -62,12 +62,12 @@ fun main() {
 fun SchemaRegistryClient.uploadSchemas(): CompletableFuture<HttpStatusCode> =
     CompletableFuture.supplyAsync {
         subjectMap
-            .onEach { (_, subject) ->
+            .onEach { (subject, _) ->
                 runCatching { setFullTransitiveCompatibility(subject) }
                     .onFailure { logger.error("Failed to set compatibility for $subject", it) }
                     .getOrThrow()
             }
-            .map{(schema, subject) -> uploadSchema(schema, subject)}
+            .map{(subject, schema) -> uploadSchema(schema, subject)}
             .firstOrNull { it != HttpStatusCode.OK }
             ?: HttpStatusCode.OK
     }
