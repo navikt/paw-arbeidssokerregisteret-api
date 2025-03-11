@@ -1,7 +1,7 @@
 apiVersion: nais.io/v1
 kind: Naisjob
 metadata:
-  name: paw-arbeidssokerregisteret-api-schema-registry
+  name: paw-arbeidssokerregisteret-api-schema-registry-{{ schema_domain }}
   namespace: paw
   labels:
     team: paw
