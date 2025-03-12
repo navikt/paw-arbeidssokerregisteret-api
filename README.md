@@ -123,7 +123,7 @@ Profilering.sendtInnAv.tidspunkt kan benyttes for å se når selve profilering b
 
 ### Bekreftelse Topic
 Topic navn: `paw.arbeidssoker-bekreftelse-{VERSION}`  
-Gjeldene versjon: `beta-v3`  
+Gjeldene versjon: `v1`  
 Schema: [bekreftelse](bekreftelsesmelding-schema/src/main/resources/bekreftelsesmelding-v1.avdl)
 
 Hver X. dag (normalt hver 14. dag, men konsumenter må takle at dette intervallet endres) må bruker bekrefte av vedkommende fremdeles ønsker å være arbeidssøker og oppgi om vedkommende har jobbet i den aktuelle perioden. Dersom vedkommende ikke lenger ønsker å være arbeidssøker blir perioden avsluttet.
@@ -131,7 +131,7 @@ Dette topicet vil inneholde svar fra alle arbeidssøkere uavhengig av om de har 
 
 ### 'Bekreftelse På Veien Av' Topic
 Topic navn: `paw.arbeidssoker-bekreftelse-paavegneav-{VERSION}`  
-Gjeldene versjon: `beta-v1`  
+Gjeldene versjon: `v1`  
 Schema: [bekreftelse på veiene av](bekreftelse-paavegneav-schema/src/main/resources/bekreftelse_paa_vegne_av-v1.avdl)
 
 Brukes for å la andre systemer varsle om at de vil innhente bekreftelse på vegne av Arbeidssøkerregisteret.
