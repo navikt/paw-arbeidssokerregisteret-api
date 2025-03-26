@@ -1,5 +1,11 @@
 @namespace("no.nav.paw.bekreftelse.paavegneav.v1.vo")
 protocol Stopp {
-	record Stopp {}
+	record Stopp {
+		/**
+		  * Angir om grunnen til stopp meldingen er at brukeren har brutt fristen i det eksterne systemet.
+		  * Dersom denne er satt til true og fristene som ble meldt inn i start meldingen er like eller lenger enn
+		  * registerets egne frister vil arbeidssøkerperioden bli stoppet umidelbart.
+ 		*/
+		boolean fristBrutt = false;
+	}
 }
-
