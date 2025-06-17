@@ -1,0 +1,44 @@
+@namespace("no.nav.paw.arbeidssokerregisteret.api.v1")
+protocol Egenvurdering {
+	import idl "vo/metadata-v1.avdl";
+	import idl "vo/profilert_til-v1.avdl";
+
+	/**
+	  * Arbeidssøkers Egenvurdering av profileringen som er gjort.
+	  * Inneholder informasjon som brukes til ruting av arbeidssøker til riktig veiledningstjeneste.
+	  * Egenvurdering er koblet til en Profilering som er koblet til et bestemt sett opplysninger om arbeidssøker og en bestemt periode.
+	  * I tilfeller hvor 'opplysningerOmAbreidssøker' oppdateres for den gjeldende periode vil det dukke opp en ny
+	  * profilering knyttet til den samme 'opplysningerOmArbeidssokerId' (profileringId vil være endret).
+	  * Bruker vil da få mulighet til å oppdatere egenvurderingfor den nye profileringen.
+ 	*/
+	record Egenvurdering {
+		/**
+		  * Unik id for egenvurderingen
+ 		*/
+		@logicalType("uuid")
+		string id;
+		/**
+		  * Unik id for perioden som egenvurderingen tilhører
+ 		*/
+		@logicalType("uuid")
+		string periodeId;
+		/**
+		  * Unik id for OpplysningerOmArbeidssøker som tilhører profileringen som ligger til grunn for egenvurderingen
+ 		*/
+		@logicalType("uuid")
+		string opplysningerOmArbeidssokerId;
+		/**
+		  * Unik id for Profilering som egenvurderingen tilhører
+ 		*/
+		@logicalType("uuid")
+		string profileringId;
+		/**
+		  * Inneholder informasjon om når egenvurderingen ble opprettet og hvem som opprettet den.
+ 		*/
+		Metadata sendtInnAv;
+		/**
+		  * Brukers egenvurdering av profileringen.
+ 		*/
+		ProfilertTil egenvurdering;
+	}
+}
