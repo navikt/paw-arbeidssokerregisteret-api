@@ -7,6 +7,7 @@ on:
     paths:
       - 'main-avro-schema/**'
       - 'arena-avro-schema/**'
+      - '.github/workflows/build-and-publish_main_avro_schema.yaml'
 env:
   IMAGE: europe-north1-docker.pkg.dev/nais-management-233d/paw/paw-arbeidssokerregisteret-api-schema-registry
 
