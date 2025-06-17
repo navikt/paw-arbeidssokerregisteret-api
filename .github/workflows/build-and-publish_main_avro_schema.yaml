@@ -8,7 +8,7 @@ on:
       - 'main-avro-schema/**'
       - 'arena-avro-schema/**'
 env:
-  IMAGE: europe-north1-docker.pkg.dev/${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}/paw/paw-arbeidssokerregisteret-api-schema-registry
+  IMAGE: europe-north1-docker.pkg.dev/nais-management-233d/paw/paw-arbeidssokerregisteret-api-schema-registry
 
 jobs:
   build:
@@ -32,7 +32,7 @@ jobs:
       - name: Login GAR
         uses: nais/login@v0
         with:
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          project_id: nais-management-233d
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           team: paw
       - name: Build with Gradle and Publish artifact
