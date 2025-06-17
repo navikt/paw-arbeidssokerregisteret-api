@@ -1,6 +1,7 @@
 package no.nav.paw.arbeidssoekerregisteret.app
 
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig
+import no.nav.paw.arbeidssokerregisteret.api.v1.Egenvurdering
 import no.nav.paw.arbeidssokerregisteret.api.v1.Periode
 import no.nav.paw.arbeidssokerregisteret.api.v1.Profilering
 import no.nav.paw.arbeidssokerregisteret.api.v4.OpplysningerOmArbeidssoeker
@@ -30,6 +31,7 @@ val subjectMap: Map<String, Schema> get() {
             "paw.opplysninger-om-arbeidssoeker-v1" to OpplysningerOmArbeidssoeker.`SCHEMA$`,
             "paw.arbeidssoker-profilering-v1" to Profilering.`SCHEMA$`,
             "paw.arbeidssoker-arena-v1" to ArenaArbeidssokerregisterTilstand.`SCHEMA$`,
+            "paw.arbeidssoker-egenvurdering-v1" to Egenvurdering.`SCHEMA$`
         ).mapKeys { (v, _) -> "$v-value"}
         "bekreftelse" -> mapOf(
             "paw.arbeidssoker-bekreftelse-v1" to Bekreftelse.`SCHEMA$`,
