@@ -1,0 +1,10 @@
+@namespace("no.nav.paw.bekreftelse.melding.v5.vo")
+protocol Bekreftelsesloesning {
+
+	enum Bekreftelsesloesning {
+		UKJENT_VERDI,
+		ARBEIDSSOEKERREGISTERET,
+		DAGPENGER,
+		FRISKMELDT_TIL_ARBEIDSFORMIDLING
+	} = UKJENT_VERDI;
+}

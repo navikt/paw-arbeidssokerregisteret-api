@@ -4,10 +4,18 @@ protocol ArenaArbeidssokerregisterTilstand {
 	import idl "periode-v1.avdl";
 	import idl "profilering-v1.avdl";
 	import idl "opplysninger_om_arbeidssoeker-v4.avdl";
+	import idl "bekreftelsesmelding-v5.avdl";
 
 	record ArenaArbeidssokerregisterTilstand {
 		no.nav.paw.arbeidssokerregisteret.arena.v1.Periode periode;
 		no.nav.paw.arbeidssokerregisteret.arena.v1.Profilering? profilering;
 		no.nav.paw.arbeidssokerregisteret.arena.v4.OpplysningerOmArbeidssoeker? opplysningerOmArbeidssoeker;
+		/**
+		 * Dersom perioden er avsluttet grunnet at bruker har svart
+		 * nei på "Vil du fortsette som arbeidssøker?", legges utdrag fra den
+		 * aktuelle bekreftelsen inn her.
+		 * Er null dersom perioden ikke er avsluttet eller er avsluttet av andre årsaker.
+		 */
+		no.nav.paw.arbeidssokerregisteret.arena.v5.Bekreftelse? bekreftelse;
 	}
 }
