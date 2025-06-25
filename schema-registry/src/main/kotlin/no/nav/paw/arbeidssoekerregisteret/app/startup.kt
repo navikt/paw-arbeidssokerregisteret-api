@@ -77,7 +77,15 @@ fun SchemaRegistryClient.uploadSchema(schema: Schema, subject: String): HttpStat
         val avroSchema = AvroSchema(schema)
         registerWithResponse(subject, avroSchema, true)
     }
-        .onFailure { logger.error("Failed to upload schema for $subject", it) }
+        .onFailure {
+            logger.error("Failed to upload schema for $subject", it)
+            runCatching {
+                val existingSchemas = getSchemas(subject, false, true)
+                existingSchemas.forEach { existingSchema ->
+                    logger.error("Conflicting schema: $existingSchema")
+                }
+            }.onFailure { t -> logger.error("Failed to get existing schema", t) }
+        }
         .onSuccess { logger.info("Schema uploaded for $subject") }
         .map { HttpStatusCode.OK }
         .getOrElse { HttpStatusCode.InternalServerError }
