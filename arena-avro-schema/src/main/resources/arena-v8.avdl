@@ -1,10 +1,10 @@
 // OBS! Kun intern Arena bruk
-@namespace("no.nav.paw.arbeidssokerregisteret.arena.v7")
+@namespace("no.nav.paw.arbeidssokerregisteret.arena.v8")
 protocol ArenaArbeidssokerregisterTilstand {
 	import idl "periode-v1.avdl";
 	import idl "profilering-v1.avdl";
 	import idl "opplysninger_om_arbeidssoeker-v4.avdl";
-	import idl "bekreftelsesmelding-v7.avdl";
+	import idl "arena-bekreftelsesmelding-v8.avdl";
 
 	record ArenaArbeidssokerregisterTilstand {
 		no.nav.paw.arbeidssokerregisteret.arena.v1.Periode periode;
@@ -16,6 +16,6 @@ protocol ArenaArbeidssokerregisterTilstand {
 		 * aktuelle bekreftelsen inn her.
 		 * Er null dersom perioden ikke er avsluttet eller er avsluttet av andre årsaker.
 		 */
-		no.nav.paw.arbeidssokerregisteret.arena.v7.Bekreftelse? bekreftelse;
+		no.nav.paw.arbeidssokerregisteret.arena.v8.Bekreftelse? bekreftelse;
 	}
 }

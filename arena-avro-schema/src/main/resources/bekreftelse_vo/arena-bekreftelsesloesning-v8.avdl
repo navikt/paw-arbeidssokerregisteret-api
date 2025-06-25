@@ -1,4 +1,4 @@
-@namespace("no.nav.paw.arbeidssokerregisteret.arena.v7.vo")
+@namespace("no.nav.paw.arbeidssokerregisteret.arena.v8.vo")
 protocol Bekreftelsesloesning {
 
 	enum Bekreftelsesloesning {

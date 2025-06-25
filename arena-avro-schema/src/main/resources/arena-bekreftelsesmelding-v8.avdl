@@ -1,6 +1,6 @@
-@namespace("no.nav.paw.arbeidssokerregisteret.arena.v7")
+@namespace("no.nav.paw.arbeidssokerregisteret.arena.v8")
 protocol Bekreftelse {
-	import idl "bekreftelse_vo/arena-bekreftelsesloesning-v7.avdl";
+	import idl "bekreftelse_vo/arena-bekreftelsesloesning-v8.avdl";
 
 	record Bekreftelse {
 
@@ -14,7 +14,7 @@ protocol Bekreftelse {
 		/**
 		  * Hvilket løsning/system som sender meldingen.
 		  */
-		no.nav.paw.arbeidssokerregisteret.arena.v7.vo.Bekreftelsesloesning bekreftelsesloesning;
+		no.nav.paw.arbeidssokerregisteret.arena.v8.vo.Bekreftelsesloesning bekreftelsesloesning;
 
 		/**
 		  * Unik id for meldingen. Duplikater sees på som nettverkshikke eller lignende og skal trygt kunne ignoreres.
