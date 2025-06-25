@@ -16,6 +16,6 @@ protocol ArenaArbeidssokerregisterTilstand {
 		 * aktuelle bekreftelsen inn her.
 		 * Er null dersom perioden ikke er avsluttet eller er avsluttet av andre årsaker.
 		 */
-		no.nav.paw.arbeidssokerregisteret.arena.v8.Bekreftelse? bekreftelse;
+		no.nav.paw.arbeidssokerregisteret.arena.v8.Bekreftelse? bekreftelse = null;
 	}
 }
