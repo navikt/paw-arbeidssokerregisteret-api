@@ -1,4 +1,4 @@
-@namespace("no.nav.paw.arbeidssokerregisteret.api.v1")
+@namespace("no.nav.paw.arbeidssokerregisteret.api.v2")
 protocol Egenvurdering {
 	import idl "vo/metadata-v1.avdl";
 	import idl "vo/profilert_til-v1.avdl";
@@ -35,10 +35,14 @@ protocol Egenvurdering {
 		/**
 		  * Inneholder informasjon om når egenvurderingen ble opprettet og hvem som opprettet den.
  		*/
-		Metadata sendtInnAv;
+		no.nav.paw.arbeidssokerregisteret.api.v1.Metadata sendtInnAv;
+		/**
+		  * Brukers profilering.
+	   	*/
+		no.nav.paw.arbeidssokerregisteret.api.v1.ProfilertTil profilertTil;
 		/**
 		  * Brukers egenvurdering av profileringen.
  		*/
-		ProfilertTil egenvurdering;
+		no.nav.paw.arbeidssokerregisteret.api.v1.ProfilertTil egenvurdering;
 	}
 }
