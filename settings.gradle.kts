@@ -1,6 +1,6 @@
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
-    kotlin("jvm") version "2.1.0" apply false
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+    kotlin("jvm") version "2.2.20" apply false
 }
 
 rootProject.name = "paw-arbeidssokerregisteret-api"
