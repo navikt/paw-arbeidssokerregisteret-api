@@ -1,4 +1,4 @@
-@namespace("no.nav.paw.arbeidssokerregisteret.api.v2")
+@namespace("no.nav.paw.arbeidssokerregisteret.api.v3")
 protocol Egenvurdering {
 	import idl "vo/metadata-v1.avdl";
 	import idl "vo/profilert_til-v1.avdl";
@@ -22,11 +22,6 @@ protocol Egenvurdering {
  		*/
 		@logicalType("uuid")
 		string periodeId;
-		/**
-		  * Unik id for OpplysningerOmArbeidssøker som tilhører profileringen som ligger til grunn for egenvurderingen
- 		*/
-		@logicalType("uuid")
-		string opplysningerOmArbeidssokerId;
 		/**
 		  * Unik id for Profilering som egenvurderingen tilhører
  		*/
