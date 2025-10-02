@@ -31,7 +31,7 @@ val subjectMap: Map<String, Schema> get() {
             "paw.opplysninger-om-arbeidssoeker-v1" to OpplysningerOmArbeidssoeker.`SCHEMA$`,
             "paw.arbeidssoker-profilering-v1" to Profilering.`SCHEMA$`,
             "paw.arbeidssoker-arena-v1" to ArenaArbeidssokerregisterTilstand.`SCHEMA$`,
-            "paw.arbeidssoker-egenvurdering-beta-v3" to Egenvurdering.`SCHEMA$`
+            "paw.arbeidssoeker-egenvurdering-v1" to Egenvurdering.`SCHEMA$`
         ).mapKeys { (v, _) -> "$v-value"}
         "bekreftelse" -> mapOf(
             "paw.arbeidssoker-bekreftelse-v1" to Bekreftelse.`SCHEMA$`,
