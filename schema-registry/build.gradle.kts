@@ -34,7 +34,7 @@ dependencies {
     api("org.apache.avro:avro:1.12.1")
 }
 jib {
-    from.image = "gcr.io/distroless/java${jvmVersion}-debian12"
+    from.image = "europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-${jvmVersion}"
     to.image = "${image ?: rootProject.name}:${version}"
 }
 
