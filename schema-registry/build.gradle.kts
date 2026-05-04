@@ -9,7 +9,7 @@ plugins {
 
 val schemaMinorVersion: String by project
 version = schemaMinorVersion
-val jvmVersion = JavaVersion.VERSION_21
+val jvmVersion = JavaVersion.VERSION_25
 val image: String? by project
 val schema by configurations.creating {
     isTransitive = false
