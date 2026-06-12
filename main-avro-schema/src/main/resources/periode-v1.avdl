@@ -1,6 +1,7 @@
 @namespace("no.nav.paw.arbeidssokerregisteret.api.v1")
 protocol Periode {
 	import idl "vo/metadata-v1.avdl";
+	import idl "vo/avslutnings_info-v1.avdl";
 
 	/**
 	  * En periode er en tidsperiode hvor en bruker har vært registrert som arbeidssøker.
@@ -29,5 +30,11 @@ protocol Periode {
 		  * Inneholder informasjon om når perioden ble avsluttet og hvem som avsluttet den
 		  */
 		Metadata? avsluttet;
+		/**
+		  * Inneholder utvidet informasjon om avslutningen av perioden.
+		  * Dette feltet kan IKKE brukes til å sjekke om en periode er avsluttet.
+		  * Feltet er valgfritt og ikke nødvendigvis satt selv om perioden er avsluttet.
+		  */
+		AvslutningsInfo? avslutningsInfo = null;
 	}
 }
