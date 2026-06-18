@@ -33,13 +33,36 @@ dependencies {
     schema(project(":bekreftelsesmelding-schema"))
     api("org.apache.avro:avro:1.12.1")
 }
-jib {
-    from.image = "europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-${jvmVersion}"
-    to.image = "${image ?: rootProject.name}:${version}"
-}
 
 tasks.named("generateAvroProtocol", GenerateAvroProtocolTask::class.java) {
     schema.forEach {
         source(zipTree(it))
     }
 }
+
+val chainguardJavaImage : String = "europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-"
+val targetImage: String = "${image ?: project.name}:${project.version}"
+val baseImage = "$chainguardJavaImage$jvmVersion"
+
+// Workaround: Jib cannot parse OCI Image Index v1.1 manifests with the `artifactType`
+// field (unresolved upstream bug). Pre-pull via Docker, which handles OCI v1.1 natively,
+// then point Jib at the local daemon image to bypass the registry manifest parsing.
+val pullBaseImage by tasks.registering(Exec::class) {
+    group = "jib"
+    description = "Pre-pull base image to local Docker daemon"
+    commandLine("docker", "pull", baseImage)
+}
+
+jib {
+    from.image = "docker://$baseImage"
+    to.image = targetImage
+    container {
+        jvmFlags = listOf("-XX:ActiveProcessorCount=8", "-XX:+UseZGC", "-XX:+ZGenerational")
+        environment = mapOf(
+            "IMAGE_WITH_VERSION" to targetImage
+        )
+    }
+}
+
+tasks.named("jib") { dependsOn(pullBaseImage) }
+tasks.named("jibDockerBuild") { dependsOn(pullBaseImage) }
