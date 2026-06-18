@@ -64,6 +64,7 @@ jobs:
           RESOURCE: schema-registry/nais-jobb.yaml
           VAR: image=${{ needs.build.outputs.image }},kafka=nav-prod,schema_domain=main
 
+  #Publiserer pakken som maven pakke
   publish:
     name: Publish maven artifacts
     runs-on: ubuntu-latest
