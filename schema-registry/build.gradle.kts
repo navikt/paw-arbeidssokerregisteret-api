@@ -16,13 +16,13 @@ val schema by configurations.creating {
 }
 
 dependencies {
-    implementation("ch.qos.logback:logback-classic:1.5.32")
-    implementation("net.logstash.logback:logstash-logback-encoder:8.1")
-    implementation("no.nav.common:log:3.2025.11.10_14.07-a9f44944d7bc")
+    implementation("ch.qos.logback:logback-classic:1.5.34")
+    implementation("net.logstash.logback:logstash-logback-encoder:9.0")
+    implementation("no.nav.common:log:4.2026.06.09_07.11-eccd6d131c44")
 
-    implementation("io.ktor:ktor-server-core:3.4.3")
-    implementation("io.ktor:ktor-server-netty:3.4.3")
-    implementation("io.confluent:kafka-schema-registry-client:8.2.0")
+    implementation("io.ktor:ktor-server-core:3.5.0")
+    implementation("io.ktor:ktor-server-netty:3.5.0")
+    implementation("io.confluent:kafka-schema-registry-client:8.3.0")
     implementation(project(":main-avro-schema"))
     implementation(project(":arena-avro-schema"))
     implementation(project(":bekreftelse-paavegneav-schema"))
