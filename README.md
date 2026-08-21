@@ -1,12 +1,13 @@
 # paw-arbeidssokerregisteret-api
 1. [Hvordan fungerer det](#hvordan-fungerer-det)
-2. [Kafka topics](#kafka-topics)
+2. [Signering av Kafka-meldinger](docs/meldingsautentisitet-og-integritet.md)
+3. [Kafka topics](#kafka-topics)
    1. [Periode topic](#periode-topic)
    2. [Opplysninger om arbeidssøker topic](#opplysninger-om-arbeidssoker-topic)
    3. [Profilerings topic](#profilerngs-topic)
    4. [Bekreftelse](#bekreftelse-topic)
-   4. [Arena topic](#arena-topic)
-3. REST API
+   5. [Arena topic](#arena-topic)
+4. REST API
    1. [Oppslag API (internt for NAV)](https://github.com/navikt/paw-arbeidssoekerregisteret-api-oppslag)
    2. [Eksternt API](https://github.com/navikt/paw-arbeidssoekerregisteret-eksternt-api)
    3. [Start/Stopp av Perioder](https://github.com/navikt/paw-arbeidssokerregisteret-api-inngang)
