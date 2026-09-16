@@ -36,11 +36,21 @@ flowchart LR
         ArenaAdapter["arena-adapter"]
         EksterntApi["eksternt-api"]
         OppslagApi["oppslag-api (v2)"]
-        Topics[("Kafka-topics:\nperioder, opplysninger,\nprofilering, bekreftelse,\narena")]
+        PerioderTopic["paw.arbeidssokerperioder-v1"]
+        OpplysningerTopic["paw.opplysninger-om-arbeidssoeker-v1"]
+        ProfileringTopic["paw.arbeidssoker-profilering-v1"]
+        BekreftelseTopic["paw.arbeidssoker-bekreftelse-v1"]
+        ArenaTopic["paw.arbeidssoker-arena-v1"]
     end
 
     subgraph nav_ut["Blir i Nav"]
-        KafkaKonsumenter["Kafka READ:\nteam dagpenger, team obo,\ndv-a, teamarenanais"]
+        DvaKafka["dv-a-team\n(dv-a-team-arbeidssoker-konsument)"]
+        PortefoljeKafka["pto / obo\n(veilarbportefolje)"]
+        OppfolgingKafka["pto / poao\n(veilarboppfolging)"]
+        ToiKafka["toi\n(toi-arbeidssoekerperiode)"]
+        DagpengerKafka["team dagpenger\n(dp-meldekort, dp-oppslag-arbeidssoker,\ndp-rapportering-personregister)"]
+        FlexKafka["flex\n(flex-arbeidssokerregister-oppdatering)"]
+        ArenaKafka["teamarenanais\n(arena-hendelse)"]
         RestKonsumenter["REST mot oppslag-api:\nteam obo, teamdagpenger, dab,\nflex, teamcrm/platforce,\nteamsykefravr, teamfamilie,\npoao, personoversikt,\nteamarenanais"]
     end
 
@@ -53,14 +63,35 @@ flowchart LR
     Veileder -- "Azure AD, på vegne av bruker" --> Inngang
     PaaVegneAvInn -- "Kafka WRITE" --> Hendelsefilter
 
-    Inngang --> Topics
-    BekreftelseApi --> Topics
-    Hendelsefilter --> Topics
-    Topics --> ArenaAdapter --> Topics
-    Topics --> OppslagApi
-    Topics --> EksterntApi
+    Inngang --> PerioderTopic
+    BekreftelseApi --> BekreftelseTopic
+    Hendelsefilter --> BekreftelseTopic
 
-    Topics -- "Kafka READ-ACL" --> KafkaKonsumenter
+    PerioderTopic --> ArenaAdapter
+    ProfileringTopic --> ArenaAdapter
+    OpplysningerTopic --> ArenaAdapter
+    BekreftelseTopic --> ArenaAdapter
+    ArenaAdapter --> ArenaTopic
+
+    PerioderTopic --> OppslagApi
+    ProfileringTopic --> OppslagApi
+    OpplysningerTopic --> OppslagApi
+
+    PerioderTopic --> EksterntApi
+
+    PerioderTopic -- "Kafka READ" --> DvaKafka
+    PerioderTopic -- "Kafka READ" --> PortefoljeKafka
+    PerioderTopic -- "Kafka READ" --> OppfolgingKafka
+    PerioderTopic -- "Kafka READ" --> ToiKafka
+    PerioderTopic -- "Kafka READ" --> DagpengerKafka
+    PerioderTopic -- "Kafka READ" --> FlexKafka
+    ProfileringTopic -- "Kafka READ" --> DvaKafka
+    ProfileringTopic -- "Kafka READ" --> PortefoljeKafka
+    OpplysningerTopic -- "Kafka READ" --> DvaKafka
+    OpplysningerTopic -- "Kafka READ" --> PortefoljeKafka
+    BekreftelseTopic -- "Kafka READ" --> DvaKafka
+    ArenaTopic -- "Kafka READ" --> ArenaKafka
+
     OppslagApi -- "accessPolicy.inbound" --> RestKonsumenter
     EksterntApi -- "REST + Maskinporten" --> Lanekassen
 ```
@@ -91,13 +122,27 @@ og henter dataene derfra.
 
 **Kafka:**
 
+| Topic | Innhold (kort) | Avro-schema (dette repoet) |
+|---|---|---|
+| `paw.arbeidssokerperioder-v1` | Start- og sluttidspunkt for en arbeidssøkerperiode, med identitetsnummer og metadata om hvem som startet/avsluttet den | `main-avro-schema/src/main/resources/periode-v1.avdl` |
+| `paw.opplysninger-om-arbeidssoeker-v1` | Opplysninger arbeidssøkeren har oppgitt: jobbsituasjon (obligatorisk), og valgfritt utdanning, helse og annet | `main-avro-schema/src/main/resources/opplysninger_om_arbeidssoeker-v4.avdl` |
+| `paw.arbeidssoker-profilering-v1` | Profileringsresultat brukt til å rute arbeidssøkeren til riktig veiledningstjeneste (`profilertTil`, alder, om personen har jobbet sammenhengende 6 av siste 12 måneder) | `main-avro-schema/src/main/resources/profilering-v1.avdl` |
+| `paw.arbeidssoker-bekreftelse-v1` | Bekreftelse fra bruker for en periode: om personen har jobbet i perioden og om vedkommende vil fortsette som arbeidssøker, med hvilken løsning som sendte den inn | `bekreftelsesmelding-schema/src/main/resources/bekreftelsesmelding-v1.avdl` |
+| `paw.arbeidssoker-arena-v1` | Beriket sammenslåing av periode, profilering og opplysninger, pluss bekreftelsen hvis perioden ble avsluttet fordi brukeren svarte nei på fortsatt arbeidssøker. Kun til bruk for Arena | `arena-avro-schema/src/main/resources/arena-v8.avdl` |
+
+**Konsumenter per topic:**
+
 | Topic | Ekstern konsument | Tilgang | Kilde/referanse |
 |---|---|---|---|
-| `paw.arbeidssokerperioder-v1` | team dagpenger: `dp-meldekort`, `dp-oppslag-arbeidssoker`, `dp-rapportering-personregister` | Kafka READ | `kafka/prod/paw.arbeidssokerperioder-v1.yaml`, paw-iac |
-| `paw.arbeidssoker-profilering-v1` | team obo: `veilarbportefolje` | Kafka READ | `kafka/prod/paw.arbeidssoker-profilering-v1.yaml`, paw-iac |
-| `paw.opplysninger-om-arbeidssoeker-v1` | team obo: `veilarbportefolje` | Kafka READ | `kafka/prod/paw.opplysninger-om-arbeidssoeker-v1.yaml`, paw-iac |
-| `paw.arbeidssoker-bekreftelse-v1` | `dv-a-team-arbeidssoker-konsument` | Kafka READ | `kafka/prod/bekreftelse/paw.arbeidssoker-bekreftelse-v1.yaml`, paw-iac |
-| `paw.arbeidssoker-arena-v1` | team teamarenanais: `arena-hendelse` | Kafka READ | `kafka/prod/paw.arbeidssoker-arena-v1.yaml`, paw-iac |
+| `paw.arbeidssokerperioder-v1` | dv-a-team: `dv-a-team-arbeidssoker-konsument`; pto/obo: `veilarbportefolje`; pto/poao: `veilarboppfolging`; toi: `toi-arbeidssoekerperiode`; team dagpenger: `dp-meldekort`, `dp-oppslag-arbeidssoker`, `dp-rapportering-personregister`; flex: `flex-arbeidssokerregister-oppdatering` | Kafka READ | `kafka/prod/paw.arbeidssokerperioder-v1.yaml`, paw-iac |
+| `paw.arbeidssoker-profilering-v1` | dv-a-team: `dv-a-team-arbeidssoker-konsument`; pto/obo: `veilarbportefolje` | Kafka READ | `kafka/prod/paw.arbeidssoker-profilering-v1.yaml`, paw-iac |
+| `paw.opplysninger-om-arbeidssoeker-v1` | dv-a-team: `dv-a-team-arbeidssoker-konsument`; pto/obo: `veilarbportefolje` | Kafka READ | `kafka/prod/paw.opplysninger-om-arbeidssoeker-v1.yaml`, paw-iac |
+| `paw.arbeidssoker-bekreftelse-v1` | dv-a-team: `dv-a-team-arbeidssoker-konsument` | Kafka READ | `kafka/prod/bekreftelse/paw.arbeidssoker-bekreftelse-v1.yaml`, paw-iac |
+| `paw.arbeidssoker-arena-v1` | teamarenanais: `arena-hendelse` | Kafka READ | `kafka/prod/paw.arbeidssoker-arena-v1.yaml`, paw-iac |
+
+`pto` og `poao` er trolig eldre/gjeldende navn på samme team, begge står i ACL-en for
+`veilarboppfolging`. Det samme gjelder trolig `pto`/`obo` for `veilarbportefolje`. Listen er
+gjengitt slik den står i kildene, uten å slå sammen team-navnene.
 
 **REST (`oppslag-api-v2`)**: dette er hovedkanalen for intern datadeling i Nav, med mange
 konsumenter. Alle er registrert som `accessPolicy.inbound`-regler i
@@ -133,6 +178,10 @@ derfor ikke som data ut av namespacet.
 | API | Endepunkt | Scope | Kilde/referanse |
 |---|---|---|---|
 | `eksternt-api` | `POST /api/v1/arbeidssoekerperioder` | `nav:arbeid:arbeidssokerregisteret.read` | `apps/eksternt-api`, monorepo-ekstern (`nais-prod.yaml`, `security_config.toml`, `PeriodeRoutes.kt`) |
+
+`eksternt-api` har i praksis bare dette ene endepunktet. Konsumenten sender inn et identitetsnummer
+(og valgfritt en fra-dato), og får tilbake arbeidssøkerperiodene for personen. Ingen andre
+ressurser er eksponert.
 
 **Kjent konsument:** Lånekassen er i dag den eneste eksterne virksomheten med tilgang via
 Maskinporten, ikke en av flere. Maskinporten-tilganger registreres i Maskinportens eget
