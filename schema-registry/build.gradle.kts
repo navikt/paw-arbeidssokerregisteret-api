@@ -2,7 +2,7 @@ import com.github.davidmc24.gradle.plugin.avro.GenerateAvroProtocolTask
 
 plugins {
     kotlin("jvm")
-    id("com.google.cloud.tools.jib") version "3.5.3"
+    id("com.google.cloud.tools.jib") version "3.5.4"
     id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1"
     application
 }
@@ -16,12 +16,12 @@ val schema by configurations.creating {
 }
 
 dependencies {
-    implementation("ch.qos.logback:logback-classic:1.5.34")
+    implementation("ch.qos.logback:logback-classic:1.6.3")
     implementation("net.logstash.logback:logstash-logback-encoder:9.0")
-    implementation("no.nav.common:log:4.2026.06.09_07.11-eccd6d131c44")
+    implementation("no.nav.common:log:4.2026.08.03_09.24-8d55c4f00b2f")
 
-    implementation("io.ktor:ktor-server-core:3.5.0")
-    implementation("io.ktor:ktor-server-netty:3.5.0")
+    implementation("io.ktor:ktor-server-core:3.5.2")
+    implementation("io.ktor:ktor-server-netty:3.5.2")
     implementation("io.confluent:kafka-schema-registry-client:8.3.0")
     implementation(project(":main-avro-schema"))
     implementation(project(":arena-avro-schema"))
@@ -31,7 +31,7 @@ dependencies {
     schema(project(":main-avro-schema"))
     schema(project(":bekreftelse-paavegneav-schema"))
     schema(project(":bekreftelsesmelding-schema"))
-    api("org.apache.avro:avro:1.12.1")
+    api("org.apache.avro:avro:1.12.2")
 }
 
 tasks.named("generateAvroProtocol", GenerateAvroProtocolTask::class.java) {

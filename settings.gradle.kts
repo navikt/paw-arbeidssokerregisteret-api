@@ -1,12 +1,12 @@
 pluginManagement {
     plugins {
-        id("com.github.ben-manes.versions") version "0.54.0"
+        id("com.github.ben-manes.versions") version "0.64.0"
     }
 }
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    kotlin("jvm") version "2.3.0" apply false
+    kotlin("jvm") version "2.4.20" apply false
 }
 
 rootProject.name = "paw-arbeidssokerregisteret-api"
