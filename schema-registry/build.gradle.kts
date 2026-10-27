@@ -18,7 +18,7 @@ val schema by configurations.creating {
 dependencies {
     implementation("ch.qos.logback:logback-classic:1.6.5")
     implementation("net.logstash.logback:logstash-logback-encoder:9.0")
-    implementation("no.nav.common:log:4.2026.08.03_09.24-8d55c4f00b2f")
+    implementation("no.nav.common:log:4.2026.10.01_11.30-68a5418edc3c")
 
     implementation("io.ktor:ktor-server-core:3.6.0")
     implementation("io.ktor:ktor-server-netty:3.6.0")
