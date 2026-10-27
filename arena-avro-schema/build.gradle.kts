@@ -35,7 +35,7 @@ publishing {
     }
 }
 
-tasks.withType(Copy::class).configureEach {
+tasks.named<Copy>("processResources") {
     from("$rootDir/main-avro-schema/src/main/resources/") {
         include("*.avdl", "vo/*.avdl", "helpers/*.avdl")
         filter { line ->
@@ -45,7 +45,7 @@ tasks.withType(Copy::class).configureEach {
             )
         }
     }
-    into("$buildTreePath/resources/main/")
+    into(layout.buildDirectory.dir("resources/main"))
 }
 
 tasks.withType(Jar::class) {
