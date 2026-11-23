@@ -16,13 +16,22 @@ val schema by configurations.creating {
 }
 
 dependencies {
-    implementation("ch.qos.logback:logback-classic:1.6.5")
+    // Løfter transitive Jackson-versjoner (fra avro, confluent og logstash-encoder) forbi kjente CVE-er
+    implementation(platform("com.fasterxml.jackson:jackson-bom:2.22.3"))
+    implementation(platform("tools.jackson:jackson-bom:3.2.3"))
+    constraints {
+        implementation("com.google.guava:guava:33.8.0-jre") {
+            because("CVE-2026-102554, transitivt fra kafka-schema-registry-client")
+        }
+    }
+
+    implementation("ch.qos.logback:logback-classic:1.6.8")
     implementation("net.logstash.logback:logstash-logback-encoder:9.0")
     implementation("no.nav.common:log:4.2026.10.01_11.30-68a5418edc3c")
 
-    implementation("io.ktor:ktor-server-core:3.6.0")
-    implementation("io.ktor:ktor-server-netty:3.6.0")
-    implementation("io.confluent:kafka-schema-registry-client:8.3.2")
+    implementation("io.ktor:ktor-server-core:3.6.1")
+    implementation("io.ktor:ktor-server-netty:3.6.1")
+    implementation("io.confluent:kafka-schema-registry-client:8.4.1")
     implementation(project(":main-avro-schema"))
     implementation(project(":arena-avro-schema"))
     implementation(project(":bekreftelse-paavegneav-schema"))
